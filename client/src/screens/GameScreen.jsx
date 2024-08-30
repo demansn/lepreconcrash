@@ -74,13 +74,13 @@ const GameScreen = () => {
                 <Toolbar sx={{ justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <Typography variant="caption">Balance</Typography>
-                        <Typography variant="h6" sx={{ color: 'yellow' }}>
+                        <Typography variant="h6" sx={{ color: 'yellow', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                             {playerBalance}
                         </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <Typography variant="caption">Luck</Typography>
-                        <Typography variant="h6" sx={{ color: 'yellow' }}>
+                        <Typography variant="h6" sx={{ color: 'yellow', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                             {playerLuck}
                         </Typography>
                     </Box>
@@ -98,8 +98,9 @@ const GameScreen = () => {
                     sx={{
                         width: '100%',
                         height: 0,
-                        paddingBottom: '133.33%',
+                        paddingBottom: '120%',
                         position: 'relative',
+                        maxWidth: { xs: '100%', sm: '80%', md: '60%' }, // Responsive width for different screens
                     }}
                 >
                     <Box
@@ -114,17 +115,31 @@ const GameScreen = () => {
                     />
                 </Box>
             </Box>
-            <AppBar position="static" sx={{     top: 'auto',
-                bottom: 0,
-                height: '40%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',}}>
+            <AppBar
+                position="static"
+                sx={{
+                    top: 'auto',
+                    bottom: 0,
+                    height: { xs: '30%', sm: '35%', md: '40%' }, // Responsive height
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
                 <Toolbar>
-                    {round ? <GamePlayToolbar onClickCashOut={onClickCashOut} onClickGo={onClickGo} cashOutIsDisabled={round && round.step <= 0} /> : <PlaceBetToolbar onClickBet={onClickBet}/>}
+                    {round ? (
+                        <GamePlayToolbar
+                            onClickCashOut={onClickCashOut}
+                            onClickGo={onClickGo}
+                            cashOutIsDisabled={round && round.step <= 0}
+                        />
+                    ) : (
+                        <PlaceBetToolbar onClickBet={onClickBet} />
+                    )}
                 </Toolbar>
             </AppBar>
         </Box>
+
     );
 };
 
