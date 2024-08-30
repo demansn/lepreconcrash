@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "esbuild src/index.js --bundle --outfile=dist/js/index.js --loader:.js=jsx --format=cjs --sourcemap --watch  --servedir=dist",
-    "build": "esbuild src/index.js --bundle --outfile=dist/js/index.js --loader:.js=jsx --format=cjs --sourcemap",
+    "build": "esbuild src/index.js --bundle --outfile=dist/js/index.js --loader:.js=jsx --format=cjs --sourcemap"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
