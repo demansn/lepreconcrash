@@ -10,6 +10,7 @@ const GameScreen = () => {
     const [roundInfo, setRoundInfo] = useState(round);
     const [playerBalance, setPlayerBalance] = useState(balance);
     const [playerLuck, setPlayerLuck] = useState(luck);
+    const [disabledButton, setDisabledButtons] = useState(false);
     const updatePlayerInfo = () => {
         const {balance, luck, round} = game.getInfo();
         setPlayerBalance(balance);
@@ -17,35 +18,42 @@ const GameScreen = () => {
         setRoundInfo(round);
     };
 
-    const onClickBet = (betAmount) => {
+    const onClickBet = async (betAmount) => {
             game.placeBet(betAmount);
+            setDisabledButtons(false);
            updatePlayerInfo();
     };
     const onClickGo = async () => {
+        setDisabledButtons(true);
         const result = await game.go();
         updatePlayerInfo();
 
         if (result.isWin || result.isLose) {
             setOpen(true);
             setResult(result);
-            game.reset();
+        } else {
+            setDisabledButtons(false);
         }
     };
 
     const onClickCashOut = async () => {
+        setDisabledButtons(true);
         const result = await game.cashOut();
         updatePlayerInfo();
 
         if (result.isWin || result.isLose) {
             setOpen(true);
             setResult(result);
-            game.reset();
+        } else {
+            setDisabledButtons(false);
         }
     };
 
     const handleClose = () => {
         setOpen(false);
         setResult(null);
+        game.reset();
+        setDisabledButtons(false);
     };
 
     useEffect(async () => {
@@ -131,7 +139,8 @@ const GameScreen = () => {
                         <GamePlayToolbar
                             onClickCashOut={onClickCashOut}
                             onClickGo={onClickGo}
-                            cashOutIsDisabled={round && round.step <= 0}
+                            cashOutIsDisabled={(round && round.step <= 0) || disabledButton}
+                            goIsDisabled={disabledButton}
                         />
                     ) : (
                         <PlaceBetToolbar onClickBet={onClickBet} />
@@ -143,13 +152,13 @@ const GameScreen = () => {
     );
 };
 
-const GamePlayToolbar = ({onClickGo, onClickCashOut, cashOutIsDisabled = false}) => {
+const GamePlayToolbar = ({onClickGo, onClickCashOut, cashOutIsDisabled = false, goIsDisabled = false}) => {
     return (
         <Box sx={{ display: 'flex', gap: 2 }}>
             <Button variant="contained" color="secondary" size="large" onClick={onClickCashOut} disabled={cashOutIsDisabled}>
                 Cash out
             </Button>
-            <Button variant="contained" color="secondary" size="large" onClick={onClickGo}>
+            <Button variant="contained" color="secondary" size="large" onClick={onClickGo} disabled={goIsDisabled}>
                 Go
             </Button>
         </Box>

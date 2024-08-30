@@ -73,7 +73,7 @@ class Game extends EventEmitter {
                 this.scene.setText(`
                 Current round step: ${round.step}
                 Possible winnings: ${round.win}
-                Bonus in step: ${round.bonus && round.bonus.step}
+                Bonus in step: ${round.bonus && round.bonus.step + 1}
                 Bonus win: ${round.bonus && round.bonus.win}
                 Current multiplier: ${round.multiplier}
             `);
