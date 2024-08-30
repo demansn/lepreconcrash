@@ -1,0 +1,111 @@
+export class GameRound {
+    constructor(result) {
+        this.isEnded = false;
+        this.currentStep = -1;
+        this.result = result;
+        this.endResutlt = null;
+    }
+
+    nextStep() {
+        if (this.isEnded) {
+            throw new Error('Round is ended')
+        }
+
+        this.currentStep++;
+
+        if (this.currentStep > this.result.maxSteps) {
+            throw new Error('Round is ended');
+        }
+
+        if (this.isLoseStep()) {
+            this.endWitLose();
+        } else if (this.isBonusStep() || this.isEndStep()) {
+            this.endWithWin();
+        }
+    }
+
+    getCurrentWin() {
+        return this.isFirstStep() ? 0 : this.result.betAmount * this.getCurrentMultiplier();
+    }
+
+    getTotalWin() {
+        return this.getCurrentWin() + (this.isBonusStep() ? this.getBonus().win : 0);
+    }
+
+    getCurrentMultiplier() {
+        return this.isFirstStep() ? 0 : this.result.steps[this.currentStep].multiplier;
+    }
+
+    getBonus() {
+        return this.result.bonus;
+    }
+
+    isEndStep() {
+        return this.currentStep === this.result.maxSteps;
+    }
+
+    isLoseStep() {
+        return this.currentStep === this.result.loseStep;
+    }
+
+    isBonusStep() {
+        return this.currentStep === this.result.bonus.step;
+    }
+
+    isFirstStep() {
+        return this.currentStep === -1;
+    }
+
+    isEnd() {
+        return this.isEnded;
+    }
+
+    isWin() {
+        return this.endResutlt.isWin;
+    }
+
+    end() {
+        this.endWithWin();
+    }
+
+    endWitLose() {
+        if (this.isEnded) {
+            return;
+        }
+
+        this.isEnded = true;
+        this.endResutlt = {
+            isLose: true,
+            step: this.currentStep + 1,
+        };
+    }
+
+    endWithWin() {
+        if (this.isEnded) {
+            return;
+        }
+
+        this.isEnded = true;
+        this.endResutlt = {
+            isWin: true,
+            totalWin: this.getTotalWin(),
+            win: this.getCurrentWin(),
+            bonus: this.getBonus(),
+            step: this.currentStep + 1,
+        }
+    }
+
+    getInfo() {
+        if (this.isEnded) {
+            return this.endResutlt;
+        }
+
+        return {
+            step: this.currentStep + 1,
+            multiplier: this.getCurrentMultiplier(),
+            totalWin: this.getTotalWin(),
+            win: this.getCurrentWin(),
+            bonus: this.getBonus()
+        };
+    }
+}

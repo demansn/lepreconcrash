@@ -2,6 +2,8 @@
   "name": "lepreconcrash",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-  }
+  "scripts": {},
+  "workspaces": [
+    "server"
+  ]
 }
