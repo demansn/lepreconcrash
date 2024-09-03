@@ -17,8 +17,7 @@ export class GameMath {
             loseStep: Math.floor(Math.random() * this.totalStepsNumber),
             bonus: {
                 step: bonusStep,
-                multiplier: bonus.bonusMultiplier,
-                win: bet * bonus.bonusMultiplier,
+                luck: bonus.bonusLuck,
             },
             betAmount: bet,
             steps: this.steps,

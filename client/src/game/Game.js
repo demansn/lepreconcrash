@@ -37,7 +37,7 @@ class Game extends EventEmitter {
         const roundResult = this.server.nextStep();
         this.updateInfo(roundResult);
 
-        await this.scene.heroJumpTo(roundResult.step, roundResult.isLose, roundResult.isWin);
+        await this.scene.heroJumpTo(roundResult.step, roundResult.isLose, roundResult.isWin, roundResult.isBonus);
 
         return roundResult;
     }
@@ -74,7 +74,7 @@ class Game extends EventEmitter {
                 Current round step: ${round.step}
                 Possible winnings: ${round.win}
                 Bonus in step: ${round.bonus && round.bonus.step + 1}
-                Bonus win: ${round.bonus && round.bonus.win}
+                Bonus luck: ${round.bonus && round.bonus.luck}
                 Current multiplier: ${round.multiplier}
             `);
             }

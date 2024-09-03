@@ -10,4 +10,12 @@ export class Bonus extends Container {
         this.bg.anchor.set(0.5, 1);
         this.addChild(this.bg);
     }
+
+    hide() {
+        this.visible = false;
+    }
+
+    show() {
+        this.visible = true;
+    }
 }

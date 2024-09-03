@@ -86,12 +86,18 @@ const GameScreen = () => {
                             {playerBalance}
                         </Typography>
                     </Box>
-                    {round ? <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <Typography variant="caption">Multiplier</Typography>
+                        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <Typography variant="caption">Luck in round </Typography>
                         <Typography variant="h6" sx={{color: 'yellow', fontSize: {xs: '1.25rem', sm: '1.5rem'}}}>
-                            x{round ? round.multiplier : 0}
+                            {round ? round.luck : 0}
                         </Typography>
-                    </Box> : null}
+                    </Box>
+                        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                            <Typography variant="caption">Multiplier</Typography>
+                            <Typography variant="h6" sx={{color: 'yellow', fontSize: {xs: '1.25rem', sm: '1.5rem'}}}>
+                                x{round ? round.multiplier : 0}
+                            </Typography>
+                        </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <Typography variant="caption">Luck</Typography>
                         <Typography variant="h6" sx={{ color: 'yellow', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>

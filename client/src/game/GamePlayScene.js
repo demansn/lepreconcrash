@@ -64,11 +64,12 @@ export class GamePlayScene extends Container {
     setBonusToPlatform(platformNumber) {
         const position = this.getPlatformPosition(platformNumber);
 
+        this.bonus.show();
         this.bonus.x = position.x;
         this.bonus.y = position.y;
     }
 
-    heroJumpTo(platformNumber, isLose, isWin) {
+    heroJumpTo(platformNumber, isLose, isWin, isBonusStep) {
         const position = this.getPlatformPosition(platformNumber);
         let additinalPromises = [];
 
@@ -87,10 +88,17 @@ export class GamePlayScene extends Container {
         return Promise.all(
             [
                 ...additinalPromises,
-                this.hero.jumpTo(position),
+                this.hero.jumpTo(position).then(() => {
+                    if (isBonusStep) {
+                        this.hideBonus();
+                    }}),
                 this.moveTo(position)
             ]
         )
+    }
+
+    hideBonus() {
+        this.bonus.hide();
     }
 
     getPlatformByNumber(number) {

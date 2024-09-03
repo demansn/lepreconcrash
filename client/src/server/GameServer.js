@@ -37,8 +37,9 @@ export class GameServer {
 
         const result = this.gameRound.getInfo();
 
-        this.player.addLuck(result.step);
         this.player.addBalance(result.totalWin);
+        this.player.addLuck(result.luck);
+
         this.gameRound = null;
 
         return result;
@@ -60,6 +61,7 @@ export class GameServer {
         if (this.gameRound.isEnd()) {
             if (this.gameRound.isWin()) {
                 this.player.addBalance(this.gameRound.getTotalWin());
+                this.player.addLuck(this.gameRound.getRoundLuck());
             }
             this.gameRound = null
         }
