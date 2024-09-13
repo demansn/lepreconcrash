@@ -76,6 +76,7 @@ class Game extends EventEmitter {
                 Bonus in step: ${round.bonus && round.bonus.step + 1}
                 Bonus win: ${round.bonus && round.bonus.win}
                 Current multiplier: ${round.multiplier}
+                Screen ratio ${window.innerWidth}:${window.innerHeight} (${(window.innerWidth / window.innerHeight).toFixed(2)})
             `);
             }
         }
