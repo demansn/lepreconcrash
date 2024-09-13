@@ -26,3 +26,17 @@ body, html, #root {
      width: 100%;
      height: auto;
  }
+
+ #root {
+     opacity: 0;
+ }
+
+ #modal {
+     position: absolute;
+     height: 100%;
+     width: 100%;
+     background-image: url(../assets/proto-size.jpeg);
+     background-size: 100%, auto;
+     background-position-y: center;
+     background-repeat: no-repeat;
+ }
