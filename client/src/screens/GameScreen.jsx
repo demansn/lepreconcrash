@@ -64,7 +64,7 @@ const GameScreen = () => {
     }, []);
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <Box sx={{height: '100vh' }}>
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -78,54 +78,9 @@ const GameScreen = () => {
                     <Button onClick={handleClose}>close</Button>
                 </DialogActions>
             </Dialog>
-            <AppBar position="static">
-                <Toolbar sx={{ justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Typography variant="caption">Balance</Typography>
-                        <Typography variant="h6" sx={{ color: 'yellow', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
-                            {playerBalance}
-                        </Typography>
-                    </Box>
-                        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <Typography variant="caption">Luck in round </Typography>
-                        <Typography variant="h6" sx={{color: 'yellow', fontSize: {xs: '1.25rem', sm: '1.5rem'}}}>
-                            {round ? round.luck : 0}
-                        </Typography>
-                    </Box>
-                        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                            <Typography variant="caption">Multiplier</Typography>
-                            <Typography variant="h6" sx={{color: 'yellow', fontSize: {xs: '1.25rem', sm: '1.5rem'}}}>
-                                x{round ? round.multiplier : 0}
-                            </Typography>
-                        </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Typography variant="caption">Luck</Typography>
-                        <Typography variant="h6" sx={{ color: 'yellow', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
-                            {playerLuck}
-                        </Typography>
-                    </Box>
-                </Toolbar>
-            </AppBar>
             <Box
-                sx={{
-                    flex: 1,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-            >
-                <Box
-                    sx={{
-                        width: '100%',
-                        height: 0,
-                        paddingBottom: '120%',
-                        position: 'relative',
-                        maxWidth: { xs: '100%', sm: '80%', md: '60%' }, // Responsive width for different screens
-                    }}
-                >
-                    <Box
                         sx={{
-                            position: 'absolute',
+                            position: 'relative',
                             top: 0,
                             left: 0,
                             width: '100%',
@@ -133,34 +88,7 @@ const GameScreen = () => {
                         }}
                         ref={gameContainerRef}
                     />
-                </Box>
-            </Box>
-            <AppBar
-                position="static"
-                sx={{
-                    top: 'auto',
-                    bottom: 0,
-                    height: { xs: '30%', sm: '35%', md: '40%' }, // Responsive height
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-            >
-                <Toolbar>
-                    {round ? (
-                        <GamePlayToolbar
-                            onClickCashOut={onClickCashOut}
-                            onClickGo={onClickGo}
-                            cashOutIsDisabled={(round && round.step <= 0) || disabledButton}
-                            goIsDisabled={disabledButton}
-                        />
-                    ) : (
-                        <PlaceBetToolbar onClickBet={onClickBet} />
-                    )}
-                </Toolbar>
-            </AppBar>
         </Box>
-
     );
 };
 

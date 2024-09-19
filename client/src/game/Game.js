@@ -16,8 +16,8 @@ class Game extends EventEmitter {
 
     async init() {
         await this.app.init({
-            width: 480 * 2,
-            height: 640 * 2,
+            width: 712,
+            height: 1280,
             backgroundColor: 0x1099bb
         });
 
