@@ -64,7 +64,7 @@ const GameScreen = () => {
     }, []);
 
     return (
-        <Box >
+        <Box sx={{height: '100vh'}}  >
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -79,13 +79,13 @@ const GameScreen = () => {
                 </DialogActions>
             </Dialog>
             <Box
-                        sx={{
-                            position: 'relative',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                        }}
+                sx={{
+                    position: 'relative',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                }}
                         ref={gameContainerRef}
                     />
         </Box>
