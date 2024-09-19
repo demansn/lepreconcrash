@@ -64,7 +64,7 @@ const GameScreen = () => {
     }, []);
 
     return (
-        <Box sx={{height: '100vh' }}>
+        <Box >
             <Dialog
                 open={open}
                 onClose={handleClose}
