@@ -5,7 +5,7 @@ export const Styles = {
         fill: 0xffffff,
         align: 'center',
         stroke: '#743f17',
-        strokeThickness: 5,
+        strokeThickness: 8,
     },
     lackPanelValue: {
         fontFamily: 'AldotheApache',
@@ -13,7 +13,7 @@ export const Styles = {
         fill: 0xffffff,
         align: 'center',
         stroke: '#743f17',
-        strokeThickness: 4,
+        strokeThickness: 8,
     },
     lackPanelLevel: {
         fontFamily: 'AldotheApache',

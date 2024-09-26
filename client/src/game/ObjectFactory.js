@@ -98,6 +98,8 @@ export class DisplayObjectsFactory {
     text({text = '', style = '', ...properties} = {}) {
         const displayObject = new Text(text, new TextStyle(this.styles.get(style)));
 
+        displayObject.resolution = 2;
+
         return this.addAndSetProperties(displayObject, properties);
     }
 
