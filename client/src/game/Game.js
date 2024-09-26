@@ -1,8 +1,11 @@
 import {manifest} from "../configs/resources-manifest";
 import {Application, Assets} from 'pixi.js';
+
 import { EventEmitter } from '@pixi/utils';
 import {GameServer} from "../server/GameServer";
 import {GamePlayScene} from "./GamePlayScene";
+import {GAME_CONFIG} from "../configs/gameConfig";
+import {app} from "./app";
 
 class Game extends EventEmitter {
     ticker = null;
@@ -12,12 +15,13 @@ class Game extends EventEmitter {
         this.app = new Application();
         this.ticker = this.app.ticker;
         this.server = new GameServer();
+
+        window.__PIXI_APP__ = this.app;
     }
 
     async init() {
         await this.app.init({
-            width: 712,
-            height: 1280,
+            ...GAME_CONFIG.size,
             backgroundColor: 0x1099bb
         });
 
@@ -27,78 +31,47 @@ class Game extends EventEmitter {
             this.emit('assetsLoading', progress);
         }).then(() => {
             this.scene = new GamePlayScene(this.app);
-            this.scene.setText('Place bet!');
             this.app.stage.addChild(this.scene);
             this.emit('assetsLoaded');
+            this.scene.updateHUD(this.server.getInfo());
+            this.startGame();
         });
     }
 
     async go() {
         const roundResult = this.server.nextStep();
-        this.updateInfo(roundResult);
+        await this.scene.go(roundResult);
+    }
 
-        await this.scene.heroJumpTo(roundResult.step, roundResult.isLose, roundResult.isWin, roundResult.isBonus);
-
-        return roundResult;
+    async startGame() {
+        this.scene.waitPlaceBet();
+        app.eventEmitter.on('hud:play:clicked', () => this.placeBet(10), this);
+        app.eventEmitter.on('hud:cashOut:clicked', () => this.cashOut(), this);
+        app.eventEmitter.on('hud:go:clicked', () => this.go(), this);
     }
 
     async cashOut() {
         const roundResult =  this.server.cashOut();
-        this.updateInfo(roundResult);
+
+        this.scene.updateHUD(this.server.getInfo());
+        this.scene.reset();
 
         return roundResult;
     }
 
     async placeBet(bet) {
         const round = this.server.placeBet(bet);
-
         this.scene.reset();
-        this.scene.setBonusToPlatform(round.bonus.step + 1);
-
-        this.updateInfo(round);
+        this.scene.updateHUD(this.server.getInfo());
+        this.scene.play({bonusPlatform: round.bonus.step + 1 });
     }
 
     reset() {
         this.scene.reset();
-        this.scene.setText('Place bet!');
-    }
-
-    updateInfo(round) {
-        if (round) {
-            if (round.isLose) {
-                this.scene.setText(`You lose on step: ${round.step}`);
-            } else  if (round.isWin) {
-                this.scene.setText(`You win: ${round.totalWin}`);
-            } else {
-                this.scene.setText(`
-                Current round step: ${round.step}
-                Possible winnings: ${round.win}
-                Bonus in step: ${round.bonus && round.bonus.step + 1}
-                Bonus luck: ${round.bonus && round.bonus.luck}
-                Current multiplier: ${round.multiplier}
-            `);
-            }
-        }
     }
 
     getInfo() {
         return this.server.getInfo();
-    }
-
-    isState() {
-
-    }
-
-    pause() {
-        this.ticker.stop();
-    }
-
-    resume() {
-        this.ticker.start();
-    }
-
-    resizeTo(width, height) {
-        this.app
     }
 }
 

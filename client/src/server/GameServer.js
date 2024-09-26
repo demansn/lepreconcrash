@@ -29,16 +29,13 @@ export class GameServer {
             throw new Error('Current round is completed!');
         }
 
-        if (this.gameRound && this.gameRound.isFirstStep()) {
-            throw new Error('Вы не сделали ни одного шага!');
-        }
-
         this.gameRound.end();
 
         const result = this.gameRound.getInfo();
 
         this.player.addBalance(result.totalWin);
         this.player.addLuck(result.luck);
+        this.player.setLevel(this.math.getLuckLevel(this.player.getLuck()));
 
         this.gameRound = null;
 
@@ -63,6 +60,7 @@ export class GameServer {
                 this.player.addBalance(this.gameRound.getTotalWin());
                 this.player.addLuck(this.gameRound.getRoundLuck());
             }
+
             this.gameRound = null
         }
 
@@ -73,7 +71,8 @@ export class GameServer {
         return {
             balance: this.player.getBalance(),
             luck: this.player.getLuck(),
-            round: this.gameRound ? this.gameRound.getInfo() : null
+            round: this.gameRound ? this.gameRound.getInfo() : {win: 0, luck: 0, multiplier: 0, nextStepWin: 0},
+            level: this.player.getLevel()
         }
     }
 }

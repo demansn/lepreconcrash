@@ -5,17 +5,29 @@ export const manifest = {
             assets: [
                 {
                     alias: 'bg',
-                    src: './assets/bg.png',
+                    src: './assets/background.jpg',
                 },  {
                     alias: 'hero',
-                    src: './assets/hero.png',
-                },  {
-                    alias: 'platform',
-                    src: './assets/platform.png',
-                },  {
-                    alias: 'bonus',
-                    src: './assets/bonus.png',
-                }
+                    src: './assets/Character.png',
+                },
+                {alias: 'platform', src: './assets/cloud.png'},
+                {alias: 'bonus', src: './assets/bonus.png'},
+                {alias: 'balancePanelBg', src: './assets/Gold_plank.png'},
+                {alias: 'lackPanelBg', src: './assets/Clover plank.png'},
+                {alias: 'playButton', src: './assets/Play.png'},
+                {alias: 'heroNormal', src: './assets/1.png'},
+                {alias: 'heroJump', src: './assets/2.png'},
+                {alias: 'goButton', src: './assets/Go.png'},
+                {alias: 'centerButton', src: './assets/Centr but.png'},
+                {alias: 'goldIconCenter', src: './assets/Gold Centr.png'},
+                {alias: 'goldCloverCenter', src: './assets/Clover centr.png'},
+                {
+                    alias: 'font',
+                    src: './assets/fonts/AldotheApache.ttf',
+                    data: {
+                        family: 'AldotheApache',
+                        weights: ['normal', 'bold'],
+                    }}
             ],
         },
     ],

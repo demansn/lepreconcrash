@@ -1,9 +1,7 @@
 import {Assets, Container, Sprite, Text} from "pixi.js";
-import {Platform} from "./Platform";
-import {Hero} from "./Hero";
+import {Hud} from "./hud/Hud";
+import {Level} from "./Level";
 import gsap from "gsap";
-import {Bonus} from "./Bonus";
-import {WinAnimation} from "./WinAnimation";
 
 export class GamePlayScene extends Container {
     constructor(app) {
@@ -12,123 +10,59 @@ export class GamePlayScene extends Container {
         this.bg = new Sprite(Assets.get('bg'));
         // scale height to app height
         this.bg.height = app.screen.height;
-        this.bg.width = this.bg.height / this.bg.texture.height * this.bg.texture.width;
-
+        this.bg.width = app.screen.width;
         this.addChild(this.bg);
-        this.text = new Text('Hello World', {fill: 0xffffff, align: 'center'});
-        this.text.x = app.screen.width / 2;
-        this.text.y = app.screen.height / 2;
-        this.text.resolution = 2;
-        this.text.anchor.set(0.5);
-        this.addChild(this.text);
 
+        this.level = new Level();
+        this.addChild(this.level);
 
-        this.platforms = [];
-
-        // add 25 platform on bottom
-        for (let i = 0; i < 25; i++) {
-            const platform = new Platform(i);
-            platform.x = 10 +  i * (platform.width + 10);
-            platform.y = app.screen.height - platform.height;
-            this.platforms.push(platform);
-            this.addChild(platform);
-        }
-
-        // add hero under first platform
-
-        this.winAnimation = new WinAnimation();
-        this.addChild(this.winAnimation);
-
-        this.bonus = new Bonus();
-        this.bonus.x = this.getPlatformPosition(24).x;
-        this.bonus.y = this.getPlatformPosition(24).y;
-        this.addChild(this.bonus);
-
-        this.hero = new Hero();
-        this.hero.x = this.getPlatformPosition(0).x;
-        this.hero.y = this.getPlatformPosition(0).y;
-        this.addChild(this.hero);
+        this.hud = new Hud();
+        this.addChild(this.hud);
     }
 
-    // get center platform position to hero jump by platrom number
-    getPlatformPosition(platformNumber) {
-        const platform = this.platforms.find(child => child.number === platformNumber);
-
-        return {
-            x: platform.x + platform.width / 2,
-            y: platform.y
-        };
+    waitPlaceBet() {
+        this.hud.gotoPlayState();
     }
 
-    // set bonus to platform
-    setBonusToPlatform(platformNumber) {
-        const position = this.getPlatformPosition(platformNumber);
-
-        this.bonus.show();
-        this.bonus.x = position.x;
-        this.bonus.y = position.y;
+    updateHUD({balance, luck, level, round}) {
+        this.hud.balance.setValue(balance);
+        this.hud.lack.setValue(luck);
+        this.hud.lack.setLevel(level);
+        this.hud.updateRoundInfo(round);
     }
 
-    heroJumpTo(platformNumber, isLose, isWin, isBonusStep) {
-        const position = this.getPlatformPosition(platformNumber);
-        let additinalPromises = [];
-
-        if (isLose) {
-            position.y += 500;
-
-            const platform = this.getPlatformByNumber(platformNumber);
-
-            additinalPromises.push(platform.hide());
-        } else if (isWin) {
-            additinalPromises.push(this.playWinAnimationInPosition(position));
-        }
-
-        // hide platform by number
-
-        return Promise.all(
-            [
-                ...additinalPromises,
-                this.hero.jumpTo(position).then(() => {
-                    if (isBonusStep) {
-                        this.hideBonus();
-                    }}),
-                this.moveTo(position)
-            ]
-        )
+    play({bonusPlatform}) {
+        this.level.reset();
+        this.level.setBonusToPlatform(bonusPlatform);
+        this.hud.gotoGoState();
     }
 
-    hideBonus() {
-        this.bonus.hide();
-    }
+    go(result) {
+        const timeline = gsap.timeline();
 
-    getPlatformByNumber(number) {
-        return this.platforms.find(platform => platform.number === number);
-    }
+        timeline
+            .add(() => this.hud.gotoWaitState())
+            .add(this.level.heroJumpTo(result.step, result.isLose, result.isWin, result.isBonusStep))
+            .add(() => {
+                if (!result.isLose) {
+                    this.hud.updateRoundInfo(result);
+                } else {
+                    this.hud.updateRoundInfo({win: 0, multiplier: 0, luck: 0, nextStepWin: 0});
+                }
+            }, '-=0.5')
+            .add(() => {
+                if (result.isLose) {
+                    this.hud.gotoPlayState();
+                } else {
+                    this.hud.gotoGoState();
+                }
+            });
 
-    moveTo(position) {
-        return gsap.to(this, {
-            x: -position.x + 100,
-            duration: 1,
-            delay: 0.25
-        });
+        return timeline;
     }
 
     reset() {
-        this.hero.x = this.getPlatformPosition(0).x;
-        this.hero.y = this.getPlatformPosition(0).y;
-        this.x = 0;
-        this.setBonusToPlatform(24);
-        this.platforms.forEach(platform => platform.show());
-    }
-
-    playWinAnimationInPosition(position) {
-        this.winAnimation.x = position.x;
-        this.winAnimation.y = position.y - 50;
-
-        return this.winAnimation.play();
-    }
-
-    setText(text) {
-        this.text.text = text;
+        this.level.reset();
+        this.hud.gotoPlayState();
     }
 }

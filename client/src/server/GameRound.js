@@ -30,7 +30,11 @@ export class GameRound {
     }
 
     getCurrentWin() {
-        return this.isFirstStep() ? 0 : this.result.betAmount * this.getCurrentMultiplier();
+        return this.isFirstStep() ? this.result.betAmount : this.result.betAmount * this.getCurrentMultiplier();
+    }
+
+    getNextStepWin() {
+        return (this.result.betAmount * this.getNextStepMultiplier()) - this.result.betAmount ;
     }
 
     getTotalWin() {
@@ -38,7 +42,11 @@ export class GameRound {
     }
 
     getCurrentMultiplier() {
-        return this.isFirstStep() ? 0 : this.result.steps[this.currentStep].multiplier;
+        return this.isFirstStep() ? 1 : this.result.steps[this.currentStep].multiplier;
+    }
+
+    getNextStepMultiplier() {
+        return this.result.steps[this.currentStep + 1] ? this.result.steps[this.currentStep + 1].multiplier : 0;
     }
 
     getBonus() {
@@ -115,6 +123,7 @@ export class GameRound {
             bonus: this.getBonus(),
             isBonus: this.isBonusStep(),
             luck: this.getRoundLuck(),
+            nextStepWin: this.getNextStepWin(),
         };
     }
 
