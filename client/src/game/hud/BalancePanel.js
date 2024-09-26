@@ -1,15 +1,11 @@
-import {Container} from "pixi.js";
-import {ObjectFactory} from "../ObjectFactory";
+import {ObjectFactory, SuperContainer} from "../ObjectFactory";
 
-export class BalancePanel extends Container {
+export class BalancePanel extends SuperContainer {
     constructor() {
         super();
 
-        this.bg = ObjectFactory.createSprite('balancePanelBg');
-        this.addChild(this.bg);
-
-        this.valueText = ObjectFactory.createText('0', 'balancePanelValue', {x: 200, y:  this.bg.height / 2, anchor: {y: 0.5}});
-        this.addChild(this.valueText);
+        this.bg = this.create.sprite({texture: 'balancePanelBg'});
+        this.valueText = this.create.text({text: '0', style: 'balancePanelValue', x: 200, y:  this.bg.height / 2, anchor: {y: 0.5}});
     }
 
     setValue(value) {

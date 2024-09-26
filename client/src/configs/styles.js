@@ -13,7 +13,7 @@ export const Styles = {
         fill: 0xffffff,
         align: 'center',
         stroke: '#743f17',
-        strokeThickness: 8,
+        strokeThickness: 6,
     },
     lackPanelLevel: {
         fontFamily: 'AldotheApache',

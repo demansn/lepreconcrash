@@ -1,18 +1,13 @@
-import {ObjectFactory} from "../ObjectFactory";
+import {ObjectFactory, SuperContainer} from "../ObjectFactory";
 import {Container} from 'pixi.js';
 
-export class LackPanel extends Container {
+export class LackPanel extends SuperContainer {
     constructor() {
         super();
 
-        this.bg = ObjectFactory.createSprite('lackPanelBg');
-        this.addChild(this.bg);
-
-        this.valueText = ObjectFactory.createText('1,000,00', 'lackPanelValue', {x: 150, y:  40, anchor: {x: 0.5, y: 0.5}});
-        this.addChild(this.valueText);
-
-        this.levelText = ObjectFactory.createText('LVL 99', 'lackPanelLevel', {x: 150, y:  90, anchor: {x: 0.5, y: 0.5}});
-        this.addChild(this.levelText);
+        this.bg = this.create.sprite({texture: 'lackPanelBg'});
+        this.valueText = this.create.text({text: '1,000,00', style: 'lackPanelValue', x: 150, y:  40, anchor: {x: 0.5, y: 0.5}});
+        this.levelText = this.create.text({text: 'LVL 99', style: 'lackPanelLevel', x: 150, y:  90, anchor: {x: 0.5, y: 0.5}});
     }
 
     setValue(value) {
