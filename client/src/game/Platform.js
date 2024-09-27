@@ -8,6 +8,8 @@ export class Platform extends  Container {
 
         // draw platform with graphics
         this.bg = new Sprite(Assets.get('platform'));
+        this.bg.anchor.set(1, 0);
+        this.bg.scale.set(0.8);
         this.addChild(this.bg);
     }
 
