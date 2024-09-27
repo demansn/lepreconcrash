@@ -51,8 +51,8 @@ export class Level extends Container {
         const position = this.getPlatformPosition(platformNumber);
 
         this.bonus.show();
-        this.bonus.x = position.x;
-        this.bonus.y = position.y + this.bonus.height * 0.75;
+        this.bonus.x = position.x + this.bonus.width * 0.15;
+        this.bonus.y = position.y + this.bonus.height * 0.35;
     }
 
     heroJumpTo(platformNumber, isLose, isWin, isBonus) {
@@ -64,7 +64,7 @@ export class Level extends Container {
             timeline.add(this.playWinAnimationInPosition(position));
         }
 
-        const platform = this.getPlatformByNumber(platformNumber);
+        const platform = this.getPlatformByNumber(platformNumber + 1);
 
         timeline.add([
             this.hero.jumpTo(position),
