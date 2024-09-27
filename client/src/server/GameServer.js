@@ -7,6 +7,13 @@ export class GameServer {
         this.math = new GameMath(STEPS);
         this.gameRound = null;
         this.player = new Player(1000, 0);
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        this.cheat = {
+            bonusStep: urlParams.has('bonusStep')  ? Number(urlParams.get('bonusStep')) :  undefined,
+            loseStep: urlParams.has('loseStep')  ? Number(urlParams.get('loseStep')) :  undefined,
+        };
     }
 
     placeBet(amount) {
@@ -15,7 +22,7 @@ export class GameServer {
         }
 
         this.player.subBalance(amount);
-        this.gameRound = this.math.getRandomGameRound(amount);
+        this.gameRound = this.math.getRandomGameRound(amount, this.cheat);
 
         return this.gameRound.getInfo();
     }
@@ -29,16 +36,14 @@ export class GameServer {
             throw new Error('Current round is completed!');
         }
 
-        if (this.gameRound && this.gameRound.isFirstStep()) {
-            throw new Error('Вы не сделали ни одного шага!');
-        }
-
         this.gameRound.end();
 
         const result = this.gameRound.getInfo();
 
-        this.player.addLuck(result.step);
         this.player.addBalance(result.totalWin);
+        this.player.addLuck(result.luck);
+        this.player.setLevel(this.math.getLuckLevel(this.player.getLuck()));
+
         this.gameRound = null;
 
         return result;
@@ -60,7 +65,9 @@ export class GameServer {
         if (this.gameRound.isEnd()) {
             if (this.gameRound.isWin()) {
                 this.player.addBalance(this.gameRound.getTotalWin());
+                this.player.addLuck(this.gameRound.getRoundLuck());
             }
+
             this.gameRound = null
         }
 
@@ -71,7 +78,8 @@ export class GameServer {
         return {
             balance: this.player.getBalance(),
             luck: this.player.getLuck(),
-            round: this.gameRound ? this.gameRound.getInfo() : null
+            round: this.gameRound ? this.gameRound.getInfo() : {win: 0, luck: 0, multiplier: 0, nextStepWin: 0},
+            level: this.player.getLevel()
         }
     }
 }

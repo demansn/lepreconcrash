@@ -2,6 +2,7 @@ export class Player {
     constructor(balance, luck) {
         this.balance = balance;
         this.luck = luck;
+        this.level = 0;
     }
 
     addBalance(amount) {
@@ -16,11 +17,19 @@ export class Player {
         this.luck += amount;
     }
 
+    setLevel(level) {
+        this.level = level;
+    }
+
     getBalance() {
         return this.balance;
     }
 
     getLuck() {
         return this.luck;
+    }
+
+    getLevel() {
+        return this.level;
     }
 }

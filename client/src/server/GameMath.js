@@ -8,17 +8,16 @@ export class GameMath {
         this.testRandomBonusStep();
     }
 
-    getRandomGameRound(bet) {
-        const bonusStep = this.getRandomBonusStep();
+    getRandomGameRound(bet, {bonusStep: bs, loseStep: ls}) {
+        const bonusStep = bs ? bs : this.getRandomBonusStep();
         const bonus = this.steps[bonusStep];
 
         return new GameRound({
             maxSteps: this.totalStepsNumber,
-            loseStep: Math.floor(Math.random() * this.totalStepsNumber),
+            loseStep: ls ? ls : Math.floor(Math.random() * this.totalStepsNumber),
             bonus: {
                 step: bonusStep,
-                multiplier: bonus.bonusMultiplier,
-                win: bet * bonus.bonusMultiplier,
+                luck: bonus.bonusLuck,
             },
             betAmount: bet,
             steps: this.steps,
@@ -69,6 +68,38 @@ export class GameMath {
             console.log(
                 `${step.number}    | ${actualPercentage.toFixed(2)}%    | ${expectedPercentage.toFixed(2)}%`
             );
+        }
+    }
+
+    getLuckLevel(luck) {
+        // Level 1 < 1,000
+        // 1,000 ≤ Level 2 < 2,500
+        // 2,500 ≤ Level 3 < 5,000
+        // 5,000 ≤ Level 4 < 10,000
+        // 10,000 ≤ Level 5 < 20,000
+        // 20,000 ≤ Level 6 < 50,000
+        // 50,000 ≤ Level 7 < 100,000
+        // 100,000 ≤ Level 8 < 200,000
+        // 200,000 ≤ Level 9 < 500,000
+        // 500,000 ≤ Level 10
+
+        const levels = [
+            1000,
+            2500,
+            5000,
+            10000,
+            20000,
+            50000,
+            100000,
+            200000,
+            500000,
+            Infinity
+        ];
+
+        for (let i = 0; i < levels.length; i++) {
+            if (luck < levels[i]) {
+                return i + 1;
+            }
         }
     }
 }
