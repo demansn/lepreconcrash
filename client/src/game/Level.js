@@ -52,10 +52,10 @@ export class Level extends Container {
 
         this.bonus.show();
         this.bonus.x = position.x;
-        this.bonus.y = position.y;
+        this.bonus.y = position.y + this.bonus.height * 0.75;
     }
 
-    heroJumpTo(platformNumber, isLose, isWin, isBonusStep) {
+    heroJumpTo(platformNumber, isLose, isWin, isBonus) {
         const position = this.getPlatformPosition(platformNumber);
         const timeline = gsap.timeline();
 
@@ -64,19 +64,18 @@ export class Level extends Container {
             timeline.add(this.playWinAnimationInPosition(position));
         }
 
-        // hide platform by number
         const platform = this.getPlatformByNumber(platformNumber);
 
         timeline.add([
             this.hero.jumpTo(position),
             this.moveTo(position)
         ]);
-            // эффект качания платформы от падения
 
             if (!isLose)  {
                 timeline.add([
-                    gsap.to(platform, { y: platform.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out" }),
-                    gsap.to(this.hero, { y: this.hero.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out" })
+                    gsap.to(platform, {y: platform.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out" }),
+                    gsap.to(this.hero, {y: this.hero.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out" }),
+                    isBonus && gsap.to(this.bonus, {y: this.bonus.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out" })
                 ], '-=0.5');
             } else {
                 timeline
@@ -87,8 +86,8 @@ export class Level extends Container {
                     ], '-=0.5')
             }
 
-        if (isBonusStep) {
-            timeline.add(this.hideBonus())
+        if (isBonus) {
+            timeline.add(() => this.hideBonus())
         }
 
         return timeline;

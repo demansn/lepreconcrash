@@ -7,6 +7,13 @@ export class GameServer {
         this.math = new GameMath(STEPS);
         this.gameRound = null;
         this.player = new Player(1000, 0);
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        this.cheat = {
+            bonusStep: urlParams.has('bonusStep')  ? Number(urlParams.get('bonusStep')) :  undefined,
+            loseStep: urlParams.has('loseStep')  ? Number(urlParams.get('loseStep')) :  undefined,
+        };
     }
 
     placeBet(amount) {
@@ -15,7 +22,7 @@ export class GameServer {
         }
 
         this.player.subBalance(amount);
-        this.gameRound = this.math.getRandomGameRound(amount);
+        this.gameRound = this.math.getRandomGameRound(amount, this.cheat);
 
         return this.gameRound.getInfo();
     }

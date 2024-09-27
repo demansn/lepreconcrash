@@ -42,7 +42,7 @@ export class GamePlayScene extends Container {
 
         timeline
             .add(() => this.hud.gotoWaitState())
-            .add(this.level.heroJumpTo(result.step, result.isLose, result.isWin, result.isBonusStep))
+            .add(this.level.heroJumpTo(result.step, result.isLose, result.isWin, result.isBonus))
             .add(() => {
                 if (!result.isLose) {
                     this.hud.updateRoundInfo(result);
