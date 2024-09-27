@@ -5,14 +5,14 @@ export class Hero extends Container {
     constructor() {
         super();
 
-        this.scale.set(0.8);
+        this.scale.set(0.6);
         // draw hero with graphics circle
         this.bg = new Sprite(Assets.get('heroNormal'));
-        this.bg.anchor.set(0.5, 0.85);
+        this.bg.anchor.set(0.5, 0.75);
         this.addChild(this.bg);
 
         this.jumpState = new Sprite(Assets.get('heroJump'));
-        this.jumpState.anchor.set(0.5, 0.85);
+        this.jumpState.anchor.set(0.5, 0.75);
         this.jumpState.visible = false;
         this.addChild(this.jumpState);
     }
