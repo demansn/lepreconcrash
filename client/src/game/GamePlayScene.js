@@ -2,6 +2,7 @@ import {Assets, Container, Sprite, Text} from "pixi.js";
 import {Hud} from "./hud/Hud";
 import {Level} from "./Level";
 import gsap from "gsap";
+import {app} from "./app";
 
 export class GamePlayScene extends Container {
     constructor(app) {
@@ -42,7 +43,7 @@ export class GamePlayScene extends Container {
 
         timeline
             .add(() => this.hud.gotoWaitState())
-            .add(this.level.heroJumpTo(result.step, result.isLose, result.isWin, result.isBonus))
+            .add(this.level.heroJumpTo(result.step, result.isLose, result.isWin, result.isBonus, result.bonus))
             .add(() => {
                 if (!result.isLose) {
                     this.hud.updateRoundInfo(result);
@@ -53,6 +54,8 @@ export class GamePlayScene extends Container {
             .add(() => {
                 if (result.isLose) {
                     this.hud.gotoPlayState();
+                } else if(result.isWin) {
+                    app.eventEmitter.emit('hud:cashOut:clicked');
                 } else {
                     this.hud.gotoGoState();
                 }

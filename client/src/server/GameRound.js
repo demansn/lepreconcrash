@@ -54,7 +54,7 @@ export class GameRound {
     }
 
     isEndStep() {
-        return this.currentStep === this.result.maxSteps;
+        return this.currentStep + 1 === this.result.maxSteps;
     }
 
     isLoseStep() {
@@ -89,6 +89,7 @@ export class GameRound {
         this.isEnded = true;
         this.endResutlt = {
             isLose: true,
+            bonus: this.getBonus(),
             step: this.currentStep + 1
         };
     }

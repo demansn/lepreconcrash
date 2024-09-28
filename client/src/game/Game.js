@@ -61,6 +61,7 @@ class Game extends EventEmitter {
 
     async placeBet(bet) {
         const round = this.server.placeBet(bet);
+        app.version = !app.version;
         this.scene.reset();
         this.scene.updateHUD(this.server.getInfo());
         this.scene.play({bonusPlatform: round.bonus.step + 1 });

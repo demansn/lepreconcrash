@@ -14,7 +14,7 @@ export class GameMath {
 
         return new GameRound({
             maxSteps: this.totalStepsNumber,
-            loseStep: ls ? ls : Math.floor(Math.random() * this.totalStepsNumber),
+            loseStep: ls ? ls : Math.floor(Math.random() * this.totalStepsNumber + 1),
             bonus: {
                 step: bonusStep,
                 luck: bonus.bonusLuck,

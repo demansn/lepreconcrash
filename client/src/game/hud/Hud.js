@@ -48,6 +48,8 @@ export class Hud extends SuperContainer {
         this.playButton.enable();
         this.playButton.toggleToPlay();
         this.roundInfo.disable();
+
+        this.nextStepWin.alpha = app.version ? 1 : 0;
     }
 
     gotoGoState() {

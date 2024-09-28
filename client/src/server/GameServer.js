@@ -33,10 +33,10 @@ export class GameServer {
         }
 
         if (this.gameRound && this.gameRound.isEnd()) {
-            throw new Error('Current round is completed!');
+
         }
 
-        this.gameRound.end();
+        !this.gameRound.isEnd() && this.gameRound.end();
 
         const result = this.gameRound.getInfo();
 
@@ -67,8 +67,6 @@ export class GameServer {
                 this.player.addBalance(this.gameRound.getTotalWin());
                 this.player.addLuck(this.gameRound.getRoundLuck());
             }
-
-            this.gameRound = null
         }
 
         return roundResult;

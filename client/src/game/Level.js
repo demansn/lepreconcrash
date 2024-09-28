@@ -4,6 +4,7 @@ import {WinAnimation} from "./WinAnimation";
 import {Bonus} from "./Bonus";
 import {Hero} from "./Hero";
 import gsap from "gsap";
+import {app} from "./app";
 
 export class Level extends Container {
     constructor() {
@@ -36,16 +37,6 @@ export class Level extends Container {
         this.reset();
     }
 
-    // get center platform position to hero jump by platrom number
-    getPlatformPosition(platformNumber) {
-        const platform = this.platforms.find(child => child.number === platformNumber);
-
-        return {
-            x: platform.x,
-            y: platform.y
-        };
-    }
-
     // set bonus to platform
     setBonusToPlatform(platformNumber) {
         const position = this.getPlatformByNumber(platformNumber);
@@ -55,14 +46,14 @@ export class Level extends Container {
         this.bonus.y = position.y;
     }
 
-    heroJumpTo(platformNumber, isLose, isWin, isBonus) {
-        const platform = this.getPlatformByNumber(platformNumber );
+    heroJumpTo(platformNumber, isLose, isWin, isBonus, bonus) {
+        const platform = this.getPlatformByNumber(platformNumber);
 
         // const position = this.getPlatformPosition(platformNumber );
         const timeline = gsap.timeline();
+        const isBonusStep = bonus.step + 1 === platformNumber
 
-        if (isLose) {
-        } else if (isWin) {
+     if (isWin) {
             timeline.add(this.playWinAnimationInPosition(platform));
         }
 
@@ -71,15 +62,30 @@ export class Level extends Container {
                 gsap.timeline().add(this.hero.jumpTo(platform)).add([
                     gsap.to(platform, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
                     gsap.to(this.hero, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
-                    isBonus && gsap.to(this.bonus, {y: this.bonus.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"})
+                    isBonus && gsap.to(this.bonus, {y:  `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"})
                 ]),
                 this.moveTo(platform)
             ]);
         } else {
-            timeline.add([
-                gsap.timeline().add(this.hero.fallTo(platform)).add(gsap.to(platform, {y: '+=1500', duration: 0.2, ease: "power1.in"}), '-=1'),
-                this.moveTo(platform)
-            ])
+            if (app.version) {
+                timeline.add([
+                    gsap.timeline().add(this.hero.fallTo(platform))
+                        .add([
+                            gsap.to(platform, {y: '+=1500', duration: 0.2, ease: "power1.in"}),
+                            bonus.step + 1 === platformNumber && gsap.to(this.bonus, {y: '+=1500', duration: 0.2, ease: "power1.in"}),
+                        ], '-=1'),
+                    this.moveTo(platform)
+                ])
+            } else {
+                timeline.add([
+                    gsap.timeline().add(this.hero.jumpTo(platform)).add([
+                        gsap.timeline().add(gsap.to(platform, {y: `+=10`, duration: 0.1})).add(gsap.to(platform, {y: '+=1500', duration: 0.2, ease: "power1.in"})),
+                        gsap.timeline().add(gsap.to(this.hero, {y: `+=10`, duration: 0.1})).add(gsap.to(this.hero, {y: '+=1500', duration: 0.2, ease: "power1.in"})),
+                        isBonusStep &&  gsap.timeline().add(gsap.to(this.bonus, {y:  `+=10`, duration: 0.1})).add(gsap.to(this.bonus, {y: '+=1500', duration: 0.2, ease: "power1.in"})),
+                    ]),
+                    this.moveTo(platform)
+                ])
+            }
         }
 
         if (isBonus) {
