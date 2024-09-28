@@ -6,25 +6,35 @@ import {GameServer} from "../server/GameServer";
 import {GamePlayScene} from "./GamePlayScene";
 import {GAME_CONFIG} from "../configs/gameConfig";
 import {app} from "./app";
+import {Stage} from "@pixi/layers";
+import {layers} from "./ObjectFactory";
 
 class Game extends EventEmitter {
     ticker = null;
     constructor() {
         super();
 
-        this.app = new Application();
+        this.app = new Application({
+            ...GAME_CONFIG.size,
+            backgroundColor: 0x1099bb
+        });
+        this.app.stage = new Stage();
+        this.app.stage.sortableChildren = true;
+
+        layers.forEach((layer) => {
+            if (layer) {
+                this.app.stage.addChild(layer);
+            }
+        });
+
         this.ticker = this.app.ticker;
+
         this.server = new GameServer();
 
         window.__PIXI_APP__ = this.app;
     }
 
     async init() {
-        await this.app.init({
-            ...GAME_CONFIG.size,
-            backgroundColor: 0x1099bb
-        });
-
         await Assets.init({ manifest });
 
         Assets.loadBundle('game', (progress) => {
@@ -40,11 +50,15 @@ class Game extends EventEmitter {
 
     async go() {
         const roundResult = this.server.nextStep();
-        await this.scene.go(roundResult);
+        const info = roundResult.isWin ? this.server.getInfo() : null;
+
+
+        await this.scene.go(roundResult, info);
     }
 
     async startGame() {
         this.scene.waitPlaceBet();
+
         app.eventEmitter.on('hud:play:clicked', () => this.placeBet(10), this);
         app.eventEmitter.on('hud:cashOut:clicked', () => this.cashOut(), this);
         app.eventEmitter.on('hud:go:clicked', () => this.go(), this);
@@ -53,7 +67,7 @@ class Game extends EventEmitter {
     async cashOut() {
         const roundResult =  this.server.cashOut();
 
-        this.scene.updateHUD(this.server.getInfo());
+        this.scene.cashOut(this.server.getInfo());
         this.scene.reset();
 
         return roundResult;
@@ -61,9 +75,9 @@ class Game extends EventEmitter {
 
     async placeBet(bet) {
         const round = this.server.placeBet(bet);
-        this.scene.reset();
+        app.version = !app.version;
         this.scene.updateHUD(this.server.getInfo());
-        this.scene.play({bonusPlatform: round.bonus.step + 1 });
+        this.scene.play({bonusPlatform: round.bonus.step + 1, nextStepWin: round.nextStepWin});
     }
 
     reset() {

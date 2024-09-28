@@ -17,7 +17,7 @@ const GameScreen = () => {
     };
 
     useEffect(async () => {
-        gameContainerRef.current.appendChild(game.app.canvas);
+        gameContainerRef.current.appendChild(game.app.view);
         return () => {
             // app.destroy(true, true);
         };

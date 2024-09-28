@@ -4,6 +4,7 @@ import {WinAnimation} from "./WinAnimation";
 import {Bonus} from "./Bonus";
 import {Hero} from "./Hero";
 import gsap from "gsap";
+import {app} from "./app";
 
 export class Level extends Container {
     constructor() {
@@ -22,13 +23,8 @@ export class Level extends Container {
             this.addChild(platform);
         }
 
-        // add hero under first platform
-
         this.winAnimation = new WinAnimation();
         this.addChild(this.winAnimation);
-
-        this.bonus = new Bonus();
-        this.addChild(this.bonus);
 
         this.hero = new Hero();
         this.addChild(this.hero);
@@ -36,61 +32,58 @@ export class Level extends Container {
         this.reset();
     }
 
-    // get center platform position to hero jump by platrom number
-    getPlatformPosition(platformNumber) {
-        const platform = this.platforms.find(child => child.number === platformNumber);
-
-        return {
-            x: platform.x,
-            y: platform.y
-        };
+    setNextStepWin({step, nextStepWin}) {
+        return this.getPlatformByNumber(step).showWinValue(nextStepWin);
     }
 
-    // set bonus to platform
     setBonusToPlatform(platformNumber) {
-        const position = this.getPlatformByNumber(platformNumber);
+        const platform = this.getPlatformByNumber(platformNumber);
 
-        this.bonus.show();
-        this.bonus.x = position.x;
-        this.bonus.y = position.y;
+        platform.showBonus();
     }
 
-    heroJumpTo(platformNumber, isLose, isWin, isBonus) {
-        const platform = this.getPlatformByNumber(platformNumber );
-
-        // const position = this.getPlatformPosition(platformNumber );
+    heroJumpTo({step, isLose, isWin, isBonus, bonus, nextStepWin}) {
+        const targetPlatformNumber = step + 1;
+        const platform = this.getPlatformByNumber(targetPlatformNumber);
+        const nexPlatform = this.getPlatformByNumber(targetPlatformNumber + 1);
         const timeline = gsap.timeline();
+        const isBonusStep = bonus.step === step;
 
-        if (isLose) {
-        } else if (isWin) {
+     if (isWin) {
             timeline.add(this.playWinAnimationInPosition(platform));
         }
 
         if (!isLose) {
+            let jumpTimeline = this.hero.jumpTo(platform).add([
+                platform.hideWinValue(),
+                nexPlatform && nexPlatform.showWinValue(nextStepWin)
+            ], 'jump-half')
+
             timeline.add([
-                gsap.timeline().add(this.hero.jumpTo(platform)).add([
-                    gsap.to(platform, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
-                    gsap.to(this.hero, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
-                    isBonus && gsap.to(this.bonus, {y: this.bonus.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"})
-                ]),
+                jumpTimeline
+                    .add([
+                        gsap.to(platform, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
+                        gsap.to(this.hero, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
+                    ]),
                 this.moveTo(platform)
             ]);
         } else {
-            timeline.add([
-                gsap.timeline().add(this.hero.fallTo(platform)).add(gsap.to(platform, {y: '+=1500', duration: 0.2, ease: "power1.in"}), '-=1'),
-                this.moveTo(platform)
-            ])
+            let fall = this.hero.fallTo(platform).add([
+                platform.hideWinValue(),
+                gsap.to(platform, {y: '+=1500', duration: 0.2, ease: "power1.in"})
+            ], 'jump-half');
+
+                timeline.add([
+                    fall,
+                    this.moveTo(platform)
+                ])
         }
 
         if (isBonus) {
-            timeline.add(() => this.hideBonus())
+            timeline.add(() => platform.hideBonus(), '-=0.7');
         }
 
         return timeline;
-    }
-
-    hideBonus() {
-        return this.bonus.hide();
     }
 
     getPlatformByNumber(number) {
@@ -107,14 +100,33 @@ export class Level extends Container {
 
     reset() {
         const platform = this.getPlatformByNumber(0);
+        const timeline = gsap.timeline();
+
+        gsap.killTweensOf(this)
+        gsap.killTweensOf(this.hero)
+        gsap.killTweensOf(this.hero.scale);
 
         this.hero.x = platform.x;
         this.hero.y = platform.y;
-        this.hero.alpha = 1;
+        this.hero.alpha = 0;
         this.hero.setNormalState();
-        this.x = platform.x + platform.width / 2;
-        this.setBonusToPlatform(24);
-        this.platforms.forEach(platform => platform.show());
+
+        this.platforms.forEach(platform => {
+            platform.hideWinValue();
+            platform.hideBonus();
+            gsap.killTweensOf(platform);
+        });
+
+        timeline.add(this.platforms.map(p => p.moveToDefaultPosition()))
+        timeline.add([
+            gsap.to(this, {x: platform.x + platform.width / 2, duration: 0.3})
+        ], '-=0.1');
+        timeline.add([
+            gsap.to(this.hero, {alpha: 1, duration: 0.1}),
+            gsap.from(this.hero.scale, {x: 0, y: 0,  duration: 0.2})
+        ]);
+
+        return timeline;
     }
 
     playWinAnimationInPosition(position) {

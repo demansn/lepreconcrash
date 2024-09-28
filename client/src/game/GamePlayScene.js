@@ -2,11 +2,14 @@ import {Assets, Container, Sprite, Text} from "pixi.js";
 import {Hud} from "./hud/Hud";
 import {Level} from "./Level";
 import gsap from "gsap";
+import {SuperContainer} from "./ObjectFactory";
 
-export class GamePlayScene extends Container {
+export class GamePlayScene extends SuperContainer {
     constructor(app) {
         super();
 
+        this.zOrder = 1;
+        this.zIndex = 1;
         this.bg = new Sprite(Assets.get('bg'));
         // scale height to app height
         this.bg.height = app.screen.height;
@@ -31,38 +34,51 @@ export class GamePlayScene extends Container {
         this.hud.updateRoundInfo(round);
     }
 
-    play({bonusPlatform}) {
-        this.level.reset();
+    cashOut(result) {
+        return this.hud.animateTo(result);
+    }
+
+    play({bonusPlatform, nextStepWin}) {
         this.level.setBonusToPlatform(bonusPlatform);
+        this.level.setNextStepWin({step: 1, nextStepWin});
         this.hud.gotoGoState();
     }
 
-    go(result) {
+    go(result, info) {
         const timeline = gsap.timeline();
 
         timeline
             .add(() => this.hud.gotoWaitState())
-            .add(this.level.heroJumpTo(result.step, result.isLose, result.isWin, result.isBonus))
+            .add(this.level.heroJumpTo(result))
             .add(() => {
                 if (!result.isLose) {
+                    !result.isWin && this.hud.gotoGoState();
                     this.hud.updateRoundInfo(result);
                 } else {
-                    this.hud.updateRoundInfo({win: 0, multiplier: 0, luck: 0, nextStepWin: 0});
+                    this.hud.roundInfo.animateToZero()
                 }
-            }, '-=0.5')
+            }, '-=0.75')
             .add(() => {
                 if (result.isLose) {
+                    this.reset();
                     this.hud.gotoPlayState();
-                } else {
-                    this.hud.gotoGoState();
+                } else if(result.isWin) {
+                    this.winRoundAnimation(info);
                 }
             });
 
         return timeline;
     }
 
+    winRoundAnimation(playerInfo) {
+        const timeline = gsap.timeline();
+
+        timeline
+            .add(this.hud.animateTo(playerInfo))
+            .add(() => this.reset(), '+=0.5');
+    }
+
     reset() {
-        this.level.reset();
-        this.hud.gotoPlayState();
+        return this.level.reset().add(() => this.hud.gotoPlayState());
     }
 }

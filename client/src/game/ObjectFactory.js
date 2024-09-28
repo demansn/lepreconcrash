@@ -1,5 +1,26 @@
 import {Sprite, Assets, Text, TextStyle, Container} from 'pixi.js';
 import {Styles} from "../configs/styles";
+import {Layer} from "@pixi/layers";
+
+export const layers = {
+    hud: new Layer(),
+    game: new Layer(),
+    'none': null,
+    forEach(callback) {
+        Object.keys(this).forEach(key => {
+            if (typeof this[key] === 'function') {
+                return;
+            }
+
+            callback(this[key], key);
+        });
+    },
+    get: (name) => layers[name]
+}
+
+layers.hud.zIndex = 100;
+layers.hud.zOrder = 100;
+
 
 const styles = {
     get: (name) =>  new TextStyle(Styles[name] || {})
@@ -35,20 +56,21 @@ export class SuperContainer extends Container {
     constructor() {
         super();
 
-        this.create = new DisplayObjectsFactory(this, Assets, styles);
+        this.create = new DisplayObjectsFactory(this, Assets, styles, layers);
         this.state = new DisplayObjectStateMachine(this)
     }
 }
 
 export class DisplayObjectsFactory {
-    constructor(parent, textures, styles) {
+    constructor(parent, textures, styles, layers) {
         this.parent = parent;
         this.textures= textures;
         this.styles= styles;
+        this.layers = layers;
     }
 
     setDisplayObjectProperties(displayObject, properties = {}) {
-        const {x = 0, y = 0, anchor, ...other} = properties;
+        const {x = 0, y = 0, anchor, layer, ...other} = properties;
 
         if (typeof x === 'string') {
             const [_, sign, value, percent] = /([-+]?)(\d+)(%?)/.exec(x);
@@ -87,6 +109,10 @@ export class DisplayObjectsFactory {
                 displayObject[key] = other[key];
             }
         });
+
+        if (layer) {
+            displayObject.parentLayer = this.layers.get(layer);
+        }
     }
 
     sprite({texture, ...properties}) {

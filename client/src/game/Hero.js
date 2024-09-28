@@ -1,12 +1,12 @@
 import {Assets, Container, Graphics, Sprite} from "pixi.js";
 import gsap from "gsap";
+import {SuperContainer} from "./ObjectFactory";
 
-export class Hero extends Container {
+export class Hero extends SuperContainer {
     constructor() {
         super();
 
         this.scale.set(0.6);
-        // draw hero with graphics circle
         this.bg = new Sprite(Assets.get('heroNormal'));
         this.bg.anchor.set(0.6, 1);
         this.addChild(this.bg);
@@ -20,6 +20,10 @@ export class Hero extends Container {
     jumpTo(position) {
         const duration = 0.8;
 
+        gsap.killTweensOf(this);
+        gsap.killTweensOf(this.scale);
+        gsap.killTweensOf(this.position);
+
         const timeline = gsap.timeline();
         const dx = Math.abs(this.x - position.x);
         const dy = Math.abs(this.y - position.y);
@@ -31,6 +35,7 @@ export class Hero extends Container {
                 x: `+=${dx * 0.7}`,
                 y: '-=200',
               })
+            .addLabel('jump-half')
         .to(this, {
             duration: duration / 2,
             x: `+=${dx * 0.3}`,
@@ -44,6 +49,10 @@ export class Hero extends Container {
     fallTo(position) {
         const duration = 0.8;
 
+        gsap.killTweensOf(this);
+        gsap.killTweensOf(this.scale);
+        gsap.killTweensOf(this.position);
+
         const timeline = gsap.timeline();
         const dx = Math.abs(this.x - position.x);
         const dy = Math.abs(this.y - position.y);
@@ -55,6 +64,7 @@ export class Hero extends Container {
                 x: `+=${dx * 0.7}`,
                 y: '-=200',
             })
+            .addLabel('jump-half')
             .to(this, {
                 delay: 0.2,
                 duration: duration,

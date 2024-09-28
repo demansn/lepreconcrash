@@ -8,13 +8,19 @@ export class GameMath {
         this.testRandomBonusStep();
     }
 
-    getRandomGameRound(bet, {bonusStep: bs, loseStep: ls}) {
-        const bonusStep = bs ? bs : this.getRandomBonusStep();
+    getRandomGameRound(bet, {bonusStep: bs, loseStep: ls, totalStepsNumber: ts}) {
+        const bonusStep = bs  !== undefined ? bs : this.getRandomBonusStep();
+        const loseStep = ls !== undefined ? ls : this.getRandomLoseStep();
         const bonus = this.steps[bonusStep];
+
+        if (ts !== undefined) {
+            this.totalStepsNumber = ts;
+        }
 
         return new GameRound({
             maxSteps: this.totalStepsNumber,
-            loseStep: ls ? ls : Math.floor(Math.random() * this.totalStepsNumber),
+            lastStep: this.totalStepsNumber - 1,
+            loseStep,
             bonus: {
                 step: bonusStep,
                 luck: bonus.bonusLuck,
@@ -22,6 +28,10 @@ export class GameMath {
             betAmount: bet,
             steps: this.steps,
         })
+    }
+
+    getRandomLoseStep() {
+        return Math.floor(Math.random() * this.totalStepsNumber);
     }
 
      getRandomBonusStep() {

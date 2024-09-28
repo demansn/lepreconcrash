@@ -52,10 +52,10 @@ export const Styles = {
     },
     nextStepWin: {
         fontFamily: 'AldotheApache',
-        fontSize: 140,
+        fontSize: 120,
         fill: 0xfcef5e,
         stroke: '#743f17',
         strokeThickness: 8,
-        align: 'center'
+        // align: 'center'
     }
 };

@@ -22,10 +22,10 @@ export class GameRound {
             this.bonusLuck = this.getBonusLuck();
         }
 
-        if (this.isLoseStep()) {
-            this.endWitLose();
-        } else if (this.isEndStep()) {
+        if (this.isEndStep()) {
             this.endWithWin();
+        } else if (this.isLoseStep()) {
+            this.endWitLose();
         }
     }
 
@@ -54,7 +54,7 @@ export class GameRound {
     }
 
     isEndStep() {
-        return this.currentStep === this.result.maxSteps;
+        return this.currentStep === this.result.lastStep;
     }
 
     isLoseStep() {
@@ -89,7 +89,8 @@ export class GameRound {
         this.isEnded = true;
         this.endResutlt = {
             isLose: true,
-            step: this.currentStep + 1
+            bonus: this.getBonus(),
+            step: this.currentStep
         };
     }
 
@@ -101,10 +102,11 @@ export class GameRound {
         this.isEnded = true;
         this.endResutlt = {
             isWin: true,
+            step: this.currentStep,
+            multiplier: this.getCurrentMultiplier(),
             totalWin: this.getTotalWin(),
             win: this.getCurrentWin(),
             bonus: this.getBonus(),
-            step: this.currentStep + 1,
             isBonus: this.isBonusStep(),
             luck: this.getRoundLuck(),
         }
@@ -116,7 +118,7 @@ export class GameRound {
         }
 
         return {
-            step: this.currentStep + 1,
+            step: this.currentStep,
             multiplier: this.getCurrentMultiplier(),
             totalWin: this.getTotalWin(),
             win: this.getCurrentWin(),
@@ -131,7 +133,7 @@ export class GameRound {
            return this.result.bonus.luck;
     }
 
-    getRoundLuck () {
+    getRoundLuck() {
         return this.currentStep + 1 + this.bonusLuck;
     }
 }

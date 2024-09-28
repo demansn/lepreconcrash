@@ -1,4 +1,5 @@
 import {SuperContainer} from "./ObjectFactory";
+import gsap from "gsap";
 
 export class RoundWinInfo extends SuperContainer {
     constructor() {
@@ -53,12 +54,34 @@ export class RoundWinInfo extends SuperContainer {
             this.button.scale.set(1);
             this.emit('click');
         });
+
+        this.setValue({win: 0, multiplier: 0, luck: 0});
     }
 
     setValue({win, multiplier, luck}) {
+        this.win = win;
+        this.multiplier = multiplier;
+        this.luck = luck;
+
         this.winText.text = win;
         this.multiplerText.text = `x${multiplier}`;
         this.luckText.text = luck;
+    }
+
+    animateToZero() {
+        const timeline = gsap.timeline();
+
+        timeline.add([
+            this.animateValue('win', 0, () => this.winText.text = Math.floor(this.win)),
+            this.animateValue('multiplier', 0, () => this.multiplerText.text = `x${this.multiplier.toFixed(2)}`),
+            this.animateValue('luck', 0, () => this.luckText.text = this.luck.toFixed(0))
+        ]);
+
+        return timeline;
+    }
+
+    animateValue(valueName, value, onUpdate) {
+       return gsap.to(this, {duration: 0.2, [valueName]: value}).eventCallback('onUpdate', onUpdate);
     }
 
     disable() {

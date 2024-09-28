@@ -56,7 +56,7 @@ export class PlayButton extends SuperContainer {
             this.playSprite.buttonMode = true;
             this.goSprite.interactive = true;
             this.goSprite.buttonMode = true;
-            this.goSprite.tint = null;
+            this.goSprite.tint = 0xffffff;
 
             this.interactive = true;
             this.buttonMode = true;

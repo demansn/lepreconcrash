@@ -33,15 +33,6 @@ export class Hud extends SuperContainer {
             console.log('cashOut');
             app.eventEmitter.emit('hud:cashOut:clicked');
         });
-
-        this.nextStepWin = this.create.text({
-            text: "+100",
-            style: "nextStepWin",
-            anchor: 0.5,
-            x: GAME_CONFIG.size.width / 2,
-            y: GAME_CONFIG.size.height * 0.69,
-            alpha: 0
-        });
     }
 
     gotoPlayState() {
@@ -61,13 +52,18 @@ export class Hud extends SuperContainer {
         this.roundInfo.disable();
     }
 
+    animateTo({balance, luck, level}) {
+        this.balance.animateTo(balance);
+        this.lack.animateTo(luck);
+        this.lack.setLevel(level);
+        return this.roundInfo.animateToZero();
+    }
+
     updateRoundInfo(result) {
         this.roundInfo.setValue({
             win: result.win,
             multiplier: result.multiplier,
             luck: result.luck
         });
-
-        this.nextStepWin.text = result.nextStepWin ? `+${result.nextStepWin}` : '';
     }
 }

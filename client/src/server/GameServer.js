@@ -6,7 +6,7 @@ export class GameServer {
     constructor() {
         this.math = new GameMath(STEPS);
         this.gameRound = null;
-        this.player = new Player(1000, 0);
+        this.player = new Player(200, 0);
 
         const urlParams = new URLSearchParams(window.location.search);
 
@@ -33,10 +33,10 @@ export class GameServer {
         }
 
         if (this.gameRound && this.gameRound.isEnd()) {
-            throw new Error('Current round is completed!');
+
         }
 
-        this.gameRound.end();
+        !this.gameRound.isEnd() && this.gameRound.end();
 
         const result = this.gameRound.getInfo();
 
@@ -67,8 +67,6 @@ export class GameServer {
                 this.player.addBalance(this.gameRound.getTotalWin());
                 this.player.addLuck(this.gameRound.getRoundLuck());
             }
-
-            this.gameRound = null
         }
 
         return roundResult;

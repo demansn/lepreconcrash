@@ -7,5 +7,7 @@ export const app = {
         return new Promise((resolve) => {
             this.eventEmitter.once(eventName, resolve);
         });
-    }
+    },
+
+    version: true
 };
