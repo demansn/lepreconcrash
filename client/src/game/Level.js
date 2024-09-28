@@ -14,8 +14,10 @@ export class Level extends Container {
         // add 25 platform on bottom
         for (let i = 0; i < 25; i++) {
             const platform = new Platform(i);
-            platform.x = 10 +  i * (platform.width + 30);
-            platform.y = 1440;
+            platform.setPosition({
+                x: 10 +  i * (platform.width + 30),
+                y: 1440 + (Math.random() > 0.5 ? (Math.random() * 40) : -(Math.random() * 40))
+            })
             this.platforms.push(platform);
             this.addChild(platform);
         }
@@ -26,14 +28,12 @@ export class Level extends Container {
         this.addChild(this.winAnimation);
 
         this.bonus = new Bonus();
-        this.bonus.x = this.getPlatformPosition(24).x;
-        this.bonus.y = this.getPlatformPosition(24).y;
         this.addChild(this.bonus);
 
         this.hero = new Hero();
-        this.hero.x = this.getPlatformPosition(0).x;
-        this.hero.y = this.getPlatformPosition(0).y;
         this.addChild(this.hero);
+
+        this.reset();
     }
 
     // get center platform position to hero jump by platrom number
@@ -41,50 +41,46 @@ export class Level extends Container {
         const platform = this.platforms.find(child => child.number === platformNumber);
 
         return {
-            x: platform.x + platform.width / 2,
+            x: platform.x,
             y: platform.y
         };
     }
 
     // set bonus to platform
     setBonusToPlatform(platformNumber) {
-        const position = this.getPlatformPosition(platformNumber);
+        const position = this.getPlatformByNumber(platformNumber);
 
         this.bonus.show();
-        this.bonus.x = position.x + this.bonus.width * 0.15;
-        this.bonus.y = position.y + this.bonus.height * 0.35;
+        this.bonus.x = position.x;
+        this.bonus.y = position.y;
     }
 
     heroJumpTo(platformNumber, isLose, isWin, isBonus) {
-        const position = this.getPlatformPosition(platformNumber);
+        const platform = this.getPlatformByNumber(platformNumber );
+
+        // const position = this.getPlatformPosition(platformNumber );
         const timeline = gsap.timeline();
 
         if (isLose) {
         } else if (isWin) {
-            timeline.add(this.playWinAnimationInPosition(position));
+            timeline.add(this.playWinAnimationInPosition(platform));
         }
 
-        const platform = this.getPlatformByNumber(platformNumber + 1);
-
-        timeline.add([
-            this.hero.jumpTo(position),
-            this.moveTo(position)
-        ]);
-
-            if (!isLose)  {
-                timeline.add([
-                    gsap.to(platform, {y: platform.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out" }),
-                    gsap.to(this.hero, {y: this.hero.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out" }),
-                    isBonus && gsap.to(this.bonus, {y: this.bonus.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out" })
-                ], '-=0.5');
-            } else {
-                timeline
-                    .add([
-                        gsap.timeline().add(gsap.to(this.hero, {y: this.hero.y + 2000, duration: 1, ease: "power1.out"})).add(gsap.to(this.hero, {alpha: 0, duration: 0.2}), '-=0.7'),
-                        gsap.to(platform, {y: platform.y + 10, duration: 0.3, ease: "power1.out"}),
-                        gsap.to(platform, {alpha: 0, delay: 0.15, duration: 0.15})
-                    ], '-=0.5')
-            }
+        if (!isLose) {
+            timeline.add([
+                gsap.timeline().add(this.hero.jumpTo(platform)).add([
+                    gsap.to(platform, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
+                    gsap.to(this.hero, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
+                    isBonus && gsap.to(this.bonus, {y: this.bonus.y + 10, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"})
+                ]),
+                this.moveTo(platform)
+            ]);
+        } else {
+            timeline.add([
+                gsap.timeline().add(this.hero.fallTo(platform)).add(gsap.to(platform, {y: '+=1500', duration: 0.2, ease: "power1.in"}), '-=1'),
+                this.moveTo(platform)
+            ])
+        }
 
         if (isBonus) {
             timeline.add(() => this.hideBonus())
@@ -104,16 +100,19 @@ export class Level extends Container {
     moveTo(position) {
         return gsap.to(this, {
             x: -position.x + 220,
-            duration: 1,
-            delay: 0.25
+            duration: 0.7,
+            delay: 0.2
         });
     }
 
     reset() {
-        this.hero.x = this.getPlatformPosition(0).x;
-        this.hero.y = this.getPlatformPosition(0).y;
+        const platform = this.getPlatformByNumber(0);
+
+        this.hero.x = platform.x;
+        this.hero.y = platform.y;
         this.hero.alpha = 1;
-        this.x = 0;
+        this.hero.setNormalState();
+        this.x = platform.x + platform.width / 2;
         this.setBonusToPlatform(24);
         this.platforms.forEach(platform => platform.show());
     }

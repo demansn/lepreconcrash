@@ -27,7 +27,7 @@ export class Hud extends SuperContainer {
 
         this.roundInfo = this.create.displayObject(RoundWinInfo, {
             x: GAME_CONFIG.size.width / 2,
-            y: 400
+            y: 500
         });
         this.roundInfo.on('click', () => {
             console.log('cashOut');
@@ -39,7 +39,8 @@ export class Hud extends SuperContainer {
             style: "nextStepWin",
             anchor: 0.5,
             x: GAME_CONFIG.size.width / 2,
-            y: GAME_CONFIG.size.height * 0.69
+            y: GAME_CONFIG.size.height * 0.69,
+            alpha: 0
         });
     }
 

@@ -8,16 +8,20 @@ export class Platform extends  Container {
 
         // draw platform with graphics
         this.bg = new Sprite(Assets.get('platform'));
-        this.bg.anchor.set(1, 0);
+        this.bg.anchor.set(0.5, 0.3);
         this.bg.scale.set(0.8);
         this.addChild(this.bg);
     }
 
-    show(){
-        this.alpha = 1;
+    setPosition({x, y}) {
+        this.defaultPosition = {x, y};
+        this.x = x;
+        this.y = y;
     }
 
-    hide() {
-        return gsap.to(this, {alpha: 0, delay: 0.4, duration: 0.5});
+    show(){
+        this.alpha = 1;
+        this.x = this.defaultPosition.x;
+        this.y = this.defaultPosition.y;
     }
 }

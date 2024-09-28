@@ -26,8 +26,10 @@ export const Styles = {
     roundWinInfoWinValue: {
         fontFamily: 'AldotheApache',
         fontSize: 220,
-        fill: 0xffffff,
-        align: 'center'
+        align: 'center',
+        fill: 0xfcef5e,
+        stroke: '#743f17',
+        strokeThickness: 6,
     },
     roundWinInfoMultiplierValue: {
         fontFamily: 'AldotheApache',
@@ -39,7 +41,7 @@ export const Styles = {
         fontFamily: 'AldotheApache',
         fontSize: 100,
         fill: 0xffffff,
-        align: 'center'
+        align: 'center',
     },
     grabGoldIconText: {
         fontFamily: 'AldotheApache',
