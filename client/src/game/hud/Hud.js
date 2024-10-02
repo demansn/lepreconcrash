@@ -30,7 +30,6 @@ export class Hud extends SuperContainer {
             y: 500
         });
         this.roundInfo.on('click', () => {
-            console.log('cashOut');
             app.eventEmitter.emit('hud:cashOut:clicked');
         });
     }
@@ -39,8 +38,6 @@ export class Hud extends SuperContainer {
         this.playButton.enable();
         this.playButton.toggleToPlay();
         this.roundInfo.disable();
-
-        this.nextStepWin.alpha = app.version ? 1 : 0;
     }
 
     gotoGoState() {
