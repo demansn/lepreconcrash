@@ -39,12 +39,10 @@ export class GamePlayScene extends SuperContainer {
 
         this.hud.gotoWaitState();
 
-        timeline.add(
-            [
-                this.hud.roundInfo.animateCashGrabAnimation(),
-                this.hud.animateTo(result)
-            ]
-        );
+        this.hud.roundInfo.animateCashGrabAnimation();
+        this.hud.animateTo(result);
+
+        timeline.to({}, {duration: 0.3});
 
         return timeline;
     }
