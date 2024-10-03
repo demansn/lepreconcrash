@@ -55,7 +55,7 @@ export class RoundWinInfo extends SuperContainer {
             this.emit('click');
         });
 
-        this.cashGrabAnimation = this.button.create.animation('Fx10', {alpha: 0, anchor: 0.5, scale: {x: 1.5, y:1.5}});
+        this.cashGrabAnimation = this.button.create.animation('Fx10', {alpha: 0, anchor: 0.5, scale: {x: 2.2, y:2.2}});
         this.cashGrabAnimation.stop();
         this.cashGrabAnimation.animationSpeed = -0.5;
 
@@ -68,7 +68,7 @@ export class RoundWinInfo extends SuperContainer {
 
         timeline.add([
             gsap.to(this.cashGrabAnimation, {alpha: 1, duration: 0.1}),
-            gsap.to(this.cashGrabAnimation, {currentFrame: this.cashGrabAnimation.totalFrames - 1, duration: 0.6})
+            gsap.to(this.cashGrabAnimation, {currentFrame: this.cashGrabAnimation.totalFrames - 1, duration: 0.3})
         ])
             .add(gsap.to(this.cashGrabAnimation, {alpha: 0, duration: 0.01}))
 

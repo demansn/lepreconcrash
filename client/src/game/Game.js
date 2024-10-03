@@ -8,6 +8,7 @@ import {GAME_CONFIG} from "../configs/gameConfig";
 import {app} from "./app";
 import {Stage} from "@pixi/layers";
 import {layers} from "./ObjectFactory";
+import {sound} from "@pixi/sound";
 
 class Game extends EventEmitter {
     ticker = null;
@@ -45,6 +46,7 @@ class Game extends EventEmitter {
             this.emit('assetsLoaded');
             this.scene.updateHUD(this.server.getInfo());
             this.startGame();
+            sound.play('mainMusic', {loop: true});
         });
     }
 
@@ -67,10 +69,9 @@ class Game extends EventEmitter {
     async cashOut() {
         const roundResult =  this.server.cashOut();
 
-        this.scene.cashOut(this.server.getInfo());
-        this.scene.reset();
-
-        return roundResult;
+        this.scene.cashOut(this.server.getInfo()).add(() => {
+            this.scene.reset();
+        });
     }
 
     async placeBet(bet) {

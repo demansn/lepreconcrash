@@ -35,9 +35,18 @@ export class GamePlayScene extends SuperContainer {
     }
 
     cashOut(result) {
-        this.hud.roundInfo.animateCashGrabAnimation();
+        const timeline = gsap.timeline();
 
-        return this.hud.animateTo(result);
+        this.hud.gotoWaitState();
+
+        timeline.add(
+            [
+                this.hud.roundInfo.animateCashGrabAnimation(),
+                this.hud.animateTo(result)
+            ]
+        );
+
+        return timeline;
     }
 
     play({bonusPlatform, nextStepWin}) {

@@ -22,6 +22,7 @@ export const manifest = {
                 {alias: 'goldIconCenter', src: './assets/Gold Centr.png'},
                 {alias: 'goldCloverCenter', src: './assets/Clover centr.png'},
                 {alias: 'animations', src: './assets/animations-0.json'},
+                {alias: 'mainMusic', src: './assets/sound/WOW Sound_CGM_Level_2_noPer.mp3'},
                 {
                     alias: 'font',
                     src: './assets/fonts/AldotheApache.ttf',
