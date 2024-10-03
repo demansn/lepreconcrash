@@ -23,6 +23,11 @@ export const manifest = {
                 {alias: 'goldCloverCenter', src: './assets/Clover centr.png'},
                 {alias: 'animations', src: './assets/animations-0.json'},
                 {alias: 'mainMusic', src: './assets/sound/WOW Sound_CGM_Level_2_noPer.mp3'},
+                {alias: 'cashGrab', src: './assets/sound/cash-grab-button.mp3'},
+                {alias: 'jump', src: './assets/sound/jump.mp3'},
+                {alias: 'landing', src: './assets/sound/landing.mp3'},
+                {alias: 'crash', src: './assets/sound/Leprecon Crash 04.mp3'},
+                {alias: 'bonusWin', src: './assets/sound/activate_bonus_L.mp3'},
                 {
                     alias: 'font',
                     src: './assets/fonts/AldotheApache.ttf',

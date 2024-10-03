@@ -5,6 +5,7 @@ import {Bonus} from "./Bonus";
 import {Hero} from "./Hero";
 import gsap from "gsap";
 import {app} from "./app";
+import {sound} from "@pixi/sound";
 
 export class Level extends Container {
     constructor() {
@@ -62,6 +63,7 @@ export class Level extends Container {
             timeline.add([
                 jumpTimeline
                     .add([
+                        () => sound.play('landing'),
                         gsap.to(platform, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
                         gsap.to(this.hero, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
                     ]),
@@ -70,7 +72,8 @@ export class Level extends Container {
         } else {
             let fall = this.hero.fallTo(platform).add([
                 platform.hideWinValue(),
-                gsap.to(platform, {y: '+=1500', duration: 0.2, ease: "power1.in"})
+                gsap.to(platform, {y: '+=1500', duration: 0.2, ease: "power1.in"}),
+                () => sound.play('crash')
             ], 'jump-half');
 
                 timeline.add([
@@ -80,7 +83,10 @@ export class Level extends Container {
         }
 
         if (isBonus) {
-            timeline.add(() => platform.hideBonusAnimation(), '-=1');
+            timeline.add(() => {
+                sound.play('bonusWin');
+                platform.hideBonusAnimation();
+            }, '-=1');
         }
 
         return timeline;

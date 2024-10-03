@@ -22,6 +22,12 @@ class Game extends EventEmitter {
         this.app.stage = new Stage();
         this.app.stage.sortableChildren = true;
 
+        // window.__PIXI_DEVTOOLS__ = {
+        //     app: this.app,
+        // };
+
+        window.__PIXI_APP__ = this.app;
+
         layers.forEach((layer) => {
             if (layer) {
                 this.app.stage.addChild(layer);

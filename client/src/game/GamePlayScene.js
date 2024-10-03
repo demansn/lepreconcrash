@@ -3,6 +3,7 @@ import {Hud} from "./hud/Hud";
 import {Level} from "./Level";
 import gsap from "gsap";
 import {SuperContainer} from "./ObjectFactory";
+import {sound} from "@pixi/sound";
 
 export class GamePlayScene extends SuperContainer {
     constructor(app) {
@@ -37,8 +38,8 @@ export class GamePlayScene extends SuperContainer {
     cashOut(result) {
         const timeline = gsap.timeline();
 
+        sound.play('cashGrab');
         this.hud.gotoWaitState();
-
         this.hud.roundInfo.animateCashGrabAnimation();
         this.hud.animateTo(result);
 
@@ -58,6 +59,7 @@ export class GamePlayScene extends SuperContainer {
 
         timeline
             .add(() => this.hud.gotoWaitState())
+            .add(() => {sound.play('jump')} )
             .add(this.level.heroJumpTo(result))
             .add(() => {
                 if (!result.isLose) {
