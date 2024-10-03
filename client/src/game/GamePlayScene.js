@@ -62,8 +62,7 @@ export class GamePlayScene extends SuperContainer {
             }, '-=0.75')
             .add(() => {
                 if (result.isLose) {
-                    this.reset();
-                    this.hud.gotoPlayState();
+                    this.reset().add(() => this.hud.gotoPlayState());
                 } else if(result.isWin) {
                     this.winRoundAnimation(info);
                 }
