@@ -68,7 +68,7 @@ export class RoundWinInfo extends SuperContainer {
 
         timeline.add([
             gsap.to(this.cashGrabAnimation, {alpha: 1, duration: 0.1}),
-            gsap.to(this.cashGrabAnimation, {currentFrame: this.cashGrabAnimation.totalFrames - 1, duration: 0.4})
+            gsap.to(this.cashGrabAnimation, {currentFrame: this.cashGrabAnimation.totalFrames - 1, duration: 0.6})
         ])
             .add(gsap.to(this.cashGrabAnimation, {alpha: 0, duration: 0.01}))
 

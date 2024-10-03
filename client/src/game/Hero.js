@@ -1,6 +1,7 @@
 import {Assets, Container, Graphics, Sprite} from "pixi.js";
 import gsap from "gsap";
 import {SuperContainer} from "./ObjectFactory";
+import {game} from "./Game";
 
 export class Hero extends SuperContainer {
     constructor() {
@@ -65,6 +66,7 @@ export class Hero extends SuperContainer {
                 y: '-=200',
             })
             .addLabel('jump-half')
+            .add(gsap.to({}, {duration: 0.1}))
             .to(this, {
                 delay: 0.2,
                 duration: duration,
