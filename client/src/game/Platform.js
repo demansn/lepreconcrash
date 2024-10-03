@@ -32,7 +32,7 @@ export class Platform extends  SuperContainer {
         timeline.add([
             gsap.to(this.winAnimation, {duration: 0.01, alpha: 1}),
             gsap.to(this.bonus, {duration: 0.01, alpha: 0}),
-            gsap.to(this.winAnimation, {duration: 0.2, currentFrame: this.winAnimation.totalFrames - 1}),
+            gsap.to(this.winAnimation, {duration: 0.4, currentFrame: this.winAnimation.totalFrames - 1}),
         ]);
 
         timeline.to(this.winAnimation, {duration: 0.1, alpha: 0});
