@@ -80,7 +80,7 @@ export class Level extends Container {
         }
 
         if (isBonus) {
-            timeline.add(() => platform.hideBonus(), '-=0.7');
+            timeline.add(() => platform.hideBonusAnimation(), '-=1');
         }
 
         return timeline;

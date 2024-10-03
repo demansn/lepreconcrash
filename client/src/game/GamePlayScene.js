@@ -35,6 +35,8 @@ export class GamePlayScene extends SuperContainer {
     }
 
     cashOut(result) {
+        this.hud.roundInfo.animateCashGrabAnimation();
+
         return this.hud.animateTo(result);
     }
 

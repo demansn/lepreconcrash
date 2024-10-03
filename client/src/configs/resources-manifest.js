@@ -21,6 +21,7 @@ export const manifest = {
                 {alias: 'centerButton', src: './assets/Centr but.png'},
                 {alias: 'goldIconCenter', src: './assets/Gold Centr.png'},
                 {alias: 'goldCloverCenter', src: './assets/Clover centr.png'},
+                {alias: 'animations', src: './assets/animations-0.json'},
                 {
                     alias: 'font',
                     src: './assets/fonts/AldotheApache.ttf',

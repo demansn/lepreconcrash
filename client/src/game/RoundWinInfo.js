@@ -55,7 +55,24 @@ export class RoundWinInfo extends SuperContainer {
             this.emit('click');
         });
 
+        this.cashGrabAnimation = this.button.create.animation('Giraffe-Animation', {alpha: 0, anchor: 0.5, scale: {x:0.5, y: 0.5}});
+        this.cashGrabAnimation.stop();
+        this.cashGrabAnimation.animationSpeed = -0.5;
+
         this.setValue({win: 0, multiplier: 0, luck: 0});
+    }
+
+    animateCashGrabAnimation() {
+        const timeline = gsap.timeline();
+        this.cashGrabAnimation.currentFrame = this.cashGrabAnimation.totalFrames - 1;
+
+        timeline.add([
+            gsap.to(this.cashGrabAnimation, {alpha: 1, duration: 0.1}),
+            gsap.to(this.cashGrabAnimation, {currentFrame: 0, duration: 0.2})
+        ])
+            .add(gsap.to(this.cashGrabAnimation, {alpha: 0, duration: 0.01}))
+
+        return timeline;
     }
 
     setValue({win, multiplier, luck}) {

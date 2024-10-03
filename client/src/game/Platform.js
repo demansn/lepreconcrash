@@ -8,8 +8,12 @@ export class Platform extends  SuperContainer {
         this.number = number;
 
         this.bg = this.create.sprite({texture: 'platform', anchor: {x: 0.5, y: 0.3}, scale: {x: 0.8, y: 0.8}});
-        this.bonus = this.create.sprite({texture: 'bonus', anchor: {x: 0.5, y: 1}, alpha: 0});
+        this.bonus = this.create.sprite({texture: 'bonus', layer: 'hud',anchor: {x: 0.5, y: 1}, alpha: 0});
         this.winValue = this.create.displayObject(NextStepWin,{layer: 'hud', y: -150, alpha: 0});
+
+        this.winAnimation = this.create.animation('Fx10', {layer: 'hud', x: 0, y: -150, alpha: 0, anchor: {x: 0.5, y: 0.5}});
+        this.winAnimation.stop();
+        this.winAnimation.loop = false;
     }
 
     showBonus() {
@@ -18,6 +22,22 @@ export class Platform extends  SuperContainer {
 
     hideBonus() {
         this.bonus.alpha = 0;
+    }
+
+    hideBonusAnimation() {
+        const timeline = gsap.timeline();
+
+        this.winAnimation.currentFrame = 0;
+
+        timeline.add([
+            gsap.to(this.winAnimation, {duration: 0.01, alpha: 1}),
+            gsap.to(this.bonus, {duration: 0.01, alpha: 0}),
+            gsap.to(this.winAnimation, {duration: 0.2, currentFrame: this.winAnimation.totalFrames - 1}),
+        ]);
+
+        timeline.to(this.winAnimation, {duration: 0.1, alpha: 0});
+
+        return timeline;
     }
 
     showWinValue(value) {

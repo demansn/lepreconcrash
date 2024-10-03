@@ -1,4 +1,4 @@
-import {Sprite, Assets, Text, TextStyle, Container} from 'pixi.js';
+import {Sprite, Assets, Text, TextStyle, Container, AnimatedSprite} from 'pixi.js';
 import {Styles} from "../configs/styles";
 import {Layer} from "@pixi/layers";
 
@@ -135,6 +135,14 @@ export class DisplayObjectsFactory {
         return this.addAndSetProperties(displayObject, properties);
     }
 
+    animation(name, properties) {
+        const sprites = this.textures.get('animations').animations[name];
+        const displayObject = new AnimatedSprite(sprites);
+
+        return this.addAndSetProperties(displayObject, properties);
+
+    }
+
     displayObject(displayObjectConstructor, properties) {
         const displayObject = new displayObjectConstructor();
 
@@ -170,6 +178,7 @@ export class ObjectFactory {
 
         return displayObject;
     }
+
 
     static setParametersToDisplayObject(displayObject, {x = 0, y = 0, anchor} = {}) {
         displayObject.x = x;
