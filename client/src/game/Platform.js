@@ -13,7 +13,7 @@ export class Platform extends  SuperContainer {
         this.bonus = this.create.sprite({texture: 'bonus', layer: 'hud',anchor: {x: 0.5, y: 1}, alpha: 0});
         this.winValue = this.create.displayObject(NextStepWin,{layer: 'hud', y: -75, alpha: 0});
 
-        this.winAnimation = this.create.animation('Fx05', {layer: 'hud', x: 0, y: -75, alpha: 0, anchor: {x: 0.5, y: 0.5}});
+        this.winAnimation = this.create.animation('Fx05', {layer: 'hud', x: 0, y: -75, alpha: 0, anchor: {x: 0.5, y: 0.5}, scale: {x: 0.5, y: 0.5}});
         this.winAnimation.stop();
         this.winAnimation.loop = false;
     }

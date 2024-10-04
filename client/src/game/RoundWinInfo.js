@@ -55,7 +55,7 @@ export class RoundWinInfo extends SuperContainer {
             this.emit('click');
         });
 
-        this.cashGrabAnimation = this.button.create.animation('Fx10', {alpha: 0, anchor: 0.5, scale: {x: 2.2, y:2.2}});
+        this.cashGrabAnimation = this.button.create.animation('Fx10', {alpha: 0, anchor: 0.5, scale: {x: 1.1, y:1.1}});
         this.cashGrabAnimation.stop();
         this.cashGrabAnimation.animationSpeed = -0.5;
 

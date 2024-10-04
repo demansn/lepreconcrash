@@ -19,18 +19,18 @@ const BottomPanel = () => {
                 zIndex: 10,
             }}
         >
-            <Button icon="./assets/ui/Icon1.png" />
-            <Button icon="./assets/ui/Icon2.png" />
-            <Button icon="./assets/ui/Icon3.png" />
-            <Button icon="./assets/ui/Icon4.png" />
-            <Button icon="./assets/ui/Icon5.png" />
+            {/*<Button icon="./assets/ui/Icon1.png" />*/}
+            {/*<Button icon="./assets/ui/Icon2.png" />*/}
+            {/*<Button icon="./assets/ui/Icon3.png" />*/}
+            {/*<Button icon="./assets/ui/Icon4.png" />*/}
+            {/*<Button icon="./assets/ui/Icon5.png" />*/}
 
 
-            {/*<Button icon="./assets/ui/Earn.png" />*/}
-            {/*<Button icon="./assets/ui/Friends.png" />*/}
-            {/*<Button icon="./assets/ui/Play.png" />*/}
-            {/*<Button icon="./assets/ui/Shop.png" />*/}
-            {/*<Button icon="./assets/ui/Leadearboard.png" />*/}
+            <Button icon="./assets/ui/Earn1.png" />
+            <Button icon="./assets/ui/Friends1.png" />
+            <Button icon="./assets/ui/Play1.png" />
+            <Button icon="./assets/ui/Shop1.png" />
+            <Button icon="./assets/ui/Leadearboard1.png" />
         </Box>
     );
 };
