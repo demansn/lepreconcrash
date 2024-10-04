@@ -62,11 +62,11 @@ export class Level extends SuperContainer {
             let jumpTimeline = this.hero.jumpTo(platform).add([
                 platform.hideWinValue(),
                 nexPlatform && nexPlatform.showWinValue(nextStepWin),
-                platform.toDark()
+                () => platform.toDark()
             ], 'jump-half')
 
             timeline.add([
-                standPlatform.toLight(),
+                () => standPlatform.toLight(),
                 jumpTimeline
                     .add([
                         () => sound.play('landing'),
@@ -83,6 +83,7 @@ export class Level extends SuperContainer {
             ], 'jump-half');
 
                 timeline.add([
+                    () => standPlatform.toLight(),
                     fall,
                     this.moveTo(platform)
                 ])
