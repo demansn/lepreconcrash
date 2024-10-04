@@ -19,7 +19,7 @@ class Game extends EventEmitter {
             ...GAME_CONFIG.size,
             backgroundColor: 0x1099bb,
             antialias: true,
-            resolution: 4,
+            resolution: window.devicePixelRatio || 1,
         });
         this.app.stage = new Stage();
         this.app.stage.sortableChildren = true;
