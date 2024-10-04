@@ -34,7 +34,7 @@ export class Hero extends SuperContainer {
             .to(this, {
                 duration: duration / 2,
                 x: `+=${dx * 0.7}`,
-                y: '-=200',
+                y: '-=100',
               })
             .addLabel('jump-half')
         .to(this, {
