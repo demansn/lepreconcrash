@@ -7,13 +7,13 @@ export class Hero extends SuperContainer {
     constructor() {
         super();
 
-        this.scale.set(0.6);
+        // this.scale.set(0.6);
         this.bg = new Sprite(Assets.get('heroNormal'));
         this.bg.anchor.set(0.6, 1);
         this.addChild(this.bg);
 
         this.jumpState = new Sprite(Assets.get('heroJump'));
-        this.jumpState.anchor.set(0.5, 1);
+        this.jumpState.anchor.set(0.6, 1);
         this.jumpState.visible = false;
         this.addChild(this.jumpState);
     }
@@ -63,7 +63,7 @@ export class Hero extends SuperContainer {
             .to(this, {
                 duration: duration / 2,
                 x: `+=${dx * 0.7}`,
-                y: '-=200',
+                y: '-=100',
             })
             .addLabel('jump-half')
             .add(gsap.to({}, {duration: 0.1}))
@@ -71,7 +71,7 @@ export class Hero extends SuperContainer {
                 delay: 0.2,
                 duration: duration,
                 x: `+=${dx * 0.3}`,
-                y: '+=2000',
+                y: '+=1000',
             }).to(this, {alpha: 0, duration: 0.2}, '-=0.5');
 
         return timeline

@@ -19,7 +19,7 @@ export class RoundWinInfo extends SuperContainer {
         });
 
         this.button.create.displayObject(GrabGoldIcon, {
-            y: 100,
+            y: 50,
             x: '-50%',
         });
 
@@ -27,18 +27,18 @@ export class RoundWinInfo extends SuperContainer {
             style: 'roundWinInfoWinValue',
             text: 100,
             anchor: 0.5,
-            y: -60
+            y: -30
         });
 
         this.multiplerText = this.create.text({
             style: 'roundWinInfoMultiplierValue',
             text: 'x1.35',
             anchor: 0.5,
-            x: -(this.bg.width / 2 + 200)
+            x: -(this.bg.width / 2 + 90)
         });
 
         this.luckText = this.create.displayObject(CloverValue,{
-            x: this.bg.width / 2 + 120
+            x: this.bg.width / 2 + 40
         });
 
         this.button.on('pointerdown', () => {

@@ -7,7 +7,9 @@ export class BalancePanel extends SuperContainer {
         super();
 
         this.bg = this.create.sprite({texture: 'balancePanelBg'});
-        this.valueText = this.create.text({text: '0', style: 'balancePanelValue', x: 200, y:  this.bg.height / 2, anchor: {y: 0.5}});
+        this.create.sprite({texture: 'balanceIcon',  y: this.bg.height / 2, anchor: {y: 0.5, x: 0.1}});
+
+        this.valueText = this.create.text({text: '0', style: 'balancePanelValue', x: this.bg.width * 0.45, y:  this.bg.height / 2, anchor: {y: 0.5}});
         this.value = 0;
     }
 

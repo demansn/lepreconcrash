@@ -20,14 +20,11 @@ export class Hud extends SuperContainer {
         this.lack.y = 20;
         this.addChild(this.lack);
 
-        this.playButton = new PlayButton();
-        this.playButton.x = GAME_CONFIG.size.width / 2;
-        this.playButton.y = 2050;
-        this.addChild(this.playButton);
+        this.playButton =  this.create.displayObject(PlayButton, {x: 's50%', y: 's80%'});
 
         this.roundInfo = this.create.displayObject(RoundWinInfo, {
-            x: GAME_CONFIG.size.width / 2,
-            y: 500
+            x: 's50%',
+            y: 's20%'
         });
         this.roundInfo.on('click', () => {
             app.eventEmitter.emit('hud:cashOut:clicked');

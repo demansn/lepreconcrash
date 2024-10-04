@@ -1,6 +1,7 @@
 import {Sprite, Assets, Text, TextStyle, Container, AnimatedSprite} from 'pixi.js';
 import {Styles} from "../configs/styles";
 import {Layer} from "@pixi/layers";
+import {GAME_CONFIG} from "../configs/gameConfig";
 
 export const layers = {
     hud: new Layer(),
@@ -73,19 +74,33 @@ export class DisplayObjectsFactory {
         const {x = 0, y = 0, anchor, layer, ...other} = properties;
 
         if (typeof x === 'string') {
-            const [_, sign, value, percent] = /([-+]?)(\d+)(%?)/.exec(x);
-            const offset = percent ? displayObject.width * parseFloat(value) / 100 : parseFloat(value);
+            const [_, sign, value, percent] = /([-+s]?)(\d+)(%?)/.exec(x);
+            let newX = 0;
 
-            displayObject.x = sign === '-' ? -offset : offset;
+            if (sign === 's') {
+                newX = value * (GAME_CONFIG.size.width / 100);
+            } else {
+                const offset = percent ? displayObject.width * parseFloat(value) / 100 : parseFloat(value);
+                newX = sign === '-' ? -offset : offset;
+            }
+
+            displayObject.x = newX;
         } else {
             displayObject.x = x;
         }
 
         if (typeof y === 'string') {
-            const [_, sign, value, percent] = /([-+]?)(\d+)(%?)/.exec(y);
-            const offset = percent ? displayObject.width * parseFloat(value) / 100 : parseFloat(value);
+            const [_, sign, value, percent] = /([-+s]?)(\d+)(%?)/.exec(y);
+            let newY = 0;
 
-            displayObject.y = sign === '-' ? -offset : offset;
+            if (sign === 's') {
+                newY = value * (GAME_CONFIG.size.height / 100);
+            } else {
+                const offset = percent ? displayObject.height * parseFloat(value) / 100 : parseFloat(value);
+                newY = sign === '-' ? -offset : offset;
+            }
+
+            displayObject.y = newY;
         } else {
             displayObject.y = y;
         }
@@ -117,6 +132,7 @@ export class DisplayObjectsFactory {
 
     sprite({texture, ...properties}) {
         const displayObject = new Sprite(this.textures.get(texture));
+        displayObject.name = texture;
 
         return this.addAndSetProperties(displayObject, properties);
     }

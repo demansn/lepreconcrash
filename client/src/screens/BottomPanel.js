@@ -24,6 +24,13 @@ const BottomPanel = () => {
             <Button icon="./assets/ui/Icon3.png" />
             <Button icon="./assets/ui/Icon4.png" />
             <Button icon="./assets/ui/Icon5.png" />
+
+
+            {/*<Button icon="./assets/ui/Earn.png" />*/}
+            {/*<Button icon="./assets/ui/Friends.png" />*/}
+            {/*<Button icon="./assets/ui/Play.png" />*/}
+            {/*<Button icon="./assets/ui/Shop.png" />*/}
+            {/*<Button icon="./assets/ui/Leadearboard.png" />*/}
         </Box>
     );
 };

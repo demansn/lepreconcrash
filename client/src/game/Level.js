@@ -1,34 +1,37 @@
-import {Assets, Container, Sprite, Text} from "pixi.js";
 import {Platform} from "./Platform";
 import {WinAnimation} from "./WinAnimation";
-import {Bonus} from "./Bonus";
 import {Hero} from "./Hero";
 import gsap from "gsap";
-import {app} from "./app";
 import {sound} from "@pixi/sound";
+import {SuperContainer} from "./ObjectFactory";
 
-export class Level extends Container {
+export class Level extends SuperContainer {
     constructor() {
         super();
 
         this.platforms = [];
 
+        this.create.sprite({texture: 'CloudsUp', anchor: {x: 0.5}, x: 's50%', y: 0});
+        this.create.sprite({texture: 'CloudsFront', anchor: {x: 0.5, y: 1}, x: 's50%', y: 's100%'});
+        this.movementLayer = this.create.container();
+        this.create.sprite({texture: 'CloudsBack', anchor: {x: 0.5, y: 1}, x: 's50%', y: 's100%'});
+
         // add 25 platform on bottom
         for (let i = 0; i < 25; i++) {
             const platform = new Platform(i);
             platform.setPosition({
-                x: 10 +  i * (platform.width + 30),
-                y: 1440 + (Math.random() > 0.5 ? (Math.random() * 40) : -(Math.random() * 40))
+                x: 5 +  i * (platform.getWidth() + 15),
+                y: 800 + (Math.random() > 0.5 ? (Math.random() * 20) : -(Math.random() * 20))
             })
             this.platforms.push(platform);
-            this.addChild(platform);
+            this.movementLayer.addChild(platform);
         }
 
         this.winAnimation = new WinAnimation();
-        this.addChild(this.winAnimation);
+        this.movementLayer.addChild(this.winAnimation);
 
         this.hero = new Hero();
-        this.addChild(this.hero);
+        this.movementLayer.addChild(this.hero);
 
         this.reset();
     }
@@ -45,6 +48,7 @@ export class Level extends Container {
 
     heroJumpTo({step, isLose, isWin, isBonus, bonus, nextStepWin}) {
         const targetPlatformNumber = step + 1;
+        const standPlatform = this.getPlatformByNumber(targetPlatformNumber - 1);
         const platform = this.getPlatformByNumber(targetPlatformNumber);
         const nexPlatform = this.getPlatformByNumber(targetPlatformNumber + 1);
         const timeline = gsap.timeline();
@@ -57,22 +61,24 @@ export class Level extends Container {
         if (!isLose) {
             let jumpTimeline = this.hero.jumpTo(platform).add([
                 platform.hideWinValue(),
-                nexPlatform && nexPlatform.showWinValue(nextStepWin)
+                nexPlatform && nexPlatform.showWinValue(nextStepWin),
+                platform.toDark()
             ], 'jump-half')
 
             timeline.add([
+                standPlatform.toLight(),
                 jumpTimeline
                     .add([
                         () => sound.play('landing'),
-                        gsap.to(platform, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
-                        gsap.to(this.hero, {y: `+=10`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
+                        gsap.to(platform, {y: `+=5`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
+                        gsap.to(this.hero, {y: `+=5`, duration: 0.3, repeat: 1, yoyo: true, ease: "power1.out"}),
                     ]),
                 this.moveTo(platform)
             ]);
         } else {
             let fall = this.hero.fallTo(platform).add([
                 platform.hideWinValue(),
-                gsap.to(platform, {y: '+=1500', duration: 0.2, ease: "power1.in"}),
+                gsap.to(platform, {y: '+=750', duration: 0.2, ease: "power1.in"}),
                 () => sound.play('crash')
             ], 'jump-half');
 
@@ -97,8 +103,8 @@ export class Level extends Container {
     }
 
     moveTo(position) {
-        return gsap.to(this, {
-            x: -position.x + 220,
+        return gsap.to(this.movementLayer, {
+            x: -position.x + 110,
             duration: 0.7,
             delay: 0.2
         });
@@ -120,14 +126,16 @@ export class Level extends Container {
         this.platforms.forEach(platform => {
             platform.hideWinValue();
             platform.hideBonus();
+            platform.toLight(0.1);
             gsap.killTweensOf(platform);
         });
 
         timeline.add(this.platforms.map(p => p.moveToDefaultPosition()))
         timeline.add([
-            gsap.to(this, {x: platform.x + platform.width / 2, duration: 0.3})
+            gsap.to(this.movementLayer, {x:  -platform.x + 110, duration: 0.3})
         ], '-=0.1');
         timeline.add([
+            platform.toDark(),
             gsap.to(this.hero, {alpha: 1, duration: 0.1}),
             gsap.from(this.hero.scale, {x: 0, y: 0,  duration: 0.2})
         ]);

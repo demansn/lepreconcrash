@@ -5,11 +5,15 @@ export class PlayButton extends SuperContainer {
         constructor() {
             super();
 
+            this.create.sprite({texture: 'BoarderButton2', anchor: {x: 0.5, y: 0.5}, y: -4});
+
             this.playSprite = ObjectFactory.createSprite('playButton', {anchor: {x: 0.5, y: 0.5}});
             this.addChild(this.playSprite);
 
             this.goSprite = ObjectFactory.createSprite('goButton', {anchor: {x: 0.5, y: 0.5}});
             this.addChild(this.goSprite);
+
+            this.create.sprite({texture: 'BoarderButton1', anchor: {x: 0.5, y: 0.5}, y: 28, x: 3});
 
             this.on('pointerdown', this.onDown, this);
             this.on('pointerup', this.onUp, this);

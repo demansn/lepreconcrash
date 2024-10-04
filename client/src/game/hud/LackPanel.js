@@ -6,8 +6,9 @@ export class LackPanel extends SuperContainer {
         super();
 
         this.bg = this.create.sprite({texture: 'lackPanelBg'});
-        this.valueText = this.create.text({text: '1,000,00', style: 'lackPanelValue', x: 150, y:  40, anchor: {x: 0.5, y: 0.5}});
-        this.levelText = this.create.text({text: 'LVL 99', style: 'lackPanelLevel', x: 150, y:  90, anchor: {x: 0.5, y: 0.5}});
+        this.create.sprite({texture: 'cloverTop',  y: this.bg.height / 2, x: this.bg.width, anchor: {y: 0.5, x: 0.5}});
+        this.valueText = this.create.text({text: '1,000,00', style: 'lackPanelValue', x: this.bg.width * 0.5, y:  20, anchor: {x: 0.5, y: 0.5}});
+        this.levelText = this.create.text({text: 'LVL 99', style: 'lackPanelLevel', x: this.bg.width * 0.5, y:  45, anchor: {x: 0.5, y: 0.5}});
 
         this.value = 0;
     }

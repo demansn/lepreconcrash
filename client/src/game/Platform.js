@@ -7,17 +7,25 @@ export class Platform extends  SuperContainer {
         super();
         this.number = number;
 
-        this.bg = this.create.sprite({texture: 'platform', anchor: {x: 0.5, y: 0.3}, scale: {x: 0.8, y: 0.8}});
+        this.bgLight = this.create.sprite({texture: 'platformLight', anchor: {x: 0.5, y: 0.3}});
+        this.bgDark = this.create.sprite({texture: 'platformDark', anchor: {x: 0.5, y: 0.3}, alpha: 0});
+        this.shadow = this.create.sprite({texture: 'Shadow', anchor: {x: 0.5, y: 0.5}, alpha: 0});
         this.bonus = this.create.sprite({texture: 'bonus', layer: 'hud',anchor: {x: 0.5, y: 1}, alpha: 0});
-        this.winValue = this.create.displayObject(NextStepWin,{layer: 'hud', y: -150, alpha: 0});
+        this.winValue = this.create.displayObject(NextStepWin,{layer: 'hud', y: -75, alpha: 0});
 
-        this.winAnimation = this.create.animation('Fx05', {layer: 'hud', x: 0, y: -150, alpha: 0, anchor: {x: 0.5, y: 0.5}});
+        this.winAnimation = this.create.animation('Fx05', {layer: 'hud', x: 0, y: -75, alpha: 0, anchor: {x: 0.5, y: 0.5}});
         this.winAnimation.stop();
         this.winAnimation.loop = false;
     }
 
+    getWidth() {
+        return this.bgLight.width;
+    }
+
     showBonus() {
         this.bonus.alpha = 1;
+        this.bgDark.alpha = 1;
+        this.shadow.alpha = 1;
     }
 
     hideBonus() {
@@ -38,6 +46,25 @@ export class Platform extends  SuperContainer {
         timeline.to(this.winAnimation, {duration: 0.1, alpha: 0});
 
         return timeline;
+    }
+
+    toDark() {
+        const timeline = gsap.timeline();
+        const duration = 0.5;
+
+        return timeline.add([
+            gsap.to(this.bgDark, {duration, alpha: 1}),
+            gsap.to(this.shadow, {duration, alpha: 1}),
+        ]);
+    }
+
+    toLight(duration = 0.4) {
+        const timeline = gsap.timeline();
+
+        return timeline.add([
+            gsap.to(this.bgDark, {duration, alpha: 0}),
+            gsap.to(this.shadow, {duration, alpha: 0}),
+        ]);
     }
 
     showWinValue(value) {
