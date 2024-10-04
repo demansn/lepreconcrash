@@ -62,7 +62,6 @@ class Game extends EventEmitter {
         const roundResult = this.server.nextStep();
         const info = roundResult.isWin ? this.server.getInfo() : null;
 
-
         await this.scene.go(roundResult, info);
     }
 

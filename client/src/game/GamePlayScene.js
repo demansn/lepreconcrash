@@ -26,6 +26,9 @@ export class GamePlayScene extends SuperContainer {
 
     waitPlaceBet() {
         this.hud.gotoPlayState();
+        this.hud.gotoWaitState();
+
+        return this.reset();
     }
 
     updateHUD({balance, luck, level, round}) {

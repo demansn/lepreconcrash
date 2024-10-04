@@ -32,8 +32,6 @@ export class Level extends SuperContainer {
 
         this.hero = new Hero();
         this.movementLayer.addChild(this.hero);
-
-        this.reset();
     }
 
     setNextStepWin({step, nextStepWin}) {
