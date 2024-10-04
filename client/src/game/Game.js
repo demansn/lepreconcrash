@@ -17,7 +17,9 @@ class Game extends EventEmitter {
 
         this.app = new Application({
             ...GAME_CONFIG.size,
-            backgroundColor: 0x1099bb
+            backgroundColor: 0x1099bb,
+            antialias: true,
+            resolution: 4,
         });
         this.app.stage = new Stage();
         this.app.stage.sortableChildren = true;
