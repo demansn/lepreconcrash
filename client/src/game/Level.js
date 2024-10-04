@@ -21,7 +21,7 @@ export class Level extends SuperContainer {
             const platform = new Platform(i);
             platform.setPosition({
                 x: 5 +  i * (platform.getWidth() + 15),
-                y: 800 + (Math.random() > 0.5 ? (Math.random() * 20) : -(Math.random() * 20))
+                y: 730 + (Math.random() > 0.5 ? (Math.random() * 20) : -(Math.random() * 20))
             })
             this.platforms.push(platform);
             this.movementLayer.addChild(platform);

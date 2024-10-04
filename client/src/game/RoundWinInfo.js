@@ -15,6 +15,7 @@ export class RoundWinInfo extends SuperContainer {
 
         this.bg = this.button.create.sprite({
             texture: 'centerButton',
+            scale: {x: 0.9, y: 0.9},
             anchor: 0.5
         });
 

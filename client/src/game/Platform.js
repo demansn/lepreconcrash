@@ -8,7 +8,7 @@ export class Platform extends  SuperContainer {
         this.number = number;
 
         this.bgLight = this.create.sprite({texture: 'platformLight', anchor: {x: 0.5, y: 0.3}});
-        this.bgDark = this.create.sprite({texture: 'platformDark', anchor: {x: 0.5, y: 0.3}, alpha: 0});
+        this.bgDark = this.create.sprite({texture: 'platformDark', anchor: {x: 0.5, y: 0.3}, alpha: 1});
         this.shadow = this.create.sprite({texture: 'Shadow', anchor: {x: 0.5, y: 0.5}, alpha: 0});
         this.bonus = this.create.sprite({texture: 'bonus', layer: 'hud',anchor: {x: 0.5, y: 1}, alpha: 0});
         this.winValue = this.create.displayObject(NextStepWin,{layer: 'hud', y: -75, alpha: 0});
@@ -53,7 +53,7 @@ export class Platform extends  SuperContainer {
         const duration = 0.5;
 
         return timeline.add([
-            gsap.to(this.bgDark, {duration, alpha: 1}),
+            // gsap.to(this.bgDark, {duration, alpha: 1}),
             gsap.to(this.shadow, {duration, alpha: 1}),
         ]);
     }
@@ -62,7 +62,7 @@ export class Platform extends  SuperContainer {
         const timeline = gsap.timeline();
 
         return timeline.add([
-            gsap.to(this.bgDark, {duration, alpha: 0}),
+            // gsap.to(this.bgDark, {duration, alpha: 0}),
             gsap.to(this.shadow, {duration, alpha: 0}),
         ]);
     }
