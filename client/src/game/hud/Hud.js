@@ -5,6 +5,7 @@ import {PlayButton} from "./PlayButton";
 import {app} from "../app";
 import {SuperContainer} from "../ObjectFactory";
 import {RoundWinInfo} from "../RoundWinInfo";
+import gsap from "gsap";
 
 export class Hud extends SuperContainer {
     constructor() {
@@ -20,7 +21,9 @@ export class Hud extends SuperContainer {
         this.lack.y = 20;
         this.addChild(this.lack);
 
+        this.cloudsFront = this.create.sprite({texture: 'CloudsFront', anchor: {x: 0.5, y: 1}, x: 's50%', y: 's100%'});
         this.playButton =  this.create.displayObject(PlayButton, {x: 's50%', y: 's80%'});
+        this.cloudsBack = this.create.sprite({texture: 'CloudsBack', anchor: {x: 0.5, y: 1}, x: 's50%', y: 's100%'});
 
         this.roundInfo = this.create.displayObject(RoundWinInfo, {
             x: 's50%',
@@ -29,6 +32,23 @@ export class Hud extends SuperContainer {
         this.roundInfo.on('click', () => {
             app.eventEmitter.emit('hud:cashOut:clicked');
         });
+
+        this.animateClouds();
+    }
+
+    animateClouds() {
+        const timeline = gsap.timeline();
+        const duration = 10;
+        const dx = 60;
+
+        timeline.add([
+            gsap.to(this.cloudsFront, {x:`+=${dx}`, duration, ease: "power1.inOut"}),
+            gsap.to(this.cloudsBack, {x:`-=${dx}`, duration, ease: "power2.inOut"})
+        ])
+            .add([
+                gsap.to(this.cloudsFront, {x:`-=${dx}`, duration, ease: "power1.inOut"}),
+                gsap.to(this.cloudsBack, {x: `+=${dx}`, duration, ease: "power2.inOut"})
+            ]).repeat(-1);
     }
 
     gotoPlayState() {

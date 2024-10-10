@@ -4,6 +4,7 @@ import {Level} from "./Level";
 import gsap from "gsap";
 import {SuperContainer} from "./ObjectFactory";
 import {sound} from "@pixi/sound";
+import {Base} from "./popup/Base";
 
 export class GamePlayScene extends SuperContainer {
     constructor(app) {
@@ -11,17 +12,26 @@ export class GamePlayScene extends SuperContainer {
 
         this.zOrder = 1;
         this.zIndex = 1;
-        this.bg = new Sprite(Assets.get('bg'));
-        // scale height to app height
-        this.bg.height = app.screen.height;
-        this.bg.width = app.screen.width;
-        this.addChild(this.bg);
 
         this.level = new Level();
         this.addChild(this.level);
 
         this.hud = new Hud();
         this.addChild(this.hud);
+
+        this.popup = this.create.displayObject(Base, {gameSize: app.screen, visible: false, layer: 'popup'});
+    }
+
+    showWinPopup({bet, win, luck}) {
+        this.popup.visible = true;
+        this.hud.interactiveChildren = false;
+        this.level.interactiveChildren = false;
+
+        return this.popup.showThenHide({bet, win, luck}).add(() => {
+            this.popup.visible = false;
+            this.hud.interactiveChildren = true;
+            this.level.interactiveChildren = true;
+        });
     }
 
     waitPlaceBet() {
@@ -38,13 +48,15 @@ export class GamePlayScene extends SuperContainer {
         this.hud.updateRoundInfo(round);
     }
 
-    cashOut(result) {
+    cashOut(result, roundResult) {
         const timeline = gsap.timeline();
 
         sound.play('cashGrab');
         this.hud.gotoWaitState();
         this.hud.roundInfo.animateCashGrabAnimation();
         this.hud.animateTo(result);
+
+        this.showWinPopup({bet: roundResult.bet, win: roundResult.win, luck: roundResult.luck})
 
         timeline.to({}, {duration: 0.3});
 
@@ -76,18 +88,21 @@ export class GamePlayScene extends SuperContainer {
                 if (result.isLose) {
                     this.reset().add(() => this.hud.gotoPlayState());
                 } else if(result.isWin) {
-                    this.winRoundAnimation(info);
+                    this.winRoundAnimation(info, result);
                 }
             });
 
         return timeline;
     }
 
-    winRoundAnimation(playerInfo) {
+    winRoundAnimation(playerInfo, result) {
         const timeline = gsap.timeline();
 
         timeline
-            .add(this.hud.animateTo(playerInfo))
+            .add([
+                this.hud.animateTo(playerInfo),
+            ])
+            .add(this.showWinPopup({bet: result.bet, win: result.totalWin, luck: result.luck}))
             .add(() => this.reset(), '+=0.5');
     }
 

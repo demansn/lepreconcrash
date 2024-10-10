@@ -76,7 +76,7 @@ class Game extends EventEmitter {
     async cashOut() {
         const roundResult =  this.server.cashOut();
 
-        this.scene.cashOut(this.server.getInfo()).add(() => {
+        this.scene.cashOut(this.server.getInfo(), roundResult).add(() => {
             this.scene.reset();
         });
     }

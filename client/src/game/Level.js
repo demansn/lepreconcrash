@@ -4,6 +4,7 @@ import {Hero} from "./Hero";
 import gsap from "gsap";
 import {sound} from "@pixi/sound";
 import {SuperContainer} from "./ObjectFactory";
+import {Clouds} from "./Clouds";
 
 export class Level extends SuperContainer {
     constructor() {
@@ -11,27 +12,45 @@ export class Level extends SuperContainer {
 
         this.platforms = [];
 
-        this.create.sprite({texture: 'CloudsUp', anchor: {x: 0.5}, x: 's50%', y: 0});
-        this.create.sprite({texture: 'CloudsFront', anchor: {x: 0.5, y: 1}, x: 's50%', y: 's100%'});
+        this.backLayer = this.create.container();
+        this.middleLayer = this.create.container();
+        this.frontLayer = this.create.container();
+
+        this.backLayer.create.sprite({texture: 'bg'});
+
+        // this.create.sprite({texture: 'CloudsUp', anchor: {x: 0.5}, x: 's50%', y: 0});
+
         this.movementLayer = this.create.container();
-        this.create.sprite({texture: 'CloudsBack', anchor: {x: 0.5, y: 1}, x: 's50%', y: 's100%'});
+
 
         // add 25 platform on bottom
+        let levelWidth = 0;
+
         for (let i = 0; i < 25; i++) {
-            const platform = new Platform(i);
+            const platform = new Platform(i, i === 24);
             platform.setPosition({
                 x: 5 +  i * (platform.getWidth() + 15),
                 y: 730 + (Math.random() > 0.5 ? (Math.random() * 20) : -(Math.random() * 20))
             })
             this.platforms.push(platform);
             this.movementLayer.addChild(platform);
+
+            levelWidth = platform.x + platform.getWidth();
         }
+
+        this.levelWidth = this.movementLayer.width + 2650;
 
         this.winAnimation = new WinAnimation();
         this.movementLayer.addChild(this.winAnimation);
 
+        this.clouds = this.frontLayer.create.displayObject(Clouds, {levelWidth, variants: [1, 2, 3, 4]});
+        this.middleLayer.create.displayObject(Clouds, {levelWidth, cloudScale: 0.3, variants: [0], alpha: 0.5});
+        this.clouds.y = 50;
+
         this.hero = new Hero();
         this.movementLayer.addChild(this.hero);
+
+        this.prevX = 0;
     }
 
     setNextStepWin({step, nextStepWin}) {
@@ -50,11 +69,7 @@ export class Level extends SuperContainer {
         const platform = this.getPlatformByNumber(targetPlatformNumber);
         const nexPlatform = this.getPlatformByNumber(targetPlatformNumber + 1);
         const timeline = gsap.timeline();
-        const isBonusStep = bonus.step === step;
-
-     if (isWin) {
-            timeline.add(this.playWinAnimationInPosition(platform));
-        }
+        const isBonusStep = bonus.step === step || isWin;
 
         if (!isLose) {
             let jumpTimeline = this.hero.jumpTo(platform).add([
@@ -87,7 +102,7 @@ export class Level extends SuperContainer {
                 ])
         }
 
-        if (isBonus) {
+        if (isBonus || isWin) {
             timeline.add(() => {
                 sound.play('bonusWin');
                 platform.hideBonusAnimation();
@@ -105,7 +120,8 @@ export class Level extends SuperContainer {
         return gsap.to(this.movementLayer, {
             x: -position.x + 110,
             duration: 0.7,
-            delay: 0.2
+            delay: 0.2,
+            onUpdate: this.updateParallax.bind(this)
         });
     }
 
@@ -127,11 +143,15 @@ export class Level extends SuperContainer {
             platform.hideBonus();
             platform.toLight(0.1);
             gsap.killTweensOf(platform);
+
+            if (platform.isFinal) {
+                platform.showBonus();
+            }
         });
 
         timeline.add(this.platforms.map(p => p.moveToDefaultPosition()))
         timeline.add([
-            gsap.to(this.movementLayer, {x:  -platform.x + 110, duration: 0.3})
+            gsap.to(this.movementLayer, {x:  -platform.x + 110, duration: 0.3, onUpdate: this.updateParallax.bind(this)}),
         ], '-=0.1');
         timeline.add([
             platform.toDark(),
@@ -147,5 +167,20 @@ export class Level extends SuperContainer {
         this.winAnimation.y = position.y - 50;
 
         return this.winAnimation.play();
+    }
+
+    updateParallax() {
+        const dx =  this.movementLayer.x - this.prevX;
+        let parallaxSpeedBack = this.backLayer.width / this.levelWidth;
+
+        this.backLayer.x += dx * parallaxSpeedBack;
+        this.middleLayer.x += dx * (parallaxSpeedBack * 1.1);
+        this.frontLayer.x += dx * (parallaxSpeedBack * 1.5);
+
+        if (this.backLayer.x > 0) {
+            this.backLayer.x = 0;
+        }
+
+        this.prevX = this.movementLayer.x;
     }
 }

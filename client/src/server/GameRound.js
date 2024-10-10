@@ -109,6 +109,7 @@ export class GameRound {
             bonus: this.getBonus(),
             isBonus: this.isBonusStep(),
             luck: this.getRoundLuck(),
+            bet: this.result.betAmount
         }
     }
 
@@ -126,6 +127,7 @@ export class GameRound {
             isBonus: this.isBonusStep(),
             luck: this.getRoundLuck(),
             nextStepWin: this.getNextStepWin(),
+            bet: this.result.betAmount
         };
     }
 

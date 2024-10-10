@@ -3,14 +3,15 @@ import {SuperContainer} from "./ObjectFactory";
 import {NextStepWin} from "./hud/NextStepWin";
 
 export class Platform extends  SuperContainer {
-    constructor(number) {
+    constructor(number, isFinal) {
         super();
         this.number = number;
+        this.isFinal = isFinal;
 
         this.bgLight = this.create.sprite({texture: 'platformLight', anchor: {x: 0.5, y: 0.3}});
         this.bgDark = this.create.sprite({texture: 'platformDark', anchor: {x: 0.5, y: 0.3}, alpha: 1});
         this.shadow = this.create.sprite({texture: 'Shadow', anchor: {x: 0.5, y: 0.5}, alpha: 0});
-        this.bonus = this.create.sprite({texture: 'bonus', layer: 'hud',anchor: {x: 0.5, y: 1}, alpha: 0});
+        this.bonus = this.create.sprite({texture: isFinal ? 'FinalCash' : 'bonus', layer: 'hud',anchor: {x: 0.5, y: isFinal ? 0.8: 1}, alpha: 0});
         this.winValue = this.create.displayObject(NextStepWin,{layer: 'hud', y: -75, alpha: 0});
 
         this.winAnimation = this.create.animation('Fx05', {layer: 'hud', x: 0, y: -75, alpha: 0, anchor: {x: 0.5, y: 0.5}, scale: {x: 0.5, y: 0.5}});

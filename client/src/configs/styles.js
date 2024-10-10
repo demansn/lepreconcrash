@@ -56,5 +56,13 @@ export const Styles = {
         fill: 0xfcef5e,
         stroke: '#743f17',
         strokeThickness: 4,
+    },
+    popupLackWinValue: {
+        fontFamily: 'AldotheApache',
+        fontSize: 45,
+        fill: 0xffffff,
+        align: 'center',
+        stroke: '#743f17',
+        strokeThickness: 2,
     }
 };

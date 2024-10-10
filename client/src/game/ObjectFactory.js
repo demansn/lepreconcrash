@@ -1,9 +1,10 @@
-import {Sprite, Assets, Text, TextStyle, Container, AnimatedSprite} from 'pixi.js';
+import {Sprite, Assets, Text, TextStyle, Container, AnimatedSprite, Graphics} from 'pixi.js';
 import {Styles} from "../configs/styles";
 import {Layer} from "@pixi/layers";
 import {GAME_CONFIG} from "../configs/gameConfig";
 
 export const layers = {
+    popup: new Layer(),
     hud: new Layer(),
     game: new Layer(),
     'none': null,
@@ -22,6 +23,8 @@ export const layers = {
 layers.hud.zIndex = 100;
 layers.hud.zOrder = 100;
 
+layers.popup.zIndex = 110;
+layers.popup.zOrder = 110;
 
 const styles = {
     get: (name) =>  new TextStyle(Styles[name] || {})
@@ -137,6 +140,12 @@ export class DisplayObjectsFactory {
         return this.addAndSetProperties(displayObject, properties);
     }
 
+    graphics(properties) {
+        const displayObject = new Graphics();
+
+        return this.addAndSetProperties(displayObject, properties);
+    }
+
     text({text = '', style = '', ...properties} = {}) {
         const displayObject = new Text(text, new TextStyle(this.styles.get(style)));
 
@@ -160,7 +169,7 @@ export class DisplayObjectsFactory {
     }
 
     displayObject(displayObjectConstructor, properties) {
-        const displayObject = new displayObjectConstructor();
+        const displayObject = new displayObjectConstructor(properties);
 
         return this.addAndSetProperties(displayObject, properties);
     }

@@ -49,7 +49,7 @@ export class PlayButton extends SuperContainer {
             this.playSprite.buttonMode = false;
             this.goSprite.interactive = false;
             this.goSprite.buttonMode = false;
-            this.goSprite.tint = 0x808080;
+            this.goSprite.tint = 0xB5B5B5;
 
             this.interactive = false;
             this.buttonMode = false;
@@ -69,11 +69,13 @@ export class PlayButton extends SuperContainer {
         onDown() {
             this.playSprite.scale.set(0.95);
             this.goSprite.scale.set(0.95);
+            this.playSprite.y = this.goSprite.y = 10;
         }
 
         onUp() {
             this.playSprite.scale.set(1);
             this.goSprite.scale.set(1);
+            this.playSprite.y = this.goSprite.y = 0;
         }
 
         onClicked() {
