@@ -33,22 +33,21 @@ export class Base extends SuperContainer {
     showThenHide({win, bet, luck}) {
         const timeline = gsap.timeline();
 
-        this.interactive = true;
-        this.buttonMode = true;
-
-        this.once('pointerdown', () =>
-            timeline.play('hide')
-        );
+        this.content.interactive = true;
+        this.content.interactiveChildren = true;
+        this.content.once('pointerdown', () => {
+            timeline.seek('end');
+        });
 
         timeline
             .add(this.show({luck, win, bet}))
-            .addLabel('hide')
+            .add(gsap.to({}, {duration: 3}))
+            .addLabel('end')
             .add(() => {
-                this.off('pointerdown');
-                this.interactive = false;
+                this.content.off('pointerdown');
+                this.content.interactive = false;
             })
-            .add(this.hide(), "+=4")
-
+            .add(this.hide())
 
         return timeline;
     }
