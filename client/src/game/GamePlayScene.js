@@ -99,11 +99,11 @@ export class GamePlayScene extends SuperContainer {
         const timeline = gsap.timeline();
 
         timeline
+            .add(this.hud.animateTo(playerInfo))
             .add([
-                this.hud.animateTo(playerInfo),
-            ])
-            .add(this.showWinPopup({bet: result.bet, win: result.totalWin, luck: result.luck}))
-            .add(() => this.reset(), '+=0.5');
+                () => this.reset(),
+                this.showWinPopup({bet: result.bet, win: result.totalWin, luck: result.luck})
+            ], '+=0.2')
     }
 
     reset() {

@@ -1,5 +1,4 @@
 import {Platform} from "./Platform";
-import {WinAnimation} from "./WinAnimation";
 import {Hero} from "./Hero";
 import gsap from "gsap";
 import {sound} from "@pixi/sound";
@@ -15,13 +14,8 @@ export class Level extends SuperContainer {
         this.backLayer = this.create.container();
         this.middleLayer = this.create.container();
         this.frontLayer = this.create.container();
-
         this.backLayer.create.sprite({texture: 'bg'});
-
-        // this.create.sprite({texture: 'CloudsUp', anchor: {x: 0.5}, x: 's50%', y: 0});
-
         this.movementLayer = this.create.container();
-
 
         // add 25 platform on bottom
         let levelWidth = 0;
@@ -39,9 +33,6 @@ export class Level extends SuperContainer {
         }
 
         this.levelWidth = this.movementLayer.width + 2650;
-
-        this.winAnimation = new WinAnimation();
-        this.movementLayer.addChild(this.winAnimation);
 
         this.clouds = this.frontLayer.create.displayObject(Clouds, {levelWidth, variants: [1, 2, 3, 4]});
         this.middleLayer.create.displayObject(Clouds, {levelWidth, cloudScale: 0.3, variants: [0], alpha: 0.5});
@@ -143,11 +134,15 @@ export class Level extends SuperContainer {
             platform.hideBonus();
             platform.toLight(0.1);
             gsap.killTweensOf(platform);
-
-            if (platform.isFinal) {
-                platform.showBonus();
-            }
         });
+
+        const showWinBonus = () => {
+            this.platforms.forEach(platform => {
+                if (platform.isFinal) {
+                    platform.showBonus();
+                }
+            });
+        }
 
         timeline.add(this.platforms.map(p => p.moveToDefaultPosition()))
         timeline.add([
@@ -156,17 +151,11 @@ export class Level extends SuperContainer {
         timeline.add([
             platform.toDark(),
             gsap.to(this.hero, {alpha: 1, duration: 0.1}),
-            gsap.from(this.hero.scale, {x: 0, y: 0,  duration: 0.2})
+            gsap.from(this.hero.scale, {x: 0, y: 0,  duration: 0.2}),
+            () => showWinBonus()
         ]);
 
         return timeline;
-    }
-
-    playWinAnimationInPosition(position) {
-        this.winAnimation.x = position.x;
-        this.winAnimation.y = position.y - 50;
-
-        return this.winAnimation.play();
     }
 
     updateParallax() {

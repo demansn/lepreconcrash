@@ -63,7 +63,6 @@ export class Platform extends  SuperContainer {
         const timeline = gsap.timeline();
 
         return timeline.add([
-            // gsap.to(this.bgDark, {duration, alpha: 0}),
             gsap.to(this.shadow, {duration, alpha: 0}),
         ]);
     }
