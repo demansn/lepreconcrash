@@ -19,8 +19,8 @@ export class Base extends SuperContainer {
         this.bigWinBase = this.baseContainer.create.sprite({texture: 'BigWinBase', visible: true});
         this.megaWinBase = this.baseContainer.create.sprite({texture: 'MegaWinBase', y: -5, visible: true});
 
-        this.lackWinValue = this.baseContainer.create.text({text: '100', style: 'popupLackWinValue', x: 190, y: 213, anchor: {x: 0.5}});
-        this.goldWinValue = this.baseContainer.create.text({text: '100', style: 'popupLackWinValue', x: 190, y: 290, anchor: {x: 0.5}});
+        this.goldWinValue = this.baseContainer.create.text({text: '100', style: 'popupLackWinValue', x: 190, y: 213, anchor: {x: 0.5}});
+        this.lackWinValue = this.baseContainer.create.text({text: '100', style: 'popupLackWinValue', x: 190, y: 290, anchor: {x: 0.5}});
 
         this.baseContainer.create.text({text: '+', style: 'popupLackWinValue', x: 25, y: 213});
         this.baseContainer.create.text({text: '+', style: 'popupLackWinValue', x: 25, y: 290});

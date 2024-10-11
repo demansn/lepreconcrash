@@ -9,13 +9,10 @@ const BottomPanel = () => {
                 bottom: 0,
                 width: '98%',
                 height: '10%',
-                // backgroundColor: 'rgba(0, 0, 0, 0.5)', // Прозрачный фон
                 display: 'flex',
-                justifyContent: 'space-between', // Равномерное распределение кнопок
+                justifyContent: 'space-between',
                 alignItems: 'center',
                 paddingBottom: '10px',
-                // padding: '0 20px',
-                // gap: '20px',
                 margin: '1%',
                 zIndex: 10,
             }}
