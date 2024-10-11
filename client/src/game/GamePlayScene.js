@@ -102,7 +102,7 @@ export class GamePlayScene extends SuperContainer {
             .add(this.hud.animateTo(playerInfo))
             .add([
                 () => this.reset(),
-                this.showWinPopup({bet: result.bet, win: result.totalWin, luck: result.luck})
+                () => this.showWinPopup({bet: result.bet, win: result.totalWin, luck: result.luck})
             ], '+=0.2')
     }
 

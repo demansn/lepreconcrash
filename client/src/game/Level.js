@@ -14,10 +14,9 @@ export class Level extends SuperContainer {
         this.backLayer = this.create.container();
         this.middleLayer = this.create.container();
         this.frontLayer = this.create.container();
-        this.backLayer.create.sprite({texture: 'bg'});
+        this.backLayer.create.sprite({texture: 'bg', scale: {x: 1.3, y: 1.3}, y: -320});
         this.movementLayer = this.create.container();
 
-        // add 25 platform on bottom
         let levelWidth = 0;
 
         for (let i = 0; i < 25; i++) {
@@ -34,9 +33,8 @@ export class Level extends SuperContainer {
 
         this.levelWidth = this.movementLayer.width + 2650;
 
-        this.clouds = this.frontLayer.create.displayObject(Clouds, {levelWidth, variants: [1, 2, 3, 4]});
-        this.middleLayer.create.displayObject(Clouds, {levelWidth, cloudScale: 0.3, variants: [0], alpha: 0.5});
-        this.clouds.y = 50;
+        this.clouds = this.frontLayer.create.displayObject(Clouds, {levelWidth,  variants: [1, 2, 3, 4], clodScale: 0.5, y: 50});
+        this.middleLayer.create.displayObject(Clouds, {levelWidth, clodScale: 0.3, variants: [0], alpha: 0.3, y: 40});
 
         this.hero = new Hero();
         this.movementLayer.addChild(this.hero);

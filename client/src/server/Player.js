@@ -1,3 +1,5 @@
+import {toFixed} from "../game/utils";
+
 export class Player {
     constructor(balance, luck) {
         this.balance = balance;
@@ -6,7 +8,7 @@ export class Player {
     }
 
     addBalance(amount) {
-        this.balance += amount;
+        this.balance = toFixed(this.balance + amount);
     }
 
     subBalance(amount) {

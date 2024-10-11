@@ -8,7 +8,7 @@ export class GameMath {
         this.testRandomBonusStep();
     }
 
-    getRandomGameRound(bet, {bonusStep: bs, loseStep: ls, totalStepsNumber: ts}) {
+    getRandomGameRound(bet, {bonusStep: bs, loseStep: ls, winStep: ts}) {
         const bonusStep = bs  !== undefined ? bs : this.getRandomBonusStep();
         const loseStep = ls !== undefined ? ls : this.getRandomLoseStep();
         const bonus = this.steps[bonusStep];

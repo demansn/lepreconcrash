@@ -33,21 +33,29 @@ export class Base extends SuperContainer {
     showThenHide({win, bet, luck}) {
         const timeline = gsap.timeline();
 
-        this.content.interactive = true;
-        this.content.interactiveChildren = true;
-        this.content.once('pointerdown', () => {
-            timeline.seek('end');
-        });
+        this.interactive = true;
+        this.interactiveChildren = true;
+
+        gsap.killTweensOf(this.rays);
+        gsap.killTweensOf(this.baseContainer);
+        gsap.killTweensOf(this.rays.scale);
+        gsap.killTweensOf(this.baseContainer.scale);
 
         timeline
             .add(this.show({luck, win, bet}))
-            .add(gsap.to({}, {duration: 3}))
-            .addLabel('end')
             .add(() => {
-                this.content.off('pointerdown');
-                this.content.interactive = false;
+                this.on('pointerdown', () => {
+                    timeline.seek('end')
+                    console.log('pointerdown')
+                })
             })
-            .add(this.hide())
+            .add(gsap.to({v:0}, {v: 1,duration: 3}))
+            .add('end')
+            .add(() => {
+                this.off('pointerdown');
+                this.interactive = false;
+            })
+            .add(this.hide());
 
         return timeline;
     }
@@ -71,15 +79,12 @@ export class Base extends SuperContainer {
         this.baseContainer.scale.set(0);
         this.rays.alpha = 0;
         this.baseContainer.alpha = 0;
-
-        gsap.killTweensOf(this.rays);
-        gsap.killTweensOf(this.baseContainer);
-        gsap.killTweensOf(this.rays.scale);
-        gsap.killTweensOf(this.baseContainer.scale);
+        this.shadow.alpha = 0;
 
         gsap.to(this.rays, {duration: 5, rotation: '+=0.05', repeat: -1, yoyo: true, ease: 'power1.inOut'});
 
         timline.add([
+            gsap.to(this.shadow, {duration: 0.2, alpha: 0.5}),
             gsap.to(this.rays, {duration: 0.2, alpha: 1}),
             gsap.to(this.rays.scale, {x: 1, y: 1, duration: 0.5}),
             gsap.to(this.baseContainer, {duration: 0.2, alpha: 1}),
@@ -90,14 +95,15 @@ export class Base extends SuperContainer {
     }
 
     hide() {
-        const timline = gsap.timeline();
+        const tl = gsap.timeline();
 
-        timline.add([
+        tl.add([
+            gsap.to(this.shadow, {duration: 0.2, alpha: 0}),
             gsap.to(this.rays, {duration: 0.2, alpha: 0}),
             gsap.to(this.rays.scale, {x: 0, y: 0, duration: 0.2}),
             gsap.to(this.baseContainer, {duration: 0.2, alpha: 0})
         ]);
 
-        return timline;
+        return tl;
     }
 }

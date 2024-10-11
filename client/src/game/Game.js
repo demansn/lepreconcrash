@@ -9,6 +9,7 @@ import {app} from "./app";
 import {Stage} from "@pixi/layers";
 import {layers} from "./ObjectFactory";
 import {sound} from "@pixi/sound";
+import {toFixed} from "./utils";
 
 class Game extends EventEmitter {
     ticker = null;
@@ -47,7 +48,7 @@ class Game extends EventEmitter {
         await Assets.init({ manifest });
 
         Assets.loadBundle('game', (progress) => {
-            this.emit('assetsLoading', progress);
+            this.emit('assetsLoading', toFixed(progress));
         }).then(() => {
             this.scene = new GamePlayScene(this.app);
             this.app.stage.addChild(this.scene);

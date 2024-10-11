@@ -1,3 +1,5 @@
+import {toFixed} from "../game/utils";
+
 export class GameRound {
     constructor(result) {
         this.isEnded = false;
@@ -30,11 +32,11 @@ export class GameRound {
     }
 
     getCurrentWin() {
-        return this.isFirstStep() ? this.result.betAmount : this.result.betAmount * this.getCurrentMultiplier();
+        return toFixed(this.isFirstStep() ? this.result.betAmount : this.result.betAmount * this.getCurrentMultiplier());
     }
 
     getNextStepWin() {
-        return (this.result.betAmount * this.getNextStepMultiplier()) - this.result.betAmount ;
+        return toFixed(((this.result.betAmount * this.getNextStepMultiplier()) - this.result.betAmount));
     }
 
     getTotalWin() {

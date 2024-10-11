@@ -17,6 +17,7 @@ export class PlayButton extends SuperContainer {
 
             this.on('pointerdown', this.onDown, this);
             this.on('pointerup', this.onUp, this);
+            this.on('pointerout', this.onOut, this);
             this.on('pointerup', this.onClicked, this);
 
             this.cursor = 'pointer';
@@ -73,6 +74,12 @@ export class PlayButton extends SuperContainer {
         }
 
         onUp() {
+            this.playSprite.scale.set(1);
+            this.goSprite.scale.set(1);
+            this.playSprite.y = this.goSprite.y = 0;
+        }
+
+        onOut() {
             this.playSprite.scale.set(1);
             this.goSprite.scale.set(1);
             this.playSprite.y = this.goSprite.y = 0;

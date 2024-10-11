@@ -13,6 +13,7 @@ export class GameServer {
         this.cheat = {
             bonusStep: urlParams.has('bonusStep')  ? Number(urlParams.get('bonusStep')) :  undefined,
             loseStep: urlParams.has('loseStep')  ? Number(urlParams.get('loseStep')) :  undefined,
+            winStep: urlParams.has('winStep')  ? Number(urlParams.get('winStep')) :  undefined,
         };
     }
 
