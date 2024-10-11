@@ -13,6 +13,7 @@ const BottomPanel = () => {
                 display: 'flex',
                 justifyContent: 'space-between', // Равномерное распределение кнопок
                 alignItems: 'center',
+                paddingBottom: '10px',
                 // padding: '0 20px',
                 // gap: '20px',
                 margin: '1%',

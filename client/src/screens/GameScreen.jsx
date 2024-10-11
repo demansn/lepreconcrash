@@ -5,16 +5,6 @@ import BottomPanel from "./BottomPanel";
 
 const GameScreen = () => {
     const gameContainerRef = useRef(null);
-    const [open, setOpen] = useState(false);
-    const [result, setResult] = useState(null);
-    const [disabledButton, setDisabledButtons] = useState(false);
-
-    const handleClose = () => {
-        setOpen(false);
-        setResult(null);
-        game.reset();
-        setDisabledButtons(false);
-    };
 
     useEffect(async () => {
         gameContainerRef.current.appendChild(game.app.view);
@@ -25,19 +15,6 @@ const GameScreen = () => {
 
     return (
         <Box sx={{height: '100vh', width: '100vw'}}  >
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {result && result.isWin ? `You win: ${result.totalWin}` : 'You lose!'}
-                </DialogTitle>
-                <DialogActions>
-                    <Button onClick={handleClose}>close</Button>
-                </DialogActions>
-            </Dialog>
             <Box
                 sx={{
                     position: 'relative',
