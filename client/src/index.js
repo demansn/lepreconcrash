@@ -15,6 +15,8 @@ const App = () => {
         game.init();
         game.on('assetsLoaded', onLoaded);
 
+        window.Telegram.WebApp.expand();
+
         return () => game.off('assetsLoaded', onLoaded);
     }, []);
 
