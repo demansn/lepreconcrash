@@ -7,13 +7,13 @@ import {sound} from "@pixi/sound";
 import {Base} from "./popup/Base";
 
 export class GamePlayScene extends SuperContainer {
-    constructor(app) {
+    constructor(app, {steps}) {
         super();
 
         this.zOrder = 1;
         this.zIndex = 1;
 
-        this.level = new Level();
+        this.level = new Level(steps);
         this.addChild(this.level);
 
         this.hud = new Hud();

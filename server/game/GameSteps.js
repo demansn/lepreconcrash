@@ -1,4 +1,4 @@
-export const STEPS =  [
+export const GameSteps = [
     {number: 1, multiplier: 1.03, qualityBonus: 6875,  bonusLuck: 5},
     {number: 2, multiplier: 1.06, qualityBonus: 6875,  bonusLuck: 5},
     {number: 3, multiplier: 1.12, qualityBonus: 6875,  bonusLuck: 5},

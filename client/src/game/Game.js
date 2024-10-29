@@ -2,7 +2,7 @@ import {manifest} from "../configs/resources-manifest";
 import {Application, Assets} from 'pixi.js';
 
 import { EventEmitter } from '@pixi/utils';
-import {GameServer} from "../server/GameServer";
+import {GameLogic} from "../server/GameLogic";
 import {GamePlayScene} from "./GamePlayScene";
 import {GAME_CONFIG} from "../configs/gameConfig";
 import {app} from "./app";
@@ -10,9 +10,20 @@ import {Stage} from "@pixi/layers";
 import {layers} from "./ObjectFactory";
 import {sound} from "@pixi/sound";
 import {toFixed} from "./utils";
+import {createAPI} from "../Api";
+
+/**
+ * @typedef
+ *
+ */
 
 class Game extends EventEmitter {
     ticker = null;
+    /**
+     * @type {Object}
+     * @function initSession(playerData)
+     */
+    api = null;
     constructor() {
         super();
 
@@ -24,6 +35,8 @@ class Game extends EventEmitter {
         });
         this.app.stage = new Stage();
         this.app.stage.sortableChildren = true;
+
+
 
         // window.__PIXI_DEVTOOLS__ = {
         //     app: this.app,
@@ -39,7 +52,7 @@ class Game extends EventEmitter {
 
         this.ticker = this.app.ticker;
 
-        this.server = new GameServer();
+        this.logic = new GameLogic();
 
         window.__PIXI_APP__ = this.app;
     }
@@ -47,23 +60,18 @@ class Game extends EventEmitter {
     async init() {
         await Assets.init({ manifest });
 
+         await this.logic.initSession(window.Telegram.WebApp.initData);
+
         Assets.loadBundle('game', (progress) => {
             this.emit('assetsLoading', toFixed(progress));
         }).then(() => {
-            this.scene = new GamePlayScene(this.app);
+            this.scene = new GamePlayScene(this.app, {steps: this.logic.steps});
             this.app.stage.addChild(this.scene);
             this.emit('assetsLoaded');
-            this.scene.updateHUD(this.server.getInfo());
+            this.scene.updateHUD(this.logic.getInfo());
             this.startGame();
             sound.play('mainMusic', {loop: true});
         });
-    }
-
-    async go() {
-        const roundResult = this.server.nextStep();
-        const info = roundResult.isWin ? this.server.getInfo() : null;
-
-        await this.scene.go(roundResult, info);
     }
 
     async startGame() {
@@ -74,19 +82,27 @@ class Game extends EventEmitter {
         app.eventEmitter.on('hud:go:clicked', () => this.go(), this);
     }
 
-    async cashOut() {
-        const roundResult =  this.server.cashOut();
+    async placeBet(bet) {
+        const {round} = await this.logic.placeBet(bet);
 
-        this.scene.cashOut(this.server.getInfo(), roundResult).add(() => {
-            this.scene.reset();
-        });
+        app.version = !app.version;
+        this.scene.updateHUD(this.logic.getInfo());
+        this.scene.play({bonusPlatform: round.bonus.step + 1, nextStepWin: round.nextStepWin});
     }
 
-    async placeBet(bet) {
-        const round = this.server.placeBet(bet);
-        app.version = !app.version;
-        this.scene.updateHUD(this.server.getInfo());
-        this.scene.play({bonusPlatform: round.bonus.step + 1, nextStepWin: round.nextStepWin});
+    async go() {
+        const roundResult = await this.logic.nextStep();
+        const info = roundResult.isWin ? this.logic.getInfo() : null;
+
+        await this.scene.go(roundResult, info);
+    }
+
+    async cashOut() {
+        const {gameRound} = await this.logic.cashOut();
+
+        this.scene.cashOut(this.logic.getInfo(), gameRound).add(() => {
+            this.scene.reset();
+        });
     }
 
     reset() {

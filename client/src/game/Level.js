@@ -6,7 +6,7 @@ import {SuperContainer} from "./ObjectFactory";
 import {Clouds} from "./Clouds";
 
 export class Level extends SuperContainer {
-    constructor() {
+    constructor(steps) {
         super();
 
         this.platforms = [];

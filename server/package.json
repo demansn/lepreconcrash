@@ -2,11 +2,18 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "echo \"build test\"",
-    "start": "node app.js"
+    "dev": "node --watch-path=./game --watch app.js",
+    "start": "node app.js",
+    "test": "node --test",
+    "test-watch": "node --test --watch "
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
 }

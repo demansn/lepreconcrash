@@ -1,4 +1,4 @@
-import {toFixed} from "../game/utils";
+import {toFixed} from "../utils.js";
 
 export class GameRound {
     constructor(result) {
@@ -71,6 +71,10 @@ export class GameRound {
         return this.currentStep === -1;
     }
 
+    isLastStep() {
+        return this.currentStep === this.result.maxSteps;
+    }
+
     isEnd() {
         return this.isEnded;
     }
@@ -104,14 +108,7 @@ export class GameRound {
         this.isEnded = true;
         this.endResutlt = {
             isWin: true,
-            step: this.currentStep,
-            multiplier: this.getCurrentMultiplier(),
-            totalWin: this.getTotalWin(),
-            win: this.getCurrentWin(),
-            bonus: this.getBonus(),
-            isBonus: this.isBonusStep(),
-            luck: this.getRoundLuck(),
-            bet: this.result.betAmount
+            ...this.#getRoundData()
         }
     }
 
@@ -121,6 +118,13 @@ export class GameRound {
         }
 
         return {
+            ...this.#getRoundData(),
+            nextStepWin: this.getNextStepWin(),
+        };
+    }
+
+    #getRoundData() {
+        return {
             step: this.currentStep,
             multiplier: this.getCurrentMultiplier(),
             totalWin: this.getTotalWin(),
@@ -128,7 +132,6 @@ export class GameRound {
             bonus: this.getBonus(),
             isBonus: this.isBonusStep(),
             luck: this.getRoundLuck(),
-            nextStepWin: this.getNextStepWin(),
             bet: this.result.betAmount
         };
     }
