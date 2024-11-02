@@ -1,11 +1,13 @@
-import {GameRound} from "./GameRound.js";
-
 export class GameMath {
     constructor(steps) {
         this.steps = steps;
         this.totalStepsNumber = this.steps.length;
 
         this.testRandomBonusStep();
+    }
+
+    createGameRound(roundData) {
+        return roundData;
     }
 
     getRandomGameRound(bet, {bonusStep: bs, loseStep: ls, winStep: ts} = {}) {
@@ -17,7 +19,7 @@ export class GameMath {
             this.totalStepsNumber = ts;
         }
 
-        return new GameRound({
+        const result = {
             maxSteps: this.totalStepsNumber,
             lastStep: this.totalStepsNumber - 1,
             loseStep,
@@ -26,8 +28,10 @@ export class GameMath {
                 luck: bonus.bonusLuck,
             },
             betAmount: bet,
-            steps: this.steps,
-        })
+            steps: this.steps.map(step => step.multiplier),
+        };
+
+        return this.createGameRound({result});
     }
 
     getRandomLoseStep() {

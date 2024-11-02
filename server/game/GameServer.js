@@ -8,12 +8,12 @@ export class GameServer {
     #botToken;
     #players;
     #sessions;
-    #gameSteps = GameSteps.map(({number, multiplier}) => ({number, multiplier}));
+    #gameSteps = GameSteps.map(({number, multiplier}) => multiplier);
     #math = new GameMath(GameSteps);
 
     constructor(botToken, dbAdapter) {
         this.#botToken = botToken;
-        this.#sessions = new GameSessionsManager();
+        this.#sessions = new GameSessionsManager(dbAdapter);
         this.#players = new PlayersManager(dbAdapter);
     }
 
@@ -25,10 +25,17 @@ export class GameServer {
         }
 
         const player = await this.#players.getPlayer(playerData.user.id);
+        const session = this.#sessions.getSession(player.id, player.session);
+        const gameRound = session.getGameRoundInfo();
+
+        if (player.session) {
+            this.#players.updatePlayer(player.id, {session: null});
+        }
 
         return {
-            id: this.#sessions.createSession(player.id),
+            id: session.id,
             steps: this.#gameSteps,
+            gameRound,
             player: {
                 balance: player.getBalance(),
                 luck: player.getLuck(),
@@ -104,8 +111,6 @@ export class GameServer {
 
         const result = gameSession.finishGameRound();
 
-        console.dir(player);
-
         if (result.isWin) {
             player.addBalance(result.win);
             player.addLuck(result.luck);
@@ -122,5 +127,9 @@ export class GameServer {
             },
             gameRound: result
         };
+    }
+
+    async saveState() {
+        await this.#sessions.saveAll();
     }
 }

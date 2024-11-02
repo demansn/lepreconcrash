@@ -6,6 +6,7 @@ export class HTTPServer {
         this.port = null;
     }
 
+
     setAPI(api) {
         this.api = api
     }
@@ -67,5 +68,9 @@ export class HTTPServer {
         this.server.listen(port, () => {
             console.log(`Server is running on http://localhost:${port}`);
         });
+    }
+
+    stop() {
+        this.server.close();
     }
 }

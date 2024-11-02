@@ -11,6 +11,7 @@ export class PlayersManager {
             balance: 200,
             luck: 0,
             level: 0,
+            session: null
         };
 
         return this.dbAdapter.createPlayer(newPlayer);
@@ -27,6 +28,10 @@ export class PlayersManager {
     }
 
     async savePlayer(player) {
-        return this.dbAdapter.updatePlayer(player.id, player.toObject());
+        return this.updatePlayer(player.id, player.toObject());
+    }
+
+    async updatePlayer(playerID, data) {
+        return this.dbAdapter.updatePlayer(playerID, data);
     }
 }

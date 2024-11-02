@@ -2,7 +2,7 @@ import {Player} from "./Player";
 import {createAPI} from "../Api";
 
 // TODO: move to .env
-const API_URL = 'https://99e62295e3f6.ngrok.app';
+// const API_URL = 'https://99e62295e3f6.ngrok.app';
 
 export class GameLogic {
     constructor() {
@@ -19,15 +19,18 @@ export class GameLogic {
     }
 
     async initSession(playerData) {
-        const {player, steps, id} = await this.api.initSession(playerData);
+        const {player, steps, id, gameRound} = await this.api.initSession(playerData);
 
         this.sessionID = id;
         this.player = new Player(player.balance, player.luck, player.level);
         this.gameSteps = steps;
 
+        this.gameRound = gameRound;
+
         return {
             steps,
-            player: player
+            player: player,
+            gameRound
         }
     }
 

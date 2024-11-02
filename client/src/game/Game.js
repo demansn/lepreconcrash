@@ -1,6 +1,5 @@
 import {manifest} from "../configs/resources-manifest";
 import {Application, Assets} from 'pixi.js';
-
 import { EventEmitter } from '@pixi/utils';
 import {GameLogic} from "../server/GameLogic";
 import {GamePlayScene} from "./GamePlayScene";
@@ -10,20 +9,10 @@ import {Stage} from "@pixi/layers";
 import {layers} from "./ObjectFactory";
 import {sound} from "@pixi/sound";
 import {toFixed} from "./utils";
-import {createAPI} from "../Api";
-
-/**
- * @typedef
- *
- */
 
 class Game extends EventEmitter {
     ticker = null;
-    /**
-     * @type {Object}
-     * @function initSession(playerData)
-     */
-    api = null;
+
     constructor() {
         super();
 
@@ -35,12 +24,6 @@ class Game extends EventEmitter {
         });
         this.app.stage = new Stage();
         this.app.stage.sortableChildren = true;
-
-
-
-        // window.__PIXI_DEVTOOLS__ = {
-        //     app: this.app,
-        // };
 
         window.__PIXI_APP__ = this.app;
 
@@ -60,7 +43,13 @@ class Game extends EventEmitter {
     async init() {
         await Assets.init({ manifest });
 
-         await this.logic.initSession(window.Telegram.WebApp.initData);
+        let  userData = window.Telegram.WebApp.initData;
+
+        if (ENV === 'dev' && !userData) {
+            userData = USER_DATA;
+        }
+
+         await this.logic.initSession(userData);
 
         Assets.loadBundle('game', (progress) => {
             this.emit('assetsLoading', toFixed(progress));
@@ -69,14 +58,29 @@ class Game extends EventEmitter {
             this.app.stage.addChild(this.scene);
             this.emit('assetsLoaded');
             this.scene.updateHUD(this.logic.getInfo());
-            this.startGame();
-            sound.play('mainMusic', {loop: true});
+
+            if (this.logic.gameRound) {
+                this.restoreGame();
+            } else {
+                this.startGame();
+            }
+
+            // sound.play('mainMusic', {loop: true});
         });
     }
 
-    async startGame() {
+    startGame() {
         this.scene.waitPlaceBet();
+        this.addEventListeners();
+    }
 
+    restoreGame() {
+        this.scene.restore(this.logic.gameRound);
+        this.scene.updateHUD(this.logic.getInfo());
+        this.addEventListeners();
+    }
+
+    addEventListeners() {
         app.eventEmitter.on('hud:play:clicked', () => this.placeBet(10), this);
         app.eventEmitter.on('hud:cashOut:clicked', () => this.cashOut(), this);
         app.eventEmitter.on('hud:go:clicked', () => this.go(), this);

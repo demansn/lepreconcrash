@@ -35,12 +35,22 @@ export class FileDatabaseAdapter {
         return playerData;
     }
 
+    async saveSession(playerID, sessionData) {
+        const data = await this.loadFile();
+
+        data[playerID].session = sessionData;
+
+        await this.saveFile(data);
+    }
+
     async updatePlayer(id, playerData) {
         const data = await this.loadFile();
+
         if (!data[id]) {
             throw new Error(`Player with ID ${id} not found`);
         }
         data[id] = { ...data[id], ...playerData };
+
         await this.saveFile(data);
     }
 

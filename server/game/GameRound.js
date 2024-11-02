@@ -1,10 +1,10 @@
 import {toFixed} from "../utils.js";
 
 export class GameRound {
-    constructor(result) {
-        this.isEnded = false;
-        this.currentStep = -1;
+    constructor({result, currentStep = -1}) {
         this.result = result;
+        this.currentStep = currentStep;
+        this.isEnded = false;
         this.endResutlt = null;
         this.bonusLuck = 0;
     }
@@ -44,11 +44,11 @@ export class GameRound {
     }
 
     getCurrentMultiplier() {
-        return this.isFirstStep() ? 1 : this.result.steps[this.currentStep].multiplier;
+        return this.isFirstStep() ? 1 : this.result.steps[this.currentStep];
     }
 
     getNextStepMultiplier() {
-        return this.result.steps[this.currentStep + 1] ? this.result.steps[this.currentStep + 1].multiplier : 0;
+        return this.result.steps[this.currentStep + 1] ? this.result.steps[this.currentStep + 1] : 0;
     }
 
     getBonus() {
@@ -69,10 +69,6 @@ export class GameRound {
 
     isFirstStep() {
         return this.currentStep === -1;
-    }
-
-    isLastStep() {
-        return this.currentStep === this.result.maxSteps;
     }
 
     isEnd() {
@@ -142,5 +138,12 @@ export class GameRound {
 
     getRoundLuck() {
         return this.currentStep + 1 + this.bonusLuck;
+    }
+
+    toObject() {
+        return {
+            currentStep: this.currentStep,
+            result: this.result
+        };
     }
 }

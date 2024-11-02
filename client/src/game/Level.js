@@ -52,6 +52,26 @@ export class Level extends SuperContainer {
         platform.showBonus();
     }
 
+    setHeroToPlatform(platformNumber) {
+        const platform = this.getPlatformByNumber(platformNumber);
+
+        this.hero.x = platform.x;
+        this.hero.y = platform.y;
+        this.hero.alpha = 1;
+        this.hero.visible = true;
+        this.hero.setNormalState();
+
+        platform.toDark();
+
+        this.platforms.forEach(platform => {
+            if (platform.isFinal) {
+                platform.showBonus();
+            }
+        });
+
+        this.moveTo(platform, true);
+    }
+
     heroJumpTo({step, isLose, isWin, isBonus, bonus, nextStepWin}) {
         const targetPlatformNumber = step + 1;
         const standPlatform = this.getPlatformByNumber(targetPlatformNumber - 1);
@@ -105,7 +125,13 @@ export class Level extends SuperContainer {
         return this.platforms.find(platform => platform.number === number);
     }
 
-    moveTo(position) {
+    moveTo(position, force = false) {
+        if (force) {
+            this.movementLayer.x = -position.x + 110;
+            this.updateParallax();
+            return;
+        }
+
         return gsap.to(this.movementLayer, {
             x: -position.x + 110,
             duration: 0.7,

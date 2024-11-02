@@ -41,6 +41,19 @@ export class GamePlayScene extends SuperContainer {
         return this.reset();
     }
 
+
+    restore( round) {
+        const {bonus, nextStepWin, step} = round;
+
+        this.level.setBonusToPlatform(bonus.step + 1);
+        this.level.setNextStepWin({step: step + 2, nextStepWin});
+        this.level.setHeroToPlatform(step + 1);
+
+        this.hud.gotoPlayState();
+        this.hud.gotoWaitState();
+        this.hud.gotoGoState();
+    }
+
     updateHUD({balance, luck, level, round}) {
         this.hud.balance.setValue(balance);
         this.hud.lack.setValue(luck);

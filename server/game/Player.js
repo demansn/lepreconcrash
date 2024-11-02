@@ -1,9 +1,10 @@
 export class Player {
-    constructor({id, balance, luck, level}) {
+    constructor({id, balance, luck, level, session}) {
         this.id = id;
         this.balance = balance;
         this.luck = luck;
         this.level = level;
+        this.session = session;
     }
 
     addBalance(amount) {

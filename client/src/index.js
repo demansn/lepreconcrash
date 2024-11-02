@@ -5,6 +5,12 @@ import LoadingScreen from './screens/LoadingScreen';
 import GameScreen from './screens/GameScreen';
 import {game} from "./game/Game";
 
+/**
+ * @typedef API_URL {string}
+ * @typedef ENV {string}
+ * @typedef USER_DATA {string}
+ */
+
 const App = () => {
     const [loading, setLoading] = useState(true);
     const onLoaded = () => {

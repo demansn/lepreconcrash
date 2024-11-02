@@ -7,7 +7,6 @@ export class Hero extends SuperContainer {
     constructor() {
         super();
 
-        // this.scale.set(0.6);
         this.bg = new Sprite(Assets.get('heroNormal'));
         this.bg.anchor.set(0.6, 1);
         this.addChild(this.bg);
