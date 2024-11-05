@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "serve -s dist",
     "dev": "node ./scripts/serve.js",
     "build": "node ./scripts/build.js"
   },
@@ -19,6 +20,7 @@
     "gsap": "^3.12.5",
     "pixi.js": "^7.4.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "serve": "^14.2.4"
   }
 }
