@@ -7,7 +7,6 @@ export function createBuildSettings(options) {
         entryPoints: [
             'src/index.js',
         ],
-        jsxDev: true,
         jsx: 'automatic',
         loader: {
             '.jsx': 'jsx',
