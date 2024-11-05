@@ -6,7 +6,6 @@ export class HTTPServer {
         this.port = null;
     }
 
-
     setAPI(api) {
         this.api = api
     }
@@ -57,6 +56,13 @@ export class HTTPServer {
                     res.writeHead(200, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify(result));
                 } catch (error) {
+
+                    if (error.gameError) {
+                        res.writeHead(200, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: error.message, name: error.name }));
+                        return;
+                    }
+
                     res.writeHead(400, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({ error: error.message }));
                 }

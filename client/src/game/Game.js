@@ -1,14 +1,18 @@
 import {manifest} from "../configs/resources-manifest";
-import {Application, Assets} from 'pixi.js';
+import {Application, Assets, Container} from 'pixi.js';
 import { EventEmitter } from '@pixi/utils';
 import {GameLogic} from "../server/GameLogic";
 import {GamePlayScene} from "./GamePlayScene";
 import {GAME_CONFIG} from "../configs/gameConfig";
 import {app} from "./app";
 import {Stage} from "@pixi/layers";
-import {layers} from "./ObjectFactory";
+import {layers, SuperContainer} from "./ObjectFactory";
 import {sound} from "@pixi/sound";
 import {toFixed} from "./utils";
+import {PopupManager} from "./lib/PopupManager.js";
+import {ResultPopup} from "./popup/ResultPopup.js";
+import {SessionExpired} from "./popup/SessionExpired.js";
+import {MessagePopup} from "./popup/MessagePopup.js";
 
 class Game extends EventEmitter {
     ticker = null;
@@ -40,33 +44,54 @@ class Game extends EventEmitter {
         window.__PIXI_APP__ = this.app;
     }
 
-    async init() {
-        await Assets.init({ manifest });
-
+    getUserData() {
         let  userData = window.Telegram.WebApp.initData;
 
         if (ENV === 'dev' && !userData) {
             userData = USER_DATA;
         }
 
-         await this.logic.initSession(userData);
+        return userData;
+    }
+
+    async init() {
+         await Assets.init({ manifest });
+         await this.logic.initSession(this.getUserData());
 
         Assets.loadBundle('game', (progress) => {
             this.emit('assetsLoading', toFixed(progress));
-        }).then(() => {
-            this.scene = new GamePlayScene(this.app, {steps: this.logic.steps});
-            this.app.stage.addChild(this.scene);
-            this.emit('assetsLoaded');
-            this.scene.updateHUD(this.logic.getInfo());
+        }).then(this.onLoadedResources.bind(this));
+    }
 
-            if (this.logic.gameRound) {
-                this.restoreGame();
-            } else {
-                this.startGame();
-            }
+    onLoadedResources() {
+        this.baseContainer = new SuperContainer();
+        this.app.stage.addChild(this.baseContainer);
 
-            // sound.play('mainMusic', {loop: true});
+        this.popupManager = this.baseContainer.create.displayObject(PopupManager, {
+            gameSize: this.app.screen,
+            visible: true,
+            layer: 'popup',
+            popups: [
+                SessionExpired,
+                MessagePopup
+            ]
         });
+        this.scene = new GamePlayScene(this.app);
+        this.app.stage.addChild(this.scene);
+        this.emit('assetsLoaded');
+        this.start();
+
+        // sound.play('mainMusic', {loop: true});
+    }
+
+    start() {
+        this.scene.updateHUD(this.logic.getInfo());
+
+        if (this.logic.gameRound) {
+            this.restoreGame();
+        } else {
+            this.startGame();
+        }
     }
 
     startGame() {
@@ -84,29 +109,74 @@ class Game extends EventEmitter {
         app.eventEmitter.on('hud:play:clicked', () => this.placeBet(10), this);
         app.eventEmitter.on('hud:cashOut:clicked', () => this.cashOut(), this);
         app.eventEmitter.on('hud:go:clicked', () => this.go(), this);
+
+        app.eventEmitter.on('popups:show', this.popupManager.showPopup, this.popupManager);
+    }
+
+    removeEventListeners() {
+        app.eventEmitter.off('hud:play:clicked');
+        app.eventEmitter.off('hud:cashOut:clicked');
+        app.eventEmitter.off('hud:go:clicked');
+        app.eventEmitter.off('popups:show');
     }
 
     async placeBet(bet) {
-        const {round} = await this.logic.placeBet(bet);
+        try {
+            const {round} = await this.logic.placeBet(bet);
 
-        app.version = !app.version;
-        this.scene.updateHUD(this.logic.getInfo());
-        this.scene.play({bonusPlatform: round.bonus.step + 1, nextStepWin: round.nextStepWin});
+            app.version = !app.version;
+            this.scene.updateHUD(this.logic.getInfo());
+            this.scene.play(round);
+        } catch (e) {
+            this.error(e);
+        }
     }
 
     async go() {
-        const roundResult = await this.logic.nextStep();
-        const info = roundResult.isWin ? this.logic.getInfo() : null;
+        try {
+            const roundResult = await this.logic.nextStep();
+            const info = roundResult.isWin ? this.logic.getInfo() : null;
 
-        await this.scene.go(roundResult, info);
+            await this.scene.go(roundResult, info);
+        } catch (e) {
+            this.error(e);
+        }
     }
 
     async cashOut() {
-        const {gameRound} = await this.logic.cashOut();
+        try {
+            const {gameRound} = await this.logic.cashOut();
 
-        this.scene.cashOut(this.logic.getInfo(), gameRound).add(() => {
-            this.scene.reset();
-        });
+            this.scene.cashOut(this.logic.getInfo(), gameRound).add(() => {
+                this.scene.reset();
+            });
+        } catch (e) {
+            this.error(e);
+        }
+    }
+
+    error(e) {
+        if (e.name === 'session-expired') {
+            this.showSessionExpiredPopup();
+        } else {
+            this.popupManager.showPopup('MessagePopup', {message: e});
+            this.scene.interactiveChildren = false;
+            this.removeEventListeners();
+        }
+    }
+
+    showSessionExpiredPopup() {
+        this.popupManager.showPopup('SessionExpired', {onClick: this.reload.bind(this)});
+    }
+
+    async reload() {
+        this.popupManager.hidePopup('SessionExpired');
+        this.removeEventListeners();
+        await this.logic.initSession(this.getUserData());
+        this.scene.destroy();
+        this.scene = new GamePlayScene(this.app);
+        this.app.stage.addChild(this.scene);
+        this.start();
     }
 
     reset() {
@@ -119,3 +189,5 @@ class Game extends EventEmitter {
 }
 
 export const game = new Game();
+
+window.game = game;

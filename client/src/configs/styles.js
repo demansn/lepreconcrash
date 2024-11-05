@@ -64,5 +64,13 @@ export const Styles = {
         align: 'center',
         stroke: '#743f17',
         strokeThickness: 2,
-    }
+    },
+    popupTitle: {
+        fontFamily: 'AldotheApache',
+        fontSize: 45,
+        fill: 0xffffff,
+        align: 'center',
+        stroke: '#743f17',
+        strokeThickness: 4,
+    },
 };

@@ -1,10 +1,9 @@
 import {SuperContainer} from "../ObjectFactory";
 import gsap from "gsap";
+import {BasePopup} from "../lib/BasePopup.js";
 
-export class Base extends SuperContainer {
-    constructor({gameSize}) {
-        super();
-
+export class ResultPopup extends BasePopup {
+    init({gameSize}) {
         this.shadow = this.create.graphics({alpha: 0.5});
         this.shadow.beginFill(0x000000);
         this.shadow.drawRect(0, 0, gameSize.width, gameSize.height);

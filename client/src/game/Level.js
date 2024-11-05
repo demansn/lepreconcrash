@@ -73,7 +73,7 @@ export class Level extends SuperContainer {
     }
 
     heroJumpTo({step, isLose, isWin, isBonus, bonus, nextStepWin}) {
-        const targetPlatformNumber = step + 1;
+        const targetPlatformNumber = step;
         const standPlatform = this.getPlatformByNumber(targetPlatformNumber - 1);
         const platform = this.getPlatformByNumber(targetPlatformNumber);
         const nexPlatform = this.getPlatformByNumber(targetPlatformNumber + 1);

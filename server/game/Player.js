@@ -1,46 +1,59 @@
+import Big from "big.js";
+
 export class Player {
-    constructor({id, balance, luck, level, session}) {
-        this.id = id;
+    #balance;
+    #luck;
+    #level;
+
+    constructor({balance, luck, level, id, session}) {
         this.balance = balance;
         this.luck = luck;
         this.level = level;
+        this.id = id;
         this.session = session;
     }
 
     addBalance(amount) {
-        this.balance = this.balance + amount;
+        this.#balance = this.#balance.plus(amount);
     }
 
     subBalance(amount) {
-        this.balance -= amount;
+        this.#balance = this.#balance.minus(amount);
     }
 
     addLuck(amount) {
-        this.luck += amount;
+        this.#luck = this.#luck.plus(amount);
     }
 
-    setLevel(level) {
-        this.level = level;
+    get balance() {
+        return this.#balance.toNumber();
     }
 
-    getBalance() {
-        return this.balance;
+    set balance(value) {
+        this.#balance = Big(value);
     }
 
-    getLuck() {
-        return this.luck;
+    get luck() {
+        return this.#luck.toNumber();
     }
 
-    getLevel() {
-        return this.level;
+    set luck(value) {
+        this.#luck = Big(value);
+    }
+
+    get level() {
+        return this.#level;
+    }
+
+    set level(value) {
+        this.#level = value;
     }
 
     toObject() {
         return {
-            id: this.id,
             balance: this.balance,
             luck: this.luck,
             level: this.level
-        };
+        }
     }
 }

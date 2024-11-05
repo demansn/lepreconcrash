@@ -1,4 +1,3 @@
-import {Player} from "./Player";
 import {createAPI} from "../Api";
 
 // TODO: move to .env
@@ -7,7 +6,6 @@ import {createAPI} from "../Api";
 export class GameLogic {
     constructor() {
         this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep'], API_URL);
-        this.player = new Player(200, 0);
 
         const urlParams = new URLSearchParams(window.location.search);
 
@@ -16,13 +14,17 @@ export class GameLogic {
             loseStep: urlParams.has('loseStep')  ? Number(urlParams.get('loseStep')) :  undefined,
             winStep: urlParams.has('winStep')  ? Number(urlParams.get('winStep')) :  undefined,
         };
+
+        if (ENV !== 'dev') {
+            this.cheat = undefined;
+        }
     }
 
     async initSession(playerData) {
         const {player, steps, id, gameRound} = await this.api.initSession(playerData);
 
         this.sessionID = id;
-        this.player = new Player(player.balance, player.luck, player.level);
+        this.player = player;
         this.gameSteps = steps;
 
         this.gameRound = gameRound;
@@ -35,12 +37,9 @@ export class GameLogic {
     }
 
     async placeBet(bet) {
-        const {player, gameRound} = await this.api.placeBet(bet, this.sessionID);
+        const {player, gameRound} = await this.api.placeBet(bet, this.sessionID, this.cheat);
 
-        this.player.balance = player.balance;
-        this.player.luck = player.luck;
-        this.player.level = player.level;
-
+        this.player = player;
         this.gameRound = gameRound;
 
         return {
@@ -48,7 +47,6 @@ export class GameLogic {
             round:gameRound
         };
     }
-
 
     async nextStep() {
         const {gameRound} = await this.api.nextStep(this.sessionID);
@@ -72,10 +70,8 @@ export class GameLogic {
 
     getInfo() {
         return {
-            balance: this.player.getBalance(),
-            luck: this.player.getLuck(),
+           ...this.player,
             round: this.gameRound ? this.gameRound : {win: 0, luck: 0, multiplier: 0, nextStepWin: 0},
-            level: this.player.getLevel()
         }
     }
 }

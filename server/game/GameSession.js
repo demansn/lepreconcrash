@@ -17,7 +17,7 @@ export class GameSession {
         this.playerID = playerID;
         this.onExpire = onExpire;
         this.id = id;
-        this.timeoutTime = 1000 * 60 * 5;
+        this.timeoutTime = 1000 * 30;
         this.timeout = null;
 
         this.gameRound = gameRound ? new GameRound(gameRound) : null;

@@ -14,7 +14,13 @@ export function createAPI(methods, path) {
                 });
 
                     if (response.ok) {
-                        resolve(response.json());
+                        const result = await response.json();
+
+                        if (result.error) {
+                            reject(result.error);
+                        } else {
+                            resolve(result);
+                        }
                     } else {
                         reject(response.statusText);
                     }

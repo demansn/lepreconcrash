@@ -1,7 +1,7 @@
-import {toFixed} from "../utils.js";
+import Big from "big.js";
 
 export class GameRound {
-    constructor({result, currentStep = -1}) {
+    constructor({result, currentStep = 0}) {
         this.result = result;
         this.currentStep = currentStep;
         this.isEnded = false;
@@ -31,28 +31,24 @@ export class GameRound {
         }
     }
 
-    getCurrentWin() {
-        return toFixed(this.isFirstStep() ? this.result.betAmount : this.result.betAmount * this.getCurrentMultiplier());
+    #getCurrentWin() {
+        return Big(this.result.betAmount).mul(this.#getCurrentMultiplier()).toNumber();
     }
 
-    getNextStepWin() {
-        return toFixed(((this.result.betAmount * this.getNextStepMultiplier()) - this.result.betAmount));
+    #getNextStepWin() {
+        return Big(this.result.betAmount).mul(this.#getNextStepMultiplier()).minus(this.result.betAmount).toNumber();
     }
 
-    getTotalWin() {
-        return this.getCurrentWin();
+    #getNextStepMultiplier() {
+        return this.#getStepMultiplier(this.currentStep + 1) || 0;
     }
 
-    getCurrentMultiplier() {
-        return this.isFirstStep() ? 1 : this.result.steps[this.currentStep];
+    #getCurrentMultiplier() {
+        return this.#getStepMultiplier(this.currentStep);
     }
 
-    getNextStepMultiplier() {
-        return this.result.steps[this.currentStep + 1] ? this.result.steps[this.currentStep + 1] : 0;
-    }
-
-    getBonus() {
-        return this.result.bonus;
+    #getStepMultiplier(step) {
+        return this.result.steps[step];
     }
 
     isEndStep() {
@@ -65,10 +61,6 @@ export class GameRound {
 
     isBonusStep() {
         return this.currentStep === this.result.bonus.step;
-    }
-
-    isFirstStep() {
-        return this.currentStep === -1;
     }
 
     isEnd() {
@@ -91,7 +83,7 @@ export class GameRound {
         this.isEnded = true;
         this.endResutlt = {
             isLose: true,
-            bonus: this.getBonus(),
+            bonus: this.result.bonus,
             step: this.currentStep
         };
     }
@@ -115,17 +107,17 @@ export class GameRound {
 
         return {
             ...this.#getRoundData(),
-            nextStepWin: this.getNextStepWin(),
+            nextStepWin: this.#getNextStepWin(),
         };
     }
 
     #getRoundData() {
         return {
             step: this.currentStep,
-            multiplier: this.getCurrentMultiplier(),
-            totalWin: this.getTotalWin(),
-            win: this.getCurrentWin(),
-            bonus: this.getBonus(),
+            multiplier: this.#getCurrentMultiplier(),
+            totalWin: this.#getCurrentWin(),
+            win: this.#getCurrentWin(),
+            bonus:this.result.bonus,
             isBonus: this.isBonusStep(),
             luck: this.getRoundLuck(),
             bet: this.result.betAmount

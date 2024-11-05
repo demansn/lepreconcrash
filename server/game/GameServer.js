@@ -3,6 +3,8 @@ import {validateSignature} from "../utils.js";
 import {GameSessionsManager} from "./GameSessionsManager.js";
 import {GameMath} from "./GameMath.js";
 import {GameSteps} from "./GameSteps.js";
+import {SessionExpiredError} from "../errors/SessionExpiredError.js";
+import {ServerError} from "../errors/ServerError.js";
 
 export class GameServer {
     #botToken;
@@ -21,7 +23,7 @@ export class GameServer {
         const playerData = validateSignature(telegramInitData, this.#botToken);
 
         if (!playerData) {
-            throw new Error('Invalid signature');
+            throw new ServerError('Invalid signature');
         }
 
         const player = await this.#players.getPlayer(playerData.user.id);
@@ -36,39 +38,42 @@ export class GameServer {
             id: session.id,
             steps: this.#gameSteps,
             gameRound,
-            player: {
-                balance: player.getBalance(),
-                luck: player.getLuck(),
-                level: player.getLevel()
-            }};
+            player: player.toObject()
+        };
     }
 
-    async placeBet(bet, sessionID) {
+    async placeBet(bet, sessionID, cheat) {
         const gameSession = this.#sessions.get(sessionID);
 
         if (!gameSession) {
-            throw new Error('Session not found');
+            throw new SessionExpiredError();
         }
 
         const player = await this.#players.getPlayer(gameSession.playerID);
 
         if (!player) {
-            throw new Error('Player not found');
+            throw new ServerError('Player not found');
         }
 
         if (player.balance < bet) {
-            throw new Error('Not enough balance');
+            throw new ServerError('Not enough balance');
         }
 
         if (gameSession.hasGameRound()) {
-            throw new Error('Current round is not completed!');
+            throw new ServerError('Current round is not completed!');
         }
 
         player.subBalance(bet);
 
         await this.#players.savePlayer(player);
 
-        gameSession.startGameRound(this.#math.getRandomGameRound(bet));
+        let cheatData = undefined;
+
+        if (cheat && process.env.NODE_ENV === 'development') {
+            cheatData = cheat;
+        }
+
+        gameSession.startGameRound(this.#math.getRandomGameRound(bet, cheatData));
 
         return {
             player: {
@@ -84,11 +89,11 @@ export class GameServer {
         const gameSession = this.#sessions.get(sessionID);
 
         if (!gameSession) {
-            throw new Error('Session not found');
+            throw new SessionExpiredError();
         }
 
         if (!gameSession.hasGameRound()) {
-            throw new Error('Not placed bet!');
+            throw new ServerError('Not placed bet!');
         }
 
         const gameRound = gameSession.nextStep();
@@ -100,13 +105,13 @@ export class GameServer {
         const gameSession = this.#sessions.get(sessionID);
 
         if (!gameSession) {
-            throw new Error('Session not found');
+            throw new SessionExpiredError();
         }
 
         const player = await this.#players.getPlayer(gameSession.playerID);
 
         if (!player) {
-            throw new Error('Player not found');
+            throw new ServerError('Player not found');
         }
 
         const result = gameSession.finishGameRound();
@@ -114,17 +119,13 @@ export class GameServer {
         if (result.isWin) {
             player.addBalance(result.win);
             player.addLuck(result.luck);
-            player.setLevel(result.level);
+            player.level =this.#math.getLuckLevel(player.luck);
 
             await this.#players.savePlayer(player);
         }
 
         return {
-            player: {
-                balance: player.balance,
-                luck: player.luck,
-                level: player.level
-            },
+            player: player.toObject(),
             gameRound: result
         };
     }

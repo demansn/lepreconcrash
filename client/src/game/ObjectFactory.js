@@ -2,6 +2,7 @@ import {Sprite, Assets, Text, TextStyle, Container, AnimatedSprite, Graphics} fr
 import {Styles} from "../configs/styles";
 import {Layer} from "@pixi/layers";
 import {GAME_CONFIG} from "../configs/gameConfig";
+import gsap from "gsap";
 
 export const layers = {
     popup: new Layer(),
@@ -61,7 +62,8 @@ export class SuperContainer extends Container {
         super();
 
         this.create = new DisplayObjectsFactory(this, Assets, styles, layers);
-        this.state = new DisplayObjectStateMachine(this)
+        this.state = new DisplayObjectStateMachine(this);
+        this.gsap = gsap;
     }
 }
 

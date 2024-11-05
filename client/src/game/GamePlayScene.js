@@ -4,22 +4,22 @@ import {Level} from "./Level";
 import gsap from "gsap";
 import {SuperContainer} from "./ObjectFactory";
 import {sound} from "@pixi/sound";
-import {Base} from "./popup/Base";
+import {ResultPopup} from "./popup/ResultPopup.js";
 
 export class GamePlayScene extends SuperContainer {
-    constructor(app, {steps}) {
+    constructor(app) {
         super();
 
         this.zOrder = 1;
         this.zIndex = 1;
 
-        this.level = new Level(steps);
+        this.level = new Level(10);
         this.addChild(this.level);
 
         this.hud = new Hud();
         this.addChild(this.hud);
 
-        this.popup = this.create.displayObject(Base, {gameSize: app.screen, visible: false, layer: 'popup'});
+        this.popup = this.create.displayObject(ResultPopup, {gameSize: app.screen, visible: false, layer: 'popup'});
     }
 
     showWinPopup({bet, win, luck}) {
@@ -41,13 +41,15 @@ export class GamePlayScene extends SuperContainer {
         return this.reset();
     }
 
-
     restore( round) {
         const {bonus, nextStepWin, step} = round;
 
-        this.level.setBonusToPlatform(bonus.step + 1);
-        this.level.setNextStepWin({step: step + 2, nextStepWin});
-        this.level.setHeroToPlatform(step + 1);
+        if (step < bonus.step) {
+            this.level.setBonusToPlatform(bonus.step);
+        }
+
+        this.level.setNextStepWin({step: step + 1, nextStepWin});
+        this.level.setHeroToPlatform(step);
 
         this.hud.gotoPlayState();
         this.hud.gotoWaitState();
@@ -76,9 +78,9 @@ export class GamePlayScene extends SuperContainer {
         return timeline;
     }
 
-    play({bonusPlatform, nextStepWin}) {
-        this.level.setBonusToPlatform(bonusPlatform);
-        this.level.setNextStepWin({step: 1, nextStepWin});
+    play({bonus, nextStepWin, step}) {
+        this.level.setBonusToPlatform(bonus.step);
+        this.level.setNextStepWin({step: step + 1, nextStepWin});
         this.hud.gotoGoState();
     }
 
