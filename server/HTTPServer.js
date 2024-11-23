@@ -1,13 +1,15 @@
 import http from 'node:http';
 
 export class HTTPServer {
-    constructor() {
+    constructor(options) {
         this.server = null;
         this.port = null;
+        this.options = options;
+        this.apis = [];
     }
 
-    setAPI(api) {
-        this.api = api
+    addAPI(api) {
+        this.apis.push(api);
     }
 
     async requestHandler(req, res) {
@@ -27,12 +29,14 @@ export class HTTPServer {
         if (method === 'POST') {
             const functionName = url.replace('/', '');
 
-                if (this.api[functionName] && typeof this.api[functionName] === 'function') {
-                    const handler = this.api[functionName];
+            for (const api of this.apis) {
+                if (api[functionName] && typeof api[functionName] === 'function') {
+                    const handler = api[functionName].bind(api);
 
-                    this.handlePOSTRequest(req, res, handler.bind(this.api));
+                    this.handlePOSTRequest(req, res, handler);
                     return;
                 }
+            }
         }
 
         res.writeHead(404, { 'Content-Type': 'text/plain' });
@@ -46,7 +50,12 @@ export class HTTPServer {
             });
             req.on('end', async () => {
                 try {
-                    const data = JSON.parse(body || '[]');
+                    let data = JSON.parse(body || '[]');
+
+                    if (!Array.isArray(data)) {
+                        data = [data];
+                    }
+
                     const result = await handler(...data);
 
                     if (!result) {
@@ -56,7 +65,6 @@ export class HTTPServer {
                     res.writeHead(200, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify(result));
                 } catch (error) {
-
                     if (error.gameError) {
                         res.writeHead(200, { 'Content-Type': 'application/json' });
                         res.end(JSON.stringify({ error: error.message, name: error.name }));

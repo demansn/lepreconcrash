@@ -5,6 +5,7 @@ import {GameMath} from "./GameMath.js";
 import {GameSteps} from "./GameSteps.js";
 import {SessionExpiredError} from "../errors/SessionExpiredError.js";
 import {ServerError} from "../errors/ServerError.js";
+import fs from 'node:fs';
 
 export class GameServer {
     #botToken;
@@ -132,5 +133,70 @@ export class GameServer {
 
     async saveState() {
         await this.#sessions.saveAll();
+    }
+
+    async getTasks(sessionID) {
+        // Load tasks from the JSON file (simulate database for development purposes)
+        const tasksPath = './task_templates.json';
+
+        if (!fs.existsSync(tasksPath)) {
+            throw new Error('Task templates file not found.');
+        }
+
+        const tasksData = JSON.parse(fs.readFileSync(tasksPath, 'utf-8'));
+
+        // Filter necessary fields for the player and include default status and progress
+        const playerTasks = tasksData.map(task => ({
+            id: task._id,
+            type: task.type,
+            title: task.title,
+            description: task.description,
+            reward: task.reward,
+            goal: task.goal,
+            isRepeatable: task.isRepeatable,
+            status: "in_progress", // Default status, replace with dynamic data later
+            progress: task.goal ? 0 : null // Initialize progress only for tasks with a goal
+        }));
+
+        return playerTasks;
+    }
+
+    async claimTaskReward(sessionID, taskId) {
+        // Найти сессию игрока
+        const session = this.#sessions.getSession(sessionID);
+        if (!session) {
+            throw new Error('Invalid session ID');
+        }
+
+        // Получить прогресс задания игрока
+        const playerTasks = await this.getPlayerTasks(sessionID);
+        const task = playerTasks.find(t => t.id === taskId);
+
+        if (!task) {
+            throw new Error(`Task with ID ${taskId} not found for player.`);
+        }
+
+        // Проверить, что задание готово к выдаче награды
+        if (task.status !== "ready_to_claim") {
+            throw new Error(`Task with ID ${taskId} is not ready to claim.`);
+        }
+
+        // Начислить награду игроку
+        const player = this.#players.getPlayer(session.playerId);
+        player.balance += task.reward;
+
+        // Обновить статус задания
+        task.status = "claimed";
+        task.completedAt = new Date().toISOString();
+
+        // Сохранить изменения
+        await this.#sessions.saveSession(sessionID, session);
+        await this.#players.savePlayer(player);
+
+        return {
+            success: true,
+            message: `Reward of ${task.reward} has been claimed for task ${taskId}.`,
+            newBalance: player.balance
+        };
     }
 }

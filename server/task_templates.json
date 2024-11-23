@@ -1,0 +1,90 @@
+[
+    {
+        "_id": "daily_login",
+        "type": "daily",
+        "title": "Claim daily rewards",
+        "description": "Log in daily to claim your reward!",
+        "reward": 20,
+        "goal": 1,
+        "isRepeatable": true,
+        "resetTime": "00:00:00",
+        "actionRequired": null
+    },
+    {
+        "_id": "daily_play_3_games",
+        "type": "daily",
+        "title": "Play 3 games today",
+        "description": "Play 3 games to claim your daily reward!",
+        "reward": 30,
+        "goal": 3,
+        "isRepeatable": true,
+        "resetTime": "00:00:00",
+        "actionRequired": null
+    },
+    {
+        "_id": "daily_collect_10_bonuses",
+        "type": "daily",
+        "title": "Collect 10 bonuses",
+        "description": "Collect 10 bonus pots to claim your daily reward!",
+        "reward": 50,
+        "goal": 10,
+        "isRepeatable": true,
+        "resetTime": "00:00:00",
+        "actionRequired": null
+    },
+    {
+        "_id": "share_phone",
+        "type": "basic",
+        "title": "Share phone number",
+        "description": "Share your phone number to claim the reward!",
+        "reward": 200,
+        "goal": 1,
+        "isRepeatable": false,
+        "resetTime": null,
+        "actionRequired": "share_phone"
+    },
+    {
+        "_id": "share_x_account",
+        "type": "basic",
+        "title": "Share X account",
+        "description": "To complete the challenge, subscribe to our X page, once you subscribe you will have a reward available to you!",
+        "reward": 100,
+        "goal": 1,
+        "isRepeatable": false,
+        "resetTime": null,
+        "actionRequired": "share_x_account"
+    },
+    {
+        "_id": "share_email_address",
+        "type": "basic",
+        "title": "Share email address",
+        "description": "Share your email address to claim the reward!",
+        "reward": 50,
+        "goal": 1,
+        "isRepeatable": false,
+        "resetTime": null,
+        "actionRequired": "share_email"
+    },
+    {
+        "_id": "invite_friend",
+        "type": "friends",
+        "title": "Invite a friend",
+        "description": "Invite a friend to the game and earn a reward!",
+        "reward": 100,
+        "goal": null,
+        "isRepeatable": true,
+        "resetTime": null,
+        "actionRequired": "invite_friend"
+    },
+    {
+        "_id": "invite_premium_friend",
+        "type": "friends",
+        "title": "Invite a friend with Telegram Premium",
+        "description": "Invite a friend with Telegram Premium to earn extra rewards!",
+        "reward": 300,
+        "goal": null,
+        "isRepeatable": true,
+        "resetTime": null,
+        "actionRequired": "invite_premium_friend"
+    }
+]

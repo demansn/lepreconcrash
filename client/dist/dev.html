@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,  minimum-scale=1.0, initial-scale=1, maximum-scale=1, user-scalable=no, user-scalable=0">
+    <meta name="description" content="Leprecon Crash">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="./css/index.css"  rel="stylesheet" />
+    <title>Leprecon Crash</title>
+</head>
+<body >
+<div id="root" style="width: 720px; height: 1280px;"></div>
+<script src="js/index.js"></script>
+<script>
+    const ratio =  window.innerHeight / 1280;
+
+    const element = document.getElementById('root');
+
+    element.style.width = `${720 * ratio}px`;
+    element.style.height = `${1280 * ratio}px`;
+</script>
+</body>
+</html>

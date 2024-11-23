@@ -1,10 +1,67 @@
 export const manifest = {
     bundles: [
         {
+           name: 'preloader',
+           assets: [
+               {alias: 'SplashBG', src: './assets/SplashBG.jpg'},
+               {alias: 'PreloadProgressBg', src: './assets/PreloadProgressBg.webp'},
+               {alias: 'PreloadProgressFill', src: './assets/PreloadProgressFill.webp'},
+               {alias: 'LoadingScene', src: '../game/scenes/LoadingScene.xml'},
+           ]
+        },
+        {
             name: 'game',
             assets: [
                 // {alias: 'bg', src: './assets/background.png'},
                 {alias: 'bg', src: './assets/Back.png'},
+                {alias: 'earn_bg', src: './assets/bg/earn_bg.jpg'},
+                {alias: 'shop_bg', src: './assets/bg/shop_bg.jpg'},
+                {alias: 'friends_bg', src: './assets/bg/friends_bg.jpg'},
+                {alias: 'leaderboard_bg', src: './assets/bg/leaderboard_bg.jpg'},
+
+                {alias: 'daily_collect_10_bonuses_icon', src: './assets/tasks/box.webp'},
+                {alias: 'coin-icon', src: './assets/tasks/coin-icon.webp'},
+                {alias: 'invite_premium_friend_icon', src: './assets/tasks/dime.webp'},
+                {alias: 'share_email_address_icon', src: './assets/tasks/dime_mail.webp'},
+                {alias: 'share_x_account_icon', src: './assets/tasks/dime_x.webp'},
+                {alias: 'share_phone_icon', src: './assets/tasks/dime_phone.webp'},
+                {alias: 'invite_friend_icon', src: './assets/tasks/invite.webp'},
+                {alias: 'daily_play_3_games_icon', src: './assets/tasks/play.webp'},
+                {alias: 'daily_login_icon', src: './assets/tasks/time.webp'},
+
+                {alias: 'task_progress_bg', src: './assets/tasks/task_progress_bg.webp'},
+                {alias: 'task_progress_fill', src: './assets/tasks/task_progress_fill.webp'},
+                {alias: 'claim_button_bg', src: './assets/tasks/claim_button_bg.webp'},
+                {alias: 'default_small_btn', src: './assets/tasks/default_small_btn.webp'},
+                {alias: 'disabled_small_btn', src: './assets/tasks/disabled_small_btn.webp'},
+                {alias: 'invite_btn', src: './assets/tasks/invite_btn.webp'},
+
+                {alias: 'close_description_btn', src: './assets/tasks/close_description_btn.webp'},
+                {alias: 'open_description_btn', src: './assets/tasks/open_description_btn.webp'},
+
+                {alias: 'OnboardingPage-1', src: './assets/OnboardingPage-1.jpg'},
+                {alias: 'OnboardingPage-2', src: './assets/OnboardingPage-2.jpg'},
+                {alias: 'OnboardingPage-3', src: './assets/OnboardingPage-3.jpg'},
+                {alias: 'RadioSelected', src: './assets/RadioSelected.webp'},
+                {alias: 'RadioUnselected', src: './assets/RadioUnselected.webp'},
+                {alias: 'PlayBtnBg', src: './assets/PlayBtnBg.webp'},
+                {alias: 'PrevBtn', src: './assets/PrevBtn.webp'},
+
+                {alias: 'BottomPanelBtnActive', src: './assets/ui/bottomPanel/BottomPanelBtnActive.png'},
+                {alias: 'BottomPanelBtnDefault', src: './assets/ui/bottomPanel/BottomPanelBtnDefault.png'},
+
+                {alias: 'EarnIconActive', src: './assets/ui/bottomPanel/EarnIconActive.png'},
+                {alias: 'FriendsIconActive', src: './assets/ui/bottomPanel/FriendsIconActive.png'},
+                {alias: 'LeaderboardIconActive', src: './assets/ui/bottomPanel/LeaderboardIconActive.png'},
+                {alias: 'PlayIconActive', src: './assets/ui/bottomPanel/PlayIconActive.png'},
+                {alias: 'ShopIconActive', src: './assets/ui/bottomPanel/ShopIconActive.png'},
+
+                {alias: 'EarnIconDefault', src: './assets/ui/bottomPanel/EarnIconDefault.png'},
+                {alias: 'FriendsIconDefault', src: './assets/ui/bottomPanel/FriendsIconDefault.png'},
+                {alias: 'LeaderboardIconDefault', src: './assets/ui/bottomPanel/LeaderboardIconDefault.png'},
+                {alias: 'PlayIconDefault', src: './assets/ui/bottomPanel/PlayIconDefault.png'},
+                {alias: 'ShopIconDefault', src: './assets/ui/bottomPanel/ShopIconDefault.png'},
+
                 {alias: 'CloudsFront', src: './assets/CloudsFront.png'},
                 {alias: 'CloudsUp', src: './assets/CloudsUp.png'},
                 {alias: 'CloudsBack', src: './assets/CloudsBack.png'},
