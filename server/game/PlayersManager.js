@@ -17,7 +17,7 @@ export class PlayersManager {
             tasks: []
         };
 
-        const playerData = this.dbAdapter.createPlayer(newPlayer);
+        const playerData = await this.dbAdapter.createPlayer(newPlayer);
 
         return new Player(playerData);
     }

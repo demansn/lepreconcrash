@@ -77,6 +77,7 @@ export class MongoDBAdapter {
         }));
 
         await this.playersCollection.insertOne(playerData);
+
         return playerData;
     }
 
