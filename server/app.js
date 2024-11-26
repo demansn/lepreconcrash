@@ -27,7 +27,7 @@ const httpServer = new HTTPServer(options);
 
 httpServer.addAPI(game, ['initSession', 'placeBet', 'cashOut', 'getTasks', 'claimTaskReward']);
 // httpServer.addAPI(bot, ['fromTelegram', 'getInvoiceLink']);
-httpServer.start({port: 3001});
+httpServer.start({port: process.env.PORT});
 
 async function onTerminate() {
     await game.saveState();
