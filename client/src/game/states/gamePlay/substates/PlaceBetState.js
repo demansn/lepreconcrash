@@ -18,6 +18,7 @@ export class PlaceBetState extends GameBaseState {
 
     async placeBet(bet) {
         try {
+            this.scene.call('GamePlayScene', 'wait');
             const {round} = await this.logic.placeBet(bet);
 
             this.scene.call('GamePlayScene', 'play', {

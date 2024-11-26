@@ -9,7 +9,6 @@ export class AssetsLoading extends GameBaseState {
     }
 
     exit() {
-        console.log('Exiting AssetsLoading');
         this.scene.hide('LoadingScene');
     }
 
@@ -24,7 +23,6 @@ export class AssetsLoading extends GameBaseState {
 
     async startLoading() {
         await Assets.loadBundle('game', this.onProgress.bind(this));
-        console.log('Assets loaded');
     }
 
     onProgress(progress) {

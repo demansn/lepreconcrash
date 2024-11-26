@@ -14,6 +14,7 @@ export class PlayState extends GameBaseState {
     }
 
     async onGo() {
+        this.scene.call('GamePlayScene', 'wait');
         await this.go();
     }
 
