@@ -6,7 +6,7 @@ import {GameServer} from "./game/GameServer.js";
 import {Api, Bot} from "grammy";
 import {MongoDBAdapter} from "./db/MongoDBAdapter.js";
 
-dotenv.config();
+dotenv.config('./.env');
 
 // const bot  = new TelagramBot(process.env.BOT_TOKEN);
 
