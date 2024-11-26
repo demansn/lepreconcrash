@@ -11,4 +11,5 @@ node_modules/
 /client/idea
 /client/.env
 /client/dist/js/
+/server/database.json
 
