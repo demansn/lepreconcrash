@@ -1,12 +1,13 @@
 import {HTTPServer} from './HTTPServer.js';
 import dotenv from 'dotenv';
 import fs from 'fs';
+import path from 'node:path';
 import {FileDatabaseAdapter} from "./db/FileDatabaseAdapter.js";
 import {GameServer} from "./game/GameServer.js";
 import {Api, Bot} from "grammy";
 import {MongoDBAdapter} from "./db/MongoDBAdapter.js";
 
-dotenv.config('./.env');
+dotenv.config(path.join(process.env.PWD, '.env'));
 
 // const bot  = new TelagramBot(process.env.BOT_TOKEN);
 
