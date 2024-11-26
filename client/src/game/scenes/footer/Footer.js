@@ -30,6 +30,19 @@ export class Footer extends BaseScene {
         this.setLayer('hud');
         this.zOrder = 1000;
         this.zIndex = 1000;
+        this.eventMode = 'auto';
+    }
+
+    show() {
+        super.show();
+
+        this.eventMode = 'auto';
+    }
+
+    enable() {
+        super.enable();
+
+        this.eventMode = 'auto';
     }
 
     #onSelected(index) {
@@ -48,4 +61,5 @@ export class Footer extends BaseScene {
         this.buttons.selected = index;
         this.buttons.selectItem(index);
     }
+
 }

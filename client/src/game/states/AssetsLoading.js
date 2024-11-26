@@ -28,7 +28,6 @@ export class AssetsLoading extends GameBaseState {
     }
 
     onProgress(progress) {
-        console.log('Progress', toFixed(progress));
         this.scene.call('LoadingScene', 'setProgress', toFixed(progress));
     }
 }

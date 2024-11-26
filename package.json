@@ -5,7 +5,7 @@
   "scripts": {
     "build:client": "cd client && npm run build",
     "run:client": "cd client && npm run start",
-    "run:server": "cd server && npm run start"
+    "start:server": "cd server && npm run start"
   },
   "workspaces": [
     "server",

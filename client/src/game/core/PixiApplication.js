@@ -7,6 +7,8 @@ export class PixiApplication {
         this.app.stage = new Stage();
         this.app.stage.sortableChildren = true;
 
+        window.__PIXI_APP__ =  this.app;
+
         this.container = document.getElementById(options.containerId);
 
         if (!this.container) {

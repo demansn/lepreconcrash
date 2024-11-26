@@ -1,4 +1,5 @@
 import {SuperContainer} from "../gameObjects/SuperContainer.js";
+import {toFixed} from "../utils.js";
 
 export class LoadingScene extends SuperContainer {
     constructor() {
@@ -29,7 +30,7 @@ export class LoadingScene extends SuperContainer {
     }
 
     setProgress(progress) {
-        const p = progress * 100;
+        const p = toFixed(progress * 100);
 
         this.text.text = `Loading... ${p}%`;
         this.progressBar.progress = p

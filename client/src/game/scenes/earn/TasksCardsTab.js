@@ -15,10 +15,12 @@ export class TasksCardsTab extends SuperContainer {
 
         this.list = this.addChild(new ScrollBox({
             elementsMargin: 16,
+            topPadding: 2,
             leftPadding: 4,
+            rightPadding: 4,
             bottomPadding: 100,
             scroll: 'vertical',
-            width: 632,
+            width: 634,
             height,
         }));
 
