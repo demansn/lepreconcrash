@@ -128,5 +128,26 @@ export const Styles = {
         align: 'center',
         wordWrapWidth: 400,
         wordWrap: true,
+    },
+    RewardPopupTitle: {
+        fontFamily: 'AldotheApache',
+        fontSize: 67,
+        fill: 0xffffff,
+        align: 'center',
+        wordWrapWidth: 400,
+        wordWrap: true,
+        shadow: true,
+        shadowColor: '#003923',
+        shadowBlur: 20,
+        shadowOffsetX: 0,
+        shadowOffsetY: 1,
+        // 0px 1px 20px #003923
+    },
+    RewardPopupValue: {
+        fontFamily: 'AldotheApache',
+        fontSize: 120,
+        fill: 0xFF7700,
+        align: 'center',
+        fontWeight: 400,
     }
 };

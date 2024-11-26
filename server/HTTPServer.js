@@ -72,7 +72,9 @@ export class HTTPServer {
                     }
 
                     res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: error.message }));
+                    res.end(JSON.stringify({ error: 'Server error'}));
+
+                    console.error(error);
                 }
             });
     }

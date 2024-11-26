@@ -31,12 +31,15 @@ export class Mather {
         const factory = Mather.objectsFactoriesByNames[name];
 
         if (!factory) {
+            if (this.getTexture(name)) {
+                return this.sprite({texture: name, ...properties});
+            }
+        } else {
+            const {parameters, ...rest} = properties;
+            const displayObject = factory(parameters);
 
+            return this.addAndSetProperties(displayObject, rest);
         }
-        const {parameters = {}, ...rest} = properties;
-        const displayObject = factory(parameters);
-
-        return this.addAndSetProperties(displayObject, rest);
     }
 
     sprite({texture, ...properties}) {

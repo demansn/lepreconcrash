@@ -1,16 +1,19 @@
 import Big from "big.js";
+import {TaskStatus} from "../../shared/TaskStatus.js";
+import {Task} from "./tasks/Task.js";
 
 export class Player {
     #balance;
     #luck;
     #level;
 
-    constructor({balance, luck, level, id, session}) {
+    constructor({balance, luck, level, id, session, tasks = []}) {
         this.balance = balance;
         this.luck = luck;
         this.level = level;
         this.id = id;
         this.session = session;
+        this.tasks = tasks.map(data => new Task(data));
     }
 
     addBalance(amount) {
@@ -49,11 +52,32 @@ export class Player {
         this.#level = value;
     }
 
+    /**
+     * Возвращает задания игрока, включая статус и прогресс.
+     * @returns {Array} Список заданий игрока.
+     */
+    getTasks() {
+        return this.tasks.map(task => ({
+            ...task.toObject()
+        }));
+    }
+
+    getTask(id) {
+        return this.tasks.find(task => task.id === id);
+    }
+
+    updateTaskOnAction(action) {
+        return this.tasks.map(task => task.updateOnAction(action)).filter(Boolean);
+    }
+
     toObject() {
         return {
+            id: this.id,
             balance: this.balance,
             luck: this.luck,
-            level: this.level
+            level: this.level,
+            session: this.session,
+            tasks: this.tasks.map(task => task.toObject())
         }
     }
 }

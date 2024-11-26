@@ -33,4 +33,8 @@ export class HeaderScene extends BaseScene {
         this.lack.setValue(luck);
         this.lack.setLevel(level);
     }
+
+    setBalance(value) {
+        this.balance.setValue(value);
+    }
 }

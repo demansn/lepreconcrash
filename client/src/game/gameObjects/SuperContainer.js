@@ -45,12 +45,37 @@ export class SuperContainer extends Container {
             width: GameConfig.PixiApplication.width,
             height: GameConfig.PixiApplication.height
         };
-        this.create = new Mather(this, {get: SuperContainer.resourceGetter}, {get: SuperContainer.stylesGetter}, layers, GameConfig.PixiApplication);
+        this.create = new Mather(
+            this,
+            {get: SuperContainer.resourceGetter},
+            {get: SuperContainer.stylesGetter},
+            layers,
+            GameConfig.PixiApplication,
+        );
         this.state = new DisplayObjectStateMachine(this);
         this.gsap = gsap;
     }
 
     setLayer(name) {
         this.parentLayer =  layers.get(name);
+    }
+
+    getObjectByName(name) {
+        const object = this.children.find(child => child.name === name);
+
+        if (!object) {
+            // search in children of children
+            for (let i = 0; i < this.children.length; i++) {
+                const child = this.children[i];
+                if (child.children) {
+                    const object = child.children.find(child => child.name === name);
+                    if (object) {
+                        return object;
+                    }
+                }
+            }
+        }
+
+        return object;
     }
 }

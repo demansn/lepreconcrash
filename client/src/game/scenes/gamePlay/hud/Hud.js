@@ -17,7 +17,7 @@ export class Hud extends SuperContainer {
             y: 's20%'
         });
         this.roundInfo.on('click', () => {
-            app.eventEmitter.emit('hud:cashOut:clicked');
+           this.emit('cashOut:clicked');
         });
 
         this.animateClouds();

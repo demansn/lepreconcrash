@@ -1,9 +1,15 @@
 import {SuperContainer} from "../../gameObjects/SuperContainer.js";
 import {ElasticBackground} from "../../gameObjects/ElasticBackground.js";
+import {TextWithIcon} from "../../gameObjects/TextWithIcon.js";
 
 export class TasksCard extends SuperContainer {
-    constructor({task, margin = 26}) {
+    constructor({task, margin = 26, onClickClaim = () => {}, onClickInvite = () => {}}) {
         super();
+
+        this.name = 'TasksCard_' + task.id;
+        this.task = task;
+        this.onClickClaim = onClickClaim;
+        this.onClickInvite = onClickInvite;
 
         this.margin = margin;
         const borderColorByStatus = {
@@ -19,51 +25,46 @@ export class TasksCard extends SuperContainer {
             style: {
                 fill: 'rgba(0, 0, 0, 0.6)',
                 border: 2,
-                borderColor,
+                borderColor: this.getBorerColorByStatus(task.status),
                 borderRadius: 24
             }
         });
 
         this.content = this.create.container();
 
-        this.info = this.content.create.displayObject(TaskInfo, {
-            x: 16, y: 86,
-            parameters: task
-        });
-
+        this.createInfo(task);
         this.createContent(task);
         this.resize();
     }
 
-    createContent(task) {
-
+    createInfo(task) {
+        this.info = this.content.create.displayObject(TaskInfo, {x: 16, y: 86, parameters: task});
     }
+
+    createContent(task) {}
 
     resize() {
         this.background.setSize({width: 630, height: this.content.height + this.margin * 2});
     }
-}
 
-class TextWithIcon extends SuperContainer {
-    constructor({text, textStyle, icon, gap = 8}) {
-        super();
+    getBorerColorByStatus(status) {
+        const borderColorByStatus = {
+            ready_to_claim: 0xFFE20B,
+            in_progress: 0xffffff,
+            claimed: 0x004600
+        }
 
-        this.value = this.create.text({text: text, style: textStyle});
-        this.icon = this.create.sprite({texture: icon, });
-        this.gap = gap;
-
-        this.icon.y = this.value.height / 2 - this.icon.height / 2;
-
-        this.#update();
+        return borderColorByStatus[status] || 0xffffff;
     }
 
-    #update() {
-        this.icon.x = this.value.width + this.gap;
-    }
+    update(task) {
+        console.log('update', task);
+        this.background.setStyle({borderColor: this.getBorerColorByStatus(task.status)});
+        this.content.removeChildren();
 
-    setText(value) {
-        this.value.text = value;
-        this.#update();
+        this.createInfo(task);
+        this.createContent(task);
+        this.resize();
     }
 }
 

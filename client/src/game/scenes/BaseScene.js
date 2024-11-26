@@ -5,6 +5,10 @@ export class BaseScene extends SuperContainer {
         super(props);
 
         this.visible = false;
+
+        if (props && props.zIndex !== undefined) {
+            this.zIndex = props.zIndex;
+        }
     }
 
     show() {
@@ -13,5 +17,15 @@ export class BaseScene extends SuperContainer {
 
     hide() {
         this.visible = false;
+    }
+
+    disable() {
+        this.interactive = false;
+        this.interactiveChildren = false;
+    }
+
+    enable() {
+        this.interactiveChildren = true;
+        this.interactive = true;
     }
 }

@@ -2,6 +2,7 @@ import {GameBaseState} from "../../GameBaseState.js";
 
 export class PlaceBetState extends GameBaseState {
     enter() {
+        this.scene.call('GamePlayScene', 'updateHUD', {win: 0, multiplier: 0, luck: 0});
         this.scene.on('GamePlayScene', 'placeBet', this.onPlaceBet.bind(this));
         this.scene.call('GamePlayScene', 'waitPlaceBet');
     }

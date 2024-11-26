@@ -27652,18 +27652,21 @@ void main(void)\r
   }
 
   // src/game/core/GameLogic.js
+  var INVITE_URL = "https://t.me/share/url";
   var GameLogic = class {
     create(options) {
-      this.api = createAPI(["initSession", "placeBet", "cashOut", "nextStep", "getTasks"], "http://localhost:3001");
+      this.api = createAPI(["initSession", "placeBet", "cashOut", "nextStep", "getTasks", "claimTaskReward"], "https://8e2a8c8eabf2.ngrok.app");
       const urlParams = new URLSearchParams(window.location.search);
       this.cheat = {
         bonusStep: urlParams.has("bonusStep") ? Number(urlParams.get("bonusStep")) : void 0,
         loseStep: urlParams.has("loseStep") ? Number(urlParams.get("loseStep")) : void 0,
         winStep: urlParams.has("winStep") ? Number(urlParams.get("winStep")) : void 0
       };
+      this.invite = urlParams.has("tgWebAppStartParam") ? Number(urlParams.get("tgWebAppStartParam")) : void 0;
       if (false) {
         this.cheat = void 0;
       }
+      this.userData = this.getUserData();
     }
     getUserData() {
       let userData = window.Telegram.WebApp.initData;
@@ -27673,7 +27676,7 @@ void main(void)\r
       return userData;
     }
     async initSession() {
-      const { player, steps, id: id3, gameRound, link } = await this.api.initSession(this.getUserData());
+      const { player, steps, id: id3, gameRound, link } = await this.api.initSession(this.userData, this.invite);
       this.sessionID = id3;
       this.player = player;
       this.gameSteps = steps;
@@ -27687,7 +27690,9 @@ void main(void)\r
     }
     async placeBet(bet) {
       const { player, gameRound } = await this.api.placeBet(bet, this.sessionID, this.cheat);
-      this.player = player;
+      this.player.balance = player.balance;
+      this.player.luck = player.luck;
+      this.player.level = player.level;
       this.gameRound = gameRound;
       return {
         player,
@@ -27714,7 +27719,27 @@ void main(void)\r
       };
     }
     async getTasks() {
-      return await this.api.getTasks(this.sessionID);
+      return await this.api.getTasks(this.player.id);
+    }
+    claimTaskReward(taskId) {
+      const result = this.api.claimTaskReward(this.sessionID, taskId);
+      if (result.task) {
+        this.player.balance = result.player.balance;
+      }
+      return result;
+    }
+    createInviteLink() {
+      const playerID = 432530856;
+      const url2 = decodeURIComponent(`${"https://t.me/demansn_test_bot/leprecon_crash_develop"}?startapp=${playerID}`);
+      const text = encodeURIComponent("Join the game!");
+      return `${INVITE_URL}?url=${url2}&text=${text}`;
+    }
+    inviteFriend() {
+      const inviteLink = this.createInviteLink();
+      window.Telegram.WebApp.openLink(inviteLink);
+    }
+    async reconnect() {
+      await this.initSession();
     }
   };
 
@@ -27829,8 +27854,9 @@ void main(void)\r
       this.container.removeChild(scene);
     }
     getScene(sceneName) {
-      if (!this.scenes[sceneName] && this.scenesConfig[sceneName]) {
-        this.scenes[sceneName] = new this.scenesConfig[sceneName]();
+      const Scene = this.scenesConfig[sceneName];
+      if (!this.scenes[sceneName] && Scene) {
+        this.scenes[sceneName] = new Scene(Scene.options);
       }
       if (!this.scenes[sceneName]) {
         throw new Error(`Scene ${sceneName} not found`);
@@ -27848,6 +27874,16 @@ void main(void)\r
       if (scene[method]) {
         return scene[method](...args);
       }
+    }
+    forEachScene(callback) {
+      Object.values(this.scenes).forEach(callback);
+    }
+    callAll(method, ...args) {
+      this.forEachScene((scene) => {
+        if (scene[method]) {
+          scene[method](...args);
+        }
+      });
     }
     on(sceneName, event, callback) {
       const scene = this.getScene(sceneName);
@@ -27944,7 +27980,7 @@ void main(void)\r
       this.screenSize = screenSize;
     }
     set(displayObject, properties = {}) {
-      const { x: x2, y: y2, position, anchor, scale, ...other } = properties;
+      const { x: x2, y: y2, position, anchor, scale, offset, ...other } = properties;
       if (anchor && displayObject.anchor !== void 0) {
         this.setPointValue(displayObject.anchor, anchor);
       }
@@ -27966,6 +28002,22 @@ void main(void)\r
             displayObject.y = this.calculateValueExpression(y2, displayObject.height, this.parent.height, this.screenSize.height);
           } else {
             displayObject.y = y2;
+          }
+        }
+      }
+      if (offset) {
+        if (offset.x !== void 0) {
+          if (typeof offset.x === "string") {
+            displayObject.x += this.calculateValueExpression(offset.x, displayObject.width, this.parent.width, this.screenSize.width);
+          } else {
+            displayObject.x += offset.x;
+          }
+        }
+        if (offset.y !== void 0) {
+          if (typeof offset.y === "string") {
+            displayObject.y += this.calculateValueExpression(offset.y, displayObject.height, this.parent.height, this.screenSize.height);
+          } else {
+            displayObject.y += offset.y;
           }
         }
       }
@@ -28028,10 +28080,14 @@ void main(void)\r
     object(name, properties = {}) {
       const factory = _Mather.objectsFactoriesByNames[name];
       if (!factory) {
+        if (this.getTexture(name)) {
+          return this.sprite({ texture: name, ...properties });
+        }
+      } else {
+        const { parameters, ...rest } = properties;
+        const displayObject = factory(parameters);
+        return this.addAndSetProperties(displayObject, rest);
       }
-      const { parameters = {}, ...rest } = properties;
-      const displayObject = factory(parameters);
-      return this.addAndSetProperties(displayObject, rest);
     }
     sprite({ texture, ...properties }) {
       const displayObject = new Sprite(this.textures.get(texture));
@@ -28207,6 +28263,27 @@ void main(void)\r
       align: "center",
       wordWrapWidth: 400,
       wordWrap: true
+    },
+    RewardPopupTitle: {
+      fontFamily: "AldotheApache",
+      fontSize: 67,
+      fill: 16777215,
+      align: "center",
+      wordWrapWidth: 400,
+      wordWrap: true,
+      shadow: true,
+      shadowColor: "#003923",
+      shadowBlur: 20,
+      shadowOffsetX: 0,
+      shadowOffsetY: 1
+      // 0px 1px 20px #003923
+    },
+    RewardPopupValue: {
+      fontFamily: "AldotheApache",
+      fontSize: 120,
+      fill: 16742144,
+      align: "center",
+      fontWeight: 400
     }
   };
 
@@ -32526,12 +32603,33 @@ void main(void)\r
         width: GameConfig.PixiApplication.width,
         height: GameConfig.PixiApplication.height
       };
-      this.create = new Mather(this, { get: _SuperContainer.resourceGetter }, { get: _SuperContainer.stylesGetter }, layers, GameConfig.PixiApplication);
+      this.create = new Mather(
+        this,
+        { get: _SuperContainer.resourceGetter },
+        { get: _SuperContainer.stylesGetter },
+        layers,
+        GameConfig.PixiApplication
+      );
       this.state = new DisplayObjectStateMachine(this);
       this.gsap = gsapWithCSS;
     }
     setLayer(name) {
       this.parentLayer = layers.get(name);
+    }
+    getObjectByName(name) {
+      const object = this.children.find((child) => child.name === name);
+      if (!object) {
+        for (let i2 = 0; i2 < this.children.length; i2++) {
+          const child = this.children[i2];
+          if (child.children) {
+            const object2 = child.children.find((child2) => child2.name === name);
+            if (object2) {
+              return object2;
+            }
+          }
+        }
+      }
+      return object;
     }
   };
 
@@ -32744,7 +32842,7 @@ void main(void)\r
         y: "s20%"
       });
       this.roundInfo.on("click", () => {
-        app.eventEmitter.emit("hud:cashOut:clicked");
+        this.emit("cashOut:clicked");
       });
       this.animateClouds();
       this.playButton.on("go:clicked", () => {
@@ -35575,12 +35673,23 @@ void main(void)\r
     constructor(props) {
       super(props);
       this.visible = false;
+      if (props && props.zIndex !== void 0) {
+        this.zIndex = props.zIndex;
+      }
     }
     show() {
       this.visible = true;
     }
     hide() {
       this.visible = false;
+    }
+    disable() {
+      this.interactive = false;
+      this.interactiveChildren = false;
+    }
+    enable() {
+      this.interactiveChildren = true;
+      this.interactive = true;
     }
   };
 
@@ -35601,9 +35710,11 @@ void main(void)\r
       this.hud.on("play:clicked", () => {
         this.emit("placeBet");
       });
+      this.hud.on("cashOut:clicked", () => {
+        this.emit("cashOut");
+      });
     }
-    show({ gameRound }) {
-      super.show();
+    init({ gameRound }) {
       const levelParameters = {
         currentStep: gameRound ? gameRound.step : 0,
         bonusStep: gameRound ? gameRound.bonus.step : void 0,
@@ -35640,19 +35751,10 @@ void main(void)\r
       const { bonus, nextStepWin, step } = gameRound;
       this.level.setBonusToPlatform(bonus.step);
       this.level.setNextStepWin({ step: step + 1, nextStepWin });
-      this.hud.updateRoundInfo(info);
+      this.hud.updateRoundInfo(gameRound);
     }
-    restore({ gameRound, info }) {
-      const { bonus, nextStepWin, step } = gameRound;
-      if (step < bonus.step) {
-        this.level.setBonusToPlatform(bonus.step);
-      }
-      this.level.setNextStepWin({ step: step + 1, nextStepWin });
-      this.level.setHeroToPlatform(step);
-      this.hud.updateRoundInfo(info);
-    }
-    updateHUD({ balance, luck, level, round: round2 }) {
-      this.hud.updateRoundInfo(round2);
+    updateHUD({ win = 0, multiplier = 0, luck = 0 }) {
+      this.hud.updateRoundInfo({ win, multiplier, luck });
     }
     cashOut(result, roundResult) {
       const timeline2 = gsapWithCSS.timeline();
@@ -35690,11 +35792,11 @@ void main(void)\r
     win(info, result) {
       this.emit("win");
     }
-    winRoundAnimation(playerInfo, result) {
+    winRoundAnimation(result) {
       const timeline2 = gsapWithCSS.timeline();
-      timeline2.add(this.hud.animateTo(playerInfo)).add([
+      timeline2.add(this.hud.animateTo(result)).add([
         () => this.reset(),
-        () => this.showWinPopup({ bet: result.bet, win: result.totalWin, luck: result.luck })
+        () => this.showWinPopup({ bet: result.round.bet, win: result.round.totalWin, luck: result.round.luck })
       ], "+=0.2");
     }
     reset() {
@@ -35778,36 +35880,11 @@ void main(void)\r
         this.goTo("InitGamePlayState");
       }
       this.header.set(this.logic.getInfo());
-      this.init();
+      this.scene.show("GamePlayScene");
     }
     exit() {
       super.exit();
       this.scene.hide("GamePlayScene");
-    }
-    async init() {
-      this.gamePlayScene = this.scene.show("GamePlayScene", this.app);
-    }
-    start() {
-      this.gamePlayScene.updateHUD(this.logic.getInfo());
-      if (this.logic.gameRound) {
-        this.restoreGame();
-      } else {
-        this.startGame();
-      }
-      this.addEventListeners();
-    }
-    restoreGame() {
-    }
-    addEventListeners() {
-      app.eventEmitter.on("hud:play:clicked", () => this.placeBet(10), this);
-      app.eventEmitter.on("hud:cashOut:clicked", () => this.cashOut(), this);
-      app.eventEmitter.on("hud:go:clicked", () => this.go(), this);
-    }
-    removeEventListeners() {
-      app.eventEmitter.off("hud:play:clicked");
-      app.eventEmitter.off("hud:cashOut:clicked");
-      app.eventEmitter.off("hud:go:clicked");
-      app.eventEmitter.off("popups:show");
     }
     async cashOut() {
       try {
@@ -35824,13 +35901,11 @@ void main(void)\r
         this.showSessionExpiredPopup();
       } else {
         this.gamePlayScene.interactiveChildren = false;
-        this.removeEventListeners();
       }
     }
     showSessionExpiredPopup() {
     }
     async reload() {
-      this.removeEventListeners();
       await this.logic.initSession(this.getUserData());
       this.gamePlayScene.destroy();
       this.scene = new GamePlayScene(this.app);
@@ -35890,6 +35965,7 @@ void main(void)\r
           { alias: "RadioUnselected", src: "./assets/RadioUnselected.webp" },
           { alias: "PlayBtnBg", src: "./assets/PlayBtnBg.webp" },
           { alias: "PrevBtn", src: "./assets/PrevBtn.webp" },
+          { alias: "RewardPopup", src: "./assets/RewardPopup.webp" },
           { alias: "BottomPanelBtnActive", src: "./assets/ui/bottomPanel/BottomPanelBtnActive.png" },
           { alias: "BottomPanelBtnDefault", src: "./assets/ui/bottomPanel/BottomPanelBtnDefault.png" },
           { alias: "EarnIconActive", src: "./assets/ui/bottomPanel/EarnIconActive.png" },
@@ -40435,12 +40511,35 @@ void main(void)\r
   var EarnState = class extends ScreenState {
     async enter() {
       super.enter();
-      this.loadTasks();
+      this.init();
+    }
+    async exit() {
+      super.exit();
+      this.earn.off("onClickClaim");
+      this.earn.off("onClickInvite");
+    }
+    async init() {
+      await this.loadTasks();
+      this.earn.on("onClickClaim", this.claimTaskReward.bind(this));
+      this.earn.on("onClickInvite", this.inviteFriend.bind(this));
+    }
+    async claimTaskReward(taskId) {
+      this.footer.disable();
+      this.earn.disable();
+      const result = await this.logic.claimTaskReward(taskId);
+      this.scene.show("RewardDailyScene", result.task);
+      this.header.setBalance(result.player.balance);
+      this.earn.updateTasks([result.task]);
+      this.footer.enable();
+      this.earn.enable();
     }
     async loadTasks() {
       const tasks = await this.logic.getTasks();
       this.earn.showTasks(tasks);
       console.log(tasks);
+    }
+    inviteFriend(taskId) {
+      this.logic.inviteFriend();
     }
   };
 
@@ -40518,6 +40617,9 @@ void main(void)\r
       this.lack.setValue(luck);
       this.lack.setLevel(level);
     }
+    setBalance(value) {
+      this.balance.setValue(value);
+    }
   };
 
   // src/game/scenes/popupManager/popup/SessionExpired.js
@@ -40582,6 +40684,7 @@ void main(void)\r
   // src/game/states/gamePlay/substates/PlaceBetState.js
   var PlaceBetState = class extends GameBaseState {
     enter() {
+      this.scene.call("GamePlayScene", "updateHUD", { win: 0, multiplier: 0, luck: 0 });
       this.scene.on("GamePlayScene", "placeBet", this.onPlaceBet.bind(this));
       this.scene.call("GamePlayScene", "waitPlaceBet");
     }
@@ -40607,7 +40710,11 @@ void main(void)\r
   };
 
   // src/game/states/gamePlay/substates/CashOutState.js
-  var CashOutStateState = class extends GameBaseState {
+  var CashOutState = class extends GameBaseState {
+    async enter() {
+      await this.owner.cashOut();
+      this.owner.goTo("PlaceBetState");
+    }
   };
 
   // src/game/states/gamePlay/substates/PlayState.js
@@ -40627,21 +40734,22 @@ void main(void)\r
     }
     async go() {
       try {
+        this.scene.call("GamePlayScene", "gotoWaitState");
         const roundResult = await this.logic.nextStep();
         const info = roundResult.isWin ? this.logic.getInfo() : null;
-        await this.scene.call("GamePlayScene", "go", roundResult, info);
+        this.scene.call("GamePlayScene", "go", roundResult, info);
       } catch (e2) {
         this.error(e2);
       }
     }
     async onCashOut() {
-      await this.owner.cashOut();
+      this.owner.goTo("CashOutState");
     }
     async onLose() {
       this.owner.goTo("LoseState");
     }
     async onWin() {
-      console.log("Win");
+      this.owner.goTo("WinState");
     }
   };
 
@@ -40656,7 +40764,7 @@ void main(void)\r
   // src/game/states/gamePlay/substates/InitGamePlayState.js
   var InitGamePlayState = class extends GameBaseState {
     enter() {
-      this.scene.show("GamePlayScene", {
+      this.scene.call("GamePlayScene", "init", {
         app: this.PixiApplication.getApp(),
         gameRound: this.logic.gameRound,
         info: this.logic.getInfo()
@@ -40691,6 +40799,13 @@ void main(void)\r
     }
   };
 
+  // ../shared/TaskType.js
+  var TaskType = Object.freeze({
+    daily: "daily",
+    basic: "basic",
+    friends: "friends"
+  });
+
   // src/game/gameObjects/ElasticBackground.js
   var BorderedFill = class extends Graphics {
     constructor(parameters) {
@@ -40701,6 +40816,10 @@ void main(void)\r
     setSize({ width, height }) {
       const { fill, border, borderColor, borderRadius } = this.parameters;
       this.fillByStyle({ fill, border, borderColor, borderRadius, width, height });
+    }
+    setStyle({ fill = this.parameters.fill, borderColor = this.parameters.borderColor }) {
+      this.parameters = { ...this.parameters, fill, borderColor };
+      this.fillByStyle(this.parameters);
     }
     fillByStyle({ fill, border, borderColor, borderRadius, width, height }) {
       this.clear();
@@ -40723,6 +40842,9 @@ void main(void)\r
           borderRadius: style.borderRadius
         }
       });
+    }
+    setStyle(style) {
+      this.background.setStyle(style);
     }
     setSize(width, height) {
       this.background.setSize(width, height);
@@ -40760,10 +40882,54 @@ void main(void)\r
     }
   };
 
+  // src/game/gameObjects/TextWithIcon.js
+  var TextWithIcon = class extends SuperContainer {
+    constructor({ text, textStyle, icon, gap = 8 }) {
+      super();
+      this.value = this.create.text({ text, style: textStyle });
+      this.icon = this.create.object(icon);
+      this.gap = gap;
+      this.icon.y = this.value.height / 2 - this.icon.height / 2;
+      this.#update();
+    }
+    #update() {
+      this.icon.x = this.value.width + this.gap;
+      const align = this.value.style.align;
+      if (align) {
+        if (align === "center") {
+          this.value.x = -this.value.width / 2;
+          this.icon.x = this.value.width / 2 + this.gap;
+        } else if (align === "right") {
+          this.value.x = -this.value.width;
+          this.icon.x = this.value.width + this.gap;
+        } else if (align === "left") {
+          this.value.x = 0;
+          this.icon.x = this.value.width + this.gap;
+        }
+      }
+    }
+    set text(value) {
+      this.setText(value);
+    }
+    get text() {
+      return this.value.text;
+    }
+    setText(value) {
+      this.value.text = value;
+      this.#update();
+    }
+  };
+
   // src/game/scenes/earn/TaskCard.js
   var TasksCard = class extends SuperContainer {
-    constructor({ task, margin = 26 }) {
+    constructor({ task, margin = 26, onClickClaim = () => {
+    }, onClickInvite = () => {
+    } }) {
       super();
+      this.name = "TasksCard_" + task.id;
+      this.task = task;
+      this.onClickClaim = onClickClaim;
+      this.onClickInvite = onClickInvite;
       this.margin = margin;
       const borderColorByStatus = {
         ready_to_claim: 16769547,
@@ -40777,40 +40943,38 @@ void main(void)\r
         style: {
           fill: "rgba(0, 0, 0, 0.6)",
           border: 2,
-          borderColor,
+          borderColor: this.getBorerColorByStatus(task.status),
           borderRadius: 24
         }
       });
       this.content = this.create.container();
-      this.info = this.content.create.displayObject(TaskInfo, {
-        x: 16,
-        y: 86,
-        parameters: task
-      });
+      this.createInfo(task);
       this.createContent(task);
       this.resize();
+    }
+    createInfo(task) {
+      this.info = this.content.create.displayObject(TaskInfo, { x: 16, y: 86, parameters: task });
     }
     createContent(task) {
     }
     resize() {
       this.background.setSize({ width: 630, height: this.content.height + this.margin * 2 });
     }
-  };
-  var TextWithIcon = class extends SuperContainer {
-    constructor({ text, textStyle, icon, gap = 8 }) {
-      super();
-      this.value = this.create.text({ text, style: textStyle });
-      this.icon = this.create.sprite({ texture: icon });
-      this.gap = gap;
-      this.icon.y = this.value.height / 2 - this.icon.height / 2;
-      this.#update();
+    getBorerColorByStatus(status) {
+      const borderColorByStatus = {
+        ready_to_claim: 16769547,
+        in_progress: 16777215,
+        claimed: 17920
+      };
+      return borderColorByStatus[status] || 16777215;
     }
-    #update() {
-      this.icon.x = this.value.width + this.gap;
-    }
-    setText(value) {
-      this.value.text = value;
-      this.#update();
+    update(task) {
+      console.log("update", task);
+      this.background.setStyle({ borderColor: this.getBorerColorByStatus(task.status) });
+      this.content.removeChildren();
+      this.createInfo(task);
+      this.createContent(task);
+      this.resize();
     }
   };
   var TaskInfo = class extends SuperContainer {
@@ -40836,41 +41000,66 @@ void main(void)\r
     CLAIMED: "claimed"
   });
 
-  // src/game/gameObjects/InviteButton.js
-  var InviteButton = class extends SuperContainer {
-    constructor() {
-      super();
-      this.button = this.create.displayObject(FancyButton, {
-        parameters: {
-          defaultView: "invite_btn",
-          anchor: 0.5,
-          animations: {
-            pressed: {
-              props: {
-                anchor: 0.5,
-                scale: {
-                  x: 0.9,
-                  y: 0.9
-                }
-              },
-              duration: 100
+  // src/game/scenes/earn/DailyTaskCard.js
+  var DailyTaskCard = class extends TasksCard {
+    createContent(task) {
+      const { goal, progress } = task;
+      const left = goal - progress;
+      this.status = this.content.create.text({ text: ``, style: "TaskInfoText", y: this.info.y, x: 602, anchor: { x: 1 } });
+      switch (task.status) {
+        case TaskStatus.IN_PROGRESS:
+          this.status.text = `${left} LEFT`;
+          this.progressBar = this.content.create.object("ProgressBar", {
+            x: 26,
+            y: 206 - 46,
+            parameters: {
+              bg: "task_progress_bg",
+              fill: "task_progress_fill",
+              fillPaddings: { top: 4, left: 4 },
+              progress: progress / goal * 100
             }
-          }
-        }
-      });
-      this.button.x += this.button.width / 2;
-      this.button.y += this.button.height / 2;
+          });
+          break;
+        case TaskStatus.READY_TO_CLAIM:
+          this.status.text = "";
+          this.claimButton = this.content.create.object("ClaimButton", { x: 26, y: 206 - 46 });
+          this.claimButton.button.onPress.connect(() => {
+            this.onClickClaim(task.id, task);
+          });
+          break;
+        case TaskStatus.CLAIMED:
+          this.status.text = "CLAIMED";
+          this.background.alpha = 0.5;
+          this.info.alpha = 0.5;
+          break;
+      }
     }
   };
 
-  // src/game/scenes/earn/DailyTaskCard.js
-  var FriendsTaskCard = class extends TasksCard {
-    createContent(task) {
-      this.inviteButton = this.content.create.object("InviteButton");
-      this.inviteButton.x = 630 - 26 - this.inviteButton.width;
-      this.inviteButton.y = 26;
+  // src/game/gameObjects/DividerLine.js
+  var DividerLine = class extends Graphics {
+    /**
+     * Создает разделительную линию.
+     * @param {number} width - Ширина линии.
+     * @param {number} thickness - Толщина линии.
+     * @param {number} color - Цвет линии (в формате 0xRRGGBB).
+     * @param {number} alpha - Прозрачность линии (от 0 до 1).
+     */
+    constructor(parameters) {
+      super();
+      this.parameters = parameters;
+      this.#drawLine();
+    }
+    #drawLine() {
+      const { width, thickness = 2, color = 16777215, alpha = 0.5 } = this.parameters;
+      this.clear();
+      this.beginFill(color, alpha);
+      this.drawRect(0, 0, width, thickness);
+      this.endFill();
     }
   };
+
+  // src/game/scenes/earn/BasicTaskCard.js
   var BasicTaskCard = class extends TasksCard {
     createContent(task) {
       this.toggleDescriptionBtn = this.content.addChild(new CheckBox({
@@ -40927,111 +41116,24 @@ void main(void)\r
       return container;
     }
   };
-  var DividerLine = class extends Graphics {
-    /**
-     * Создает разделительную линию.
-     * @param {number} width - Ширина линии.
-     * @param {number} thickness - Толщина линии.
-     * @param {number} color - Цвет линии (в формате 0xRRGGBB).
-     * @param {number} alpha - Прозрачность линии (от 0 до 1).
-     */
-    constructor(parameters) {
-      super();
-      this.parameters = parameters;
-      this.#drawLine();
-    }
-    #drawLine() {
-      const { width, thickness = 2, color = 16777215, alpha = 0.5 } = this.parameters;
-      this.clear();
-      this.beginFill(color, alpha);
-      this.drawRect(0, 0, width, thickness);
-      this.endFill();
-    }
-  };
-  var DailyTaskCard = class extends TasksCard {
+
+  // src/game/scenes/earn/FriendsTaskCard.js
+  var FriendsTaskCard = class extends TasksCard {
     createContent(task) {
-      const { goal, progress } = task;
-      const left = goal - progress;
-      this.status = this.content.create.text({ text: ``, style: "TaskInfoText", y: this.info.y, x: 442 - 26, anchor: { x: 1 } });
-      switch (task.status) {
-        case TaskStatus.IN_PROGRESS:
-          this.status.text = `${left} LEFT`;
-          this.progressBar = this.content.create.object("ProgressBar", {
-            x: 26,
-            y: 206 - 46,
-            parameters: {
-              bg: "task_progress_bg",
-              fill: "task_progress_fill",
-              fillPaddings: { top: 4, left: 4 },
-              progress: progress / goal * 100
-            }
-          });
-          break;
-        case TaskStatus.READY_TO_CLAIM:
-          this.status.text = "";
-          this.claimButton = this.content.create.object("ClaimButton", { x: 26, y: 206 - 46 });
-          break;
-        case TaskStatus.CLAIMED:
-          this.status.text = "CLAIMED";
-          this.background.alpha = 0.5;
-          this.info.alpha = 0.5;
-          break;
-      }
+      this.inviteButton = this.content.create.object("InviteButton");
+      this.inviteButton.x = 630 - 26 - this.inviteButton.width;
+      this.inviteButton.y = 26;
+      this.inviteButton.button.onPress.connect(this.onClickInvite.bind(this));
     }
   };
 
-  // src/game/scenes/earn/TasksPanel.js
-  var TaskType = {
-    daily: "daily",
-    basic: "basic",
-    friends: "friends"
-  };
-  var TasksPanel = class extends SuperContainer {
-    constructor() {
+  // src/game/scenes/earn/TasksCardsTab.js
+  var TasksCardsTab = class extends SuperContainer {
+    constructor({ tasks, height = 900, onClickClaim, onClickShare, onClickInvite }) {
       super();
-      this.background = this.create.object("TaskPanelBackground");
-      this.buttons = this.create.object("TaskPanelButtons", { x: "s50%", y: 24 });
-      this.buttons.x -= this.buttons.width / 2 + 16;
-      this.buttons.onChange.connect(this.onSelect.bind(this));
-      this.panelsContainer = this.create.container();
-      this.panels = [];
-      this.panelsByTaskType = {};
-      this.panelsByTaskType[TaskType.daily] = this.addTasksPanel();
-      this.panelsByTaskType[TaskType.basic] = this.addTasksPanel();
-      this.panelsByTaskType[TaskType.friends] = this.addTasksPanel();
-      this.selectPanel(0);
-    }
-    addTasksToPanels(tasks) {
-      for (const type in this.panelsByTaskType) {
-        this.panelsByTaskType[type].addTasksCards(tasks.filter((task) => task.type === type));
-      }
-    }
-    addTasksPanel(tasks = [], height = 900) {
-      const panel = this.panelsContainer.create.displayObject(TasksCardsPanel, { tasks, height });
-      panel.x = 24;
-      panel.y = this.buttons.x + this.buttons.height;
-      panel.visible = false;
-      this.panels.push(panel);
-      return panel;
-    }
-    selectPanel(index) {
-      this.panels.forEach((panel, i2) => {
-        panel.visible = i2 === index;
-      });
-      this.selectedPanelIndex = index;
-      this.resize();
-    }
-    resize() {
-      const height = Math.min(this.panels[this.selectedPanelIndex].height + 128);
-      this.background.setSize({ height, width: 678 });
-    }
-    onSelect(i2) {
-      this.selectPanel(i2);
-    }
-  };
-  var TasksCardsPanel = class extends SuperContainer {
-    constructor({ tasks, height = 900 }) {
-      super();
+      this.onClickClaim = onClickClaim;
+      this.onClickShare = onClickShare;
+      this.onClickInvite = onClickInvite;
       this.list = this.addChild(new ScrollBox({
         elementsMargin: 16,
         leftPadding: 4,
@@ -41040,19 +41142,30 @@ void main(void)\r
         width: 632,
         height
       }));
-      tasks.forEach((task) => this.list.addItem(this.createTaskCard(task)));
+      tasks.forEach((task) => this.list.addItem(this.createTaskCard(task, { onClickClaim, onClickShare, onClickInvite })));
     }
-    createTaskCard(task) {
+    createTaskCard(task, params) {
       const constucrorsByType = {
         [TaskType.daily]: DailyTaskCard,
         [TaskType.basic]: BasicTaskCard,
         [TaskType.friends]: FriendsTaskCard
       };
-      return this.create.displayObject(constucrorsByType[task.type], { task });
+      return this.create.displayObject(constucrorsByType[task.type], { task, ...params });
+    }
+    updateTaskCard(task) {
+      const card = this.list.visibleItems.find((card2) => card2.task.id === task.id);
+      if (!card) {
+        return;
+      }
+      card.update(task);
+    }
+    updateTasksCards(tasks) {
+      tasks.forEach((task) => this.updateTaskCard(task));
+      this.resize();
     }
     addTasksCards(tasks) {
       tasks.forEach((task) => {
-        const card = this.createTaskCard(task);
+        const card = this.createTaskCard(task, { onClickClaim: this.onClickClaim, onClickShare: this.onClickShare, onClickInvite: this.onClickInvite });
         card.on("changedSize", this.resize.bind(this));
         this.list.addItem(card);
       });
@@ -41065,17 +41178,96 @@ void main(void)\r
     }
   };
 
+  // src/game/scenes/earn/TasksTabs.js
+  var TasksTabs = class extends SuperContainer {
+    constructor() {
+      super();
+      this.background = this.create.object("TaskPanelBackground");
+      this.buttons = this.create.object("TaskPanelButtons", { x: "s50%", y: 24 });
+      this.buttons.x -= this.buttons.width / 2 + 16;
+      this.buttons.onChange.connect(this.onSelect.bind(this));
+      this.tabs = this.create.container();
+      this.tabsByTaskType = {};
+      this.tabsByTaskType[TaskType.daily] = this.addTasksTab();
+      this.tabsByTaskType[TaskType.basic] = this.addTasksTab();
+      this.tabsByTaskType[TaskType.friends] = this.addTasksTab();
+      this.selectTab(0);
+      this.isCreatedTasks = false;
+    }
+    addTasksCards(tasks) {
+      for (const type in this.tabsByTaskType) {
+        this.tabsByTaskType[type].addTasksCards(tasks.filter((task) => task.type === type));
+      }
+      this.isCreatedTasks = true;
+    }
+    updateTasksCards(tasks) {
+      for (const type in this.tabsByTaskType) {
+        this.tabsByTaskType[type].updateTasksCards(tasks.filter((task) => task.type === type));
+      }
+      this.resize();
+    }
+    addTasksTab(tasks = [], height = 900) {
+      const panel = this.tabs.create.displayObject(TasksCardsTab, { tasks, height, onClickClaim: this.onClickClaim.bind(this), onClickShare: this.onClickShare.bind(this), onClickInvite: this.onClickInvite.bind(this) });
+      panel.x = 24;
+      panel.y = this.buttons.x + this.buttons.height;
+      panel.visible = false;
+      return panel;
+    }
+    onClickClaim(taskId) {
+      this.emit("onClickClaim", taskId);
+    }
+    onClickShare(taskId) {
+      this.emit("onClickShare", taskId);
+    }
+    onClickInvite(taskId) {
+      this.emit("onClickInvite", taskId);
+    }
+    selectTab(index) {
+      this.tabs.children.forEach((panel, i2) => {
+        panel.visible = i2 === index;
+      });
+      this.selectedTabIndex = index;
+      this.resize();
+    }
+    resize() {
+      const height = Math.min(this.tabs.children[this.selectedTabIndex].height + 128);
+      this.background.setSize({ height, width: 678 });
+    }
+    onSelect(i2) {
+      this.selectTab(i2);
+    }
+  };
+
   // src/game/scenes/EarnScene.js
   var EarnScene = class extends ScreenScene {
     constructor() {
       super({ name: "earn" });
-      this.tasksPanel = this.create.displayObject(TasksPanel, {
+      this.tasksTabs = this.create.displayObject(TasksTabs, {
         x: 21,
         y: 128
       });
+      this.tasksTabs.on("onClickClaim", this.onClaimTaskReward.bind(this));
+      this.tasksTabs.on("onClickShare", this.onShare.bind(this));
+      this.tasksTabs.on("onClickInvite", this.onClaimInvite.bind(this));
+    }
+    onClaimTaskReward(taskId) {
+      this.emit("onClickClaim", taskId);
+    }
+    onShare(taskId) {
+      this.emit("onClickShare", taskId);
+    }
+    onClaimInvite(taskId) {
+      this.emit("onClickInvite", taskId);
     }
     showTasks(tasks) {
-      this.tasksPanel.addTasksToPanels(tasks);
+      if (this.tasksTabs.isCreatedTasks) {
+        this.tasksTabs.updateTasksCards(tasks);
+      } else {
+        this.tasksTabs.addTasksCards(tasks);
+      }
+    }
+    updateTasks(tasks) {
+      this.tasksTabs.updateTasksCards(tasks);
     }
   };
 
@@ -41083,6 +41275,45 @@ void main(void)\r
   var LeaderboardScene = class extends ScreenScene {
     constructor() {
       super({ name: "leaderboard" });
+    }
+  };
+
+  // src/game/scenes/RewardDailyScene.js
+  var RewardDailyScene = class extends BaseScene {
+    static options = {
+      name: "rewardDailyPopup",
+      zIndex: 1001
+    };
+    constructor(params) {
+      super(params);
+      this.create.object("RewardPopup");
+      this.create.text({ text: "CLAIM YOUR DAILY REWARD", style: "RewardPopupTitle", x: "s50%", y: "s38%", anchor: 0.5 });
+      this.reward = this.create.object("TextWithIcon", {
+        text: "100",
+        x: "s50%",
+        y: "s53.5%",
+        offset: { y: "-50%" },
+        parameters: { textStyle: "RewardPopupValue", icon: "coin-icon" }
+      });
+    }
+    show({ reward }) {
+      super.show();
+      this.reward.text = reward;
+      this.interactiveChildren = true;
+      this.interactive = true;
+      this.on("pointerdown", this.onClick.bind(this));
+    }
+    onClick() {
+      this.hide();
+    }
+  };
+
+  // src/game/states/gamePlay/substates/WinState.js
+  var WinState = class extends GameBaseState {
+    async enter() {
+      const data = this.logic.getInfo();
+      await this.scene.call("GamePlayScene", "winRoundAnimation", data);
+      this.owner.goTo("PlaceBetState");
     }
   };
 
@@ -41147,7 +41378,8 @@ void main(void)\r
             PlaceBetState,
             PlayState,
             LoseState,
-            CashOutStateState
+            CashOutState,
+            WinState
           }
         },
         FriendsState: {
@@ -41198,7 +41430,8 @@ void main(void)\r
           scenes: {
             earn: "EarnScene",
             header: "HeaderScene",
-            footer: "Footer"
+            footer: "Footer",
+            rewardDailyPopup: "RewardDailyScene"
           }
         },
         LeaderboardState: {
@@ -41235,7 +41468,8 @@ void main(void)\r
         ShopScene,
         FriendsScene,
         EarnScene,
-        LeaderboardScene
+        LeaderboardScene,
+        RewardDailyScene
       }
     }
   };
@@ -41326,6 +41560,33 @@ void main(void)\r
     }
   };
 
+  // src/game/gameObjects/InviteButton.js
+  var InviteButton = class extends SuperContainer {
+    constructor() {
+      super();
+      this.button = this.create.displayObject(FancyButton, {
+        parameters: {
+          defaultView: "invite_btn",
+          anchor: 0.5,
+          animations: {
+            pressed: {
+              props: {
+                anchor: 0.5,
+                scale: {
+                  x: 0.9,
+                  y: 0.9
+                }
+              },
+              duration: 100
+            }
+          }
+        }
+      });
+      this.button.x += this.button.width / 2;
+      this.button.y += this.button.height / 2;
+    }
+  };
+
   // src/game/gameObjects/index.js
   Mather.registerObjectFactory("ProgressBar", (parameters) => new ProgressBar(parameters));
   Mather.registerObjectFactory("FancyButton", (parameters) => new FancyButton(parameters));
@@ -41334,6 +41595,7 @@ void main(void)\r
   Mather.registerObjectFactory("SubscribeButton", (parameters) => new SubscribeButton(parameters));
   Mather.registerObjectFactory("ClaimRewardButton", (parameters) => new ClaimRewardButton(parameters));
   Mather.registerObjectFactory("InviteButton", (parameters) => new InviteButton(parameters));
+  Mather.registerObjectFactory("TextWithIcon", (parameters) => new TextWithIcon(parameters));
   Mather.registerObjectFactory("TaskPanelButtons", () => {
     const checkedStyleButton = {
       fill: "0x3DB232",

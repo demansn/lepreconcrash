@@ -1,18 +1,42 @@
 import {ScreenScene} from "./ScreenScene.js";
-import {TasksPanel} from "./earn/TasksPanel.js";
+import {TasksTabs} from "./earn/TasksTabs.js";
 
 
 export class EarnScene extends ScreenScene {
     constructor() {
         super({name: 'earn'});
 
-        this.tasksPanel = this.create.displayObject(TasksPanel, {
+        this.tasksTabs = this.create.displayObject(TasksTabs, {
             x: 21,
             y: 128,
-        })
+        });
+
+        this.tasksTabs.on('onClickClaim', this.onClaimTaskReward.bind(this));
+        this.tasksTabs.on('onClickShare', this.onShare.bind(this));
+        this.tasksTabs.on('onClickInvite', this.onClaimInvite.bind(this));
+    }
+
+    onClaimTaskReward(taskId) {
+        this.emit('onClickClaim', taskId);
+    }
+
+    onShare(taskId) {
+        this.emit('onClickShare', taskId);
+    }
+
+    onClaimInvite(taskId) {
+        this.emit('onClickInvite', taskId);
     }
 
     showTasks(tasks) {
-        this.tasksPanel.addTasksToPanels(tasks);
+        if (this.tasksTabs.isCreatedTasks) {
+            this.tasksTabs.updateTasksCards(tasks);
+        } else {
+            this.tasksTabs.addTasksCards(tasks);
+        }
+    }
+
+    updateTasks(tasks) {
+        this.tasksTabs.updateTasksCards(tasks);
     }
 }

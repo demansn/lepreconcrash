@@ -13,7 +13,7 @@ import {HeaderScene} from "../game/scenes/header/HeaderScene.js";
 import {SessionExpired} from "../game/scenes/popupManager/popup/SessionExpired.js";
 import {MessagePopup} from "../game/scenes/popupManager/popup/MessagePopup.js";
 import {PlaceBetState} from "../game/states/gamePlay/substates/PlaceBetState.js";
-import {CashOutStateState} from "../game/states/gamePlay/substates/CashOutState.js";
+import {CashOutState} from "../game/states/gamePlay/substates/CashOutState.js";
 import {PlayState} from "../game/states/gamePlay/substates/PlayState.js";
 import {LoseState} from "../game/states/gamePlay/substates/LoseState.js";
 import {InitGamePlayState} from "../game/states/gamePlay/substates/InitGamePlayState.js";
@@ -21,6 +21,8 @@ import {ShopScene} from "../game/scenes/ShopScene.js";
 import {FriendsScene} from "../game/scenes/FriendsScene.js";
 import {EarnScene} from "../game/scenes/EarnScene.js";
 import {LeaderboardScene} from "../game/scenes/LeaderboardScene.js";
+import {RewardDailyScene} from "../game/scenes/RewardDailyScene.js";
+import {WinState} from "../game/states/gamePlay/substates/WinState.js";
 
 export const GameConfig = {
     PixiApplication: {
@@ -82,7 +84,8 @@ export const GameConfig = {
                     PlaceBetState,
                     PlayState,
                     LoseState,
-                    CashOutStateState,
+                    CashOutState,
+                    WinState
                 }
             },
             FriendsState: {
@@ -134,6 +137,7 @@ export const GameConfig = {
                     earn: 'EarnScene',
                     header: 'HeaderScene',
                     footer: 'Footer',
+                    rewardDailyPopup: 'RewardDailyScene',
                 }
             },
             LeaderboardState: {
@@ -171,6 +175,7 @@ export const GameConfig = {
             FriendsScene: FriendsScene,
             EarnScene: EarnScene,
             LeaderboardScene: LeaderboardScene,
+            RewardDailyScene: RewardDailyScene,
         }
     }
 };

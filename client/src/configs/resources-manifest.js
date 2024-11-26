@@ -47,6 +47,8 @@ export const manifest = {
                 {alias: 'PlayBtnBg', src: './assets/PlayBtnBg.webp'},
                 {alias: 'PrevBtn', src: './assets/PrevBtn.webp'},
 
+                {alias: 'RewardPopup', src: './assets/RewardPopup.webp'},
+
                 {alias: 'BottomPanelBtnActive', src: './assets/ui/bottomPanel/BottomPanelBtnActive.png'},
                 {alias: 'BottomPanelBtnDefault', src: './assets/ui/bottomPanel/BottomPanelBtnDefault.png'},
 

@@ -2,7 +2,7 @@ import {GameBaseState} from "../../GameBaseState.js";
 
 export class InitGamePlayState extends GameBaseState {
     enter() {
-        this.scene.show('GamePlayScene', {
+        this.scene.call('GamePlayScene', 'init', {
             app: this.PixiApplication.getApp(),
             gameRound: this.logic.gameRound,
             info: this.logic.getInfo()

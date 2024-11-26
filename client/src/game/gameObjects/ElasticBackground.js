@@ -14,6 +14,11 @@ class BorderedFill extends Graphics {
         this.fillByStyle({fill, border, borderColor, borderRadius, width, height});
     }
 
+    setStyle({fill = this.parameters.fill, borderColor = this.parameters.borderColor}) {
+        this.parameters = {...this.parameters, fill, borderColor};
+        this.fillByStyle(this.parameters);
+    }
+
     fillByStyle({fill, border, borderColor, borderRadius, width, height}) {
         this.clear();
         this.beginFill(fill);
@@ -37,6 +42,10 @@ export class ElasticBackground extends SuperContainer {
                 borderRadius: style.borderRadius
             }
         });
+    }
+
+    setStyle(style) {
+        this.background.setStyle(style);
     }
 
     setSize(width, height) {

@@ -1,11 +1,12 @@
 import {createAPI} from "../../Api.js";
 
+const INVITE_URL = 'https://t.me/share/url';
 // TODO: move to .env
 // const API_URL = 'https://99e62295e3f6.ngrok.app';
 
 export class GameLogic {
     create(options) {
-        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks'], API_URL);
+        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward'], API_URL);
 
         const urlParams = new URLSearchParams(window.location.search);
 
@@ -15,9 +16,13 @@ export class GameLogic {
             winStep: urlParams.has('winStep')  ? Number(urlParams.get('winStep')) :  undefined,
         };
 
+        this.invite = urlParams.has('tgWebAppStartParam') ? Number(urlParams.get('tgWebAppStartParam')): undefined;
+
         if (ENV !== 'dev') {
             this.cheat = undefined;
         }
+
+        this.userData = this.getUserData();
     }
 
     getUserData() {
@@ -31,7 +36,7 @@ export class GameLogic {
     }
 
     async initSession() {
-        const {player, steps, id, gameRound, link} = await this.api.initSession(this.getUserData());
+        const {player, steps, id, gameRound, link} = await this.api.initSession(this.userData, this.invite);
 
         this.sessionID = id;
         this.player = player;
@@ -50,7 +55,10 @@ export class GameLogic {
     async placeBet(bet) {
         const {player, gameRound} = await this.api.placeBet(bet, this.sessionID, this.cheat);
 
-        this.player = player;
+        this.player.balance = player.balance;
+        this.player.luck = player.luck;
+        this.player.level = player.level;
+
         this.gameRound = gameRound;
 
         return {
@@ -87,6 +95,35 @@ export class GameLogic {
     }
 
     async getTasks() {
-        return await this.api.getTasks(this.sessionID);
+        return await this.api.getTasks(this.player.id);
+    }
+
+    claimTaskReward(taskId) {
+        const result = this.api.claimTaskReward(this.sessionID, taskId);
+
+        if (result.task) {
+            this.player.balance = result.player.balance;
+        }
+
+        return result;
+    }
+
+    createInviteLink() {
+        //https://t.me/share/url?url=https://t.me/catizenbot/gameapp?startapp=rp_38841232&text=
+        const playerID = 432530856; //this.player.id;
+        const url = decodeURIComponent(`${TELEGRAM_GAME_URL}?startapp=${playerID}`);
+        const text = encodeURIComponent('Join the game!');
+
+        return `${INVITE_URL}?url=${url}&text=${text}`;
+    }
+
+    inviteFriend() {
+        const inviteLink = this.createInviteLink();
+
+        window.Telegram.WebApp.openLink(inviteLink);
+    }
+
+    async reconnect() {
+        await this.initSession();
     }
 }

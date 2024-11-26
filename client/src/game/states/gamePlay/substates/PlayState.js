@@ -19,17 +19,18 @@ export class PlayState extends GameBaseState {
 
     async go() {
         try {
+            this.scene.call('GamePlayScene', 'gotoWaitState');
             const roundResult = await this.logic.nextStep();
             const info = roundResult.isWin ? this.logic.getInfo() : null;
 
-            await this.scene.call('GamePlayScene', 'go', roundResult, info);
+            this.scene.call('GamePlayScene', 'go', roundResult, info);
         } catch (e) {
             this.error(e);
         }
     }
 
     async onCashOut() {
-        await this.owner.cashOut();
+        this.owner.goTo('CashOutState');
     }
 
     async onLose() {
@@ -37,6 +38,6 @@ export class PlayState extends GameBaseState {
     }
 
     async onWin() {
-       console.log('Win');
+        this.owner.goTo('WinState');
     }
 }

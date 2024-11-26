@@ -21,8 +21,10 @@ export class SceneManager{
   }
 
   getScene(sceneName) {
-    if (!this.scenes[sceneName] && this.scenesConfig[sceneName]) {
-        this.scenes[sceneName] = new this.scenesConfig[sceneName]();
+    const Scene = this.scenesConfig[sceneName];
+
+    if (!this.scenes[sceneName] && Scene) {
+        this.scenes[sceneName] = new Scene(Scene.options);
     }
 
     if (!this.scenes[sceneName]) {
@@ -48,6 +50,18 @@ export class SceneManager{
     if (scene[method]) {
       return scene[method](...args);
     }
+  }
+
+  forEachScene(callback) {
+    Object.values(this.scenes).forEach(callback);
+  }
+
+  callAll(method, ...args) {
+    this.forEachScene(scene => {
+      if (scene[method]) {
+        scene[method](...args);
+      }
+    });
   }
 
   on(sceneName, event, callback) {

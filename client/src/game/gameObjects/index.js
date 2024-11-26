@@ -5,6 +5,7 @@ import {ColoredCheckBox, ElasticBackground} from "./ElasticBackground.js";
 import {SubscribeButton} from "./SubscribeButton.js";
 import {ClaimRewardButton} from "./ClaimRewardButton.js";
 import {InviteButton} from "./InviteButton.js";
+import {TextWithIcon} from "./TextWithIcon.js";
 
 Mather.registerObjectFactory('ProgressBar', (parameters) => new ProgressBar(parameters));
 Mather.registerObjectFactory('FancyButton', (parameters) => new FancyButton(parameters));
@@ -13,6 +14,7 @@ Mather.registerObjectFactory('ClaimButton', (parameters) => new ClaimButton(para
 Mather.registerObjectFactory('SubscribeButton', (parameters) => new SubscribeButton(parameters));
 Mather.registerObjectFactory('ClaimRewardButton', (parameters) => new ClaimRewardButton(parameters));
 Mather.registerObjectFactory('InviteButton', (parameters) => new InviteButton(parameters));
+Mather.registerObjectFactory('TextWithIcon', (parameters) => new TextWithIcon(parameters));
 
 Mather.registerObjectFactory('TaskPanelButtons', () => {
     const checkedStyleButton = {

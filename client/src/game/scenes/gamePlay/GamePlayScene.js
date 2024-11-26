@@ -30,11 +30,13 @@ export class GamePlayScene extends BaseScene {
         this.hud.on('play:clicked', () => {
             this.emit('placeBet');
         });
+
+        this.hud.on('cashOut:clicked', () => {
+            this.emit('cashOut');
+        });
     }
 
-    show({gameRound}) {
-        super.show();
-
+    init({gameRound}) {
         const levelParameters = {
             currentStep: gameRound ? gameRound.step : 0,
             bonusStep: gameRound ? gameRound.bonus.step : undefined,
@@ -81,23 +83,11 @@ export class GamePlayScene extends BaseScene {
         this.level.setBonusToPlatform(bonus.step);
         this.level.setNextStepWin({step: step + 1, nextStepWin});
 
-        this.hud.updateRoundInfo(info)
+        this.hud.updateRoundInfo(gameRound)
     }
 
-    restore({gameRound, info}) {
-        const {bonus, nextStepWin, step} = gameRound;
-
-        if (step < bonus.step) {
-            this.level.setBonusToPlatform(bonus.step);
-        }
-
-        this.level.setNextStepWin({step: step + 1, nextStepWin});
-        this.level.setHeroToPlatform(step);
-        this.hud.updateRoundInfo(info);
-    }
-
-    updateHUD({balance, luck, level, round}) {
-        this.hud.updateRoundInfo(round);
+    updateHUD({win = 0, multiplier = 0, luck = 0}) {
+        this.hud.updateRoundInfo({win, multiplier, luck});
     }
 
     cashOut(result, roundResult) {
@@ -149,14 +139,14 @@ export class GamePlayScene extends BaseScene {
         this.emit('win');
     }
 
-    winRoundAnimation(playerInfo, result) {
+    winRoundAnimation(result) {
         const timeline = gsap.timeline();
 
         timeline
-            .add(this.hud.animateTo(playerInfo))
+            .add(this.hud.animateTo(result))
             .add([
                 () => this.reset(),
-                () => this.showWinPopup({bet: result.bet, win: result.totalWin, luck: result.luck})
+                () => this.showWinPopup({bet: result.round.bet, win: result.round.totalWin, luck: result.round.luck})
             ], '+=0.2')
     }
 
