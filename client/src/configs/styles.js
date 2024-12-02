@@ -149,5 +149,124 @@ export const Styles = {
         fill: 0xFF7700,
         align: 'center',
         fontWeight: 400,
-    }
+    },
+
+    HiPlayerNameStyle: {
+        fontFamily: 'AldotheApache',
+        fontSize: 42,
+        fill: 0xFFFFFF,
+        fontWeight: 400,
+    },
+
+    VisitMyProfileStyle: {
+        fontFamily: 'AldotheApache',
+        fontSize: 27,
+        fill: 0xFFFFFF,
+        fontWeight: 400,
+    },
+    PlayerFriendsInfoCardValue: {
+        fontFamily: 'AldotheApache',
+        fontSize: 48,
+        fill: 0xFFFFFF,
+        fontWeight: 400,
+    },
+    PlayerFriendsInfoCardLabel: {
+        fontFamily: 'AldotheApache',
+        fontSize: 27,
+        fill: 0xFFFFFF,
+        fontWeight: 400,
+    },
+
+    ShopItemLabel: {
+        fontFamily: 'AldotheApache',
+        fontSize: 27,
+        fill: 0xFFFFFF,
+        fontWeight: 400,
+        align: 'right',
+    },
+
+    ShopItemAmount: {
+        fontFamily: 'AldotheApache',
+        fontSize: 70,
+        fill: 0xFFFFFF,
+        fontWeight: 400,
+    },
+
+    ShopItemBuyButtonLabel: {
+        fontFamily: 'AldotheApache',
+        fontSize: 27,
+        fill: 0xFFFFFF,
+        fontWeight: 400,
+    },
+
+    PriceIconText: {
+        fontFamily: 'AldotheApache',
+        fontSize: 23,
+        fill: 0x3DB232,
+        fontWeight: 400,
+        align: 'center',
+    },
+
+    MainShopItemPrice: {
+        fontFamily: 'AldotheApache',
+        fontSize: 170,
+        fill: 0xffffff,
+        fontWeight: 400,
+        align: 'center',
+    },
+
+    MainShopItemBuyButton: {
+        fontFamily: 'AldotheApache',
+        fontSize: 30,
+        fill: 0xffffff,
+        fontWeight: 400,
+    },
+
+    LeaderboardVisitProfile: {
+        fontFamily: 'AldotheApache',
+        fontSize: 27,
+        fill: 0x73ACC2,
+        fontWeight: 400,
+    },
+
+    LeaderboardLevelText: {
+        fontFamily: 'AldotheApache',
+        fontSize: 80,
+        fill: 0x3DB232,
+        fontWeight: 400,
+    },
+
+    PlayerLevelProgressLuck: {
+        fontFamily: 'AldotheApache',
+        fontSize: 27,
+        fill: 0x3DB232,
+        fontWeight: 400,
+    },
+
+    PlayerLevelProgressLuckTarget: {
+        fontFamily: 'AldotheApache',
+        fontSize: 27,
+        fill: 0x73ACC2,
+        fontWeight: 400,
+    },
+
+    LeaderboardPlayerItemName: {
+        fontFamily: 'AldotheApache',
+        fontSize: 27,
+        fill: 0xFFFFFF,
+        fontWeight: 400,
+    },
+    LeaderboardPlayerItemLuck: {
+        fontFamily: 'AldotheApache',
+        fontSize: 20,
+        fill: 0x52BA48,
+        fontWeight: 400,
+    },
+
+    LeaderboardPlayerItemLuckWhite: {
+        fontFamily: 'AldotheApache',
+        fontSize: 20,
+        fill: 0xFFFFFF,
+        fontWeight: 400,
+    },
 };

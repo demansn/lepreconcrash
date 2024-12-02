@@ -19,10 +19,14 @@ class BorderedFill extends Graphics {
         this.fillByStyle(this.parameters);
     }
 
-    fillByStyle({fill, border, borderColor, borderRadius, width, height}) {
+    fillByStyle({fill, border = 0, borderColor, borderRadius, width, height}) {
         this.clear();
         this.beginFill(fill);
-        this.lineStyle(border, borderColor);
+
+        if (border && borderColor) {
+            this.lineStyle(border, borderColor);
+        }
+
         this.drawRoundedRect(0, 0, width -  border, height -  border, borderRadius);
         this.endFill();
     }

@@ -27,16 +27,16 @@ export class Mather {
         this.properties = new DisplayObjectPropertiesSetter(this.parent, screenSize);
     }
 
-    object(name, properties = {}) {
-        const factory = Mather.objectsFactoriesByNames[name];
+    object(object, properties = {}) {
+        const factory = object instanceof Function ? (params) => new object(params) : Mather.objectsFactoriesByNames[object];
 
         if (!factory) {
-            if (this.getTexture(name)) {
-                return this.sprite({texture: name, ...properties});
+            if (this.getTexture(object)) {
+                return this.sprite({texture: object, ...properties});
             }
         } else {
-            const {parameters, ...rest} = properties;
-            const displayObject = factory(parameters);
+            const {parameters, params, ...rest} = properties;
+            const displayObject = factory(parameters || params);
 
             return this.addAndSetProperties(displayObject, rest);
         }

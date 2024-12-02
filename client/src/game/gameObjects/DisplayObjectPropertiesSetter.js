@@ -5,7 +5,7 @@ export class DisplayObjectPropertiesSetter {
     }
 
     set(displayObject, properties = {}) {
-        const {x, y, position, anchor, scale, offset, ...other} = properties;
+        const {x, y, position, anchor, scale, pivot, offset, ...other} = properties;
 
         if (anchor && displayObject.anchor !== undefined) {
             this.setPointValue(displayObject.anchor, anchor);
@@ -31,6 +31,25 @@ export class DisplayObjectPropertiesSetter {
                     displayObject.y = this.calculateValueExpression(y, displayObject.height, this.parent.height, this.screenSize.height);
                 } else {
                     displayObject.y = y;
+                }
+            }
+        }
+
+
+        if (pivot && displayObject.pivot !== undefined) {
+            if (pivot.x !== undefined) {
+                if (typeof pivot.x === 'string') {
+                    displayObject.pivot.x = this.calculateValueExpression(pivot.x, displayObject.width, this.parent.width, this.screenSize.width);
+                } else {
+                    displayObject.pivot.x = pivot.x;
+                }
+            }
+
+            if (pivot.y !== undefined) {
+                if (typeof pivot.y === 'string') {
+                    displayObject.pivot.y= this.calculateValueExpression(pivot.y, displayObject.height, this.parent.height, this.screenSize.height);
+                } else {
+                    displayObject.pivot.y = pivot.y;
                 }
             }
         }

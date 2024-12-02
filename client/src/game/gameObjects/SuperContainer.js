@@ -61,21 +61,23 @@ export class SuperContainer extends Container {
     }
 
     getObjectByName(name) {
-        const object = this.children.find(child => child.name === name);
+        return this.#findObjectByType(name);
+    }
 
-        if (!object) {
-            // search in children of children
-            for (let i = 0; i < this.children.length; i++) {
-                const child = this.children[i];
-                if (child.children) {
-                    const object = child.children.find(child => child.name === name);
-                    if (object) {
-                        return object;
-                    }
+    #findObjectByType(name, children = this.children) {
+        const object = children.find((child) => child.name === name);
+
+        if (object) {
+            return object;
+        }
+
+        for (let i = 0; i < children.length; i++) {
+            if (children[i].children) {
+                const object = this.#findObjectByType(name, children[i].children);
+                if (object) {
+                    return object;
                 }
             }
         }
-
-        return object;
     }
 }

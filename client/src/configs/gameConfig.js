@@ -17,10 +17,10 @@ import {CashOutState} from "../game/states/gamePlay/substates/CashOutState.js";
 import {PlayState} from "../game/states/gamePlay/substates/PlayState.js";
 import {LoseState} from "../game/states/gamePlay/substates/LoseState.js";
 import {InitGamePlayState} from "../game/states/gamePlay/substates/InitGamePlayState.js";
-import {ShopScene} from "../game/scenes/ShopScene.js";
-import {FriendsScene} from "../game/scenes/FriendsScene.js";
+import {ShopScene} from "../game/scenes/shop/ShopScene.js";
+import {FriendsScene} from "../game/scenes/friends/FriendsScene.js";
 import {EarnScene} from "../game/scenes/EarnScene.js";
-import {LeaderboardScene} from "../game/scenes/LeaderboardScene.js";
+import {LeaderboardScene} from "../game/scenes/leaderboard/LeaderboardScene.js";
 import {RewardDailyScene} from "../game/scenes/RewardDailyScene.js";
 import {WinState} from "../game/states/gamePlay/substates/WinState.js";
 
@@ -100,7 +100,7 @@ export const GameConfig = {
                     logic: 'GameLogic',
                 },
                 scenes: {
-                    shop: 'FriendsScene',
+                    screen: 'FriendsScene',
                     header: 'HeaderScene',
                     footer: 'Footer',
                 }
@@ -117,7 +117,7 @@ export const GameConfig = {
                     logic: 'GameLogic',
                 },
                 scenes: {
-                    shop: 'ShopScene',
+                    screen: 'ShopScene',
                     header: 'HeaderScene',
                     footer: 'Footer',
                 }

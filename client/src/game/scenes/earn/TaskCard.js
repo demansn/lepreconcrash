@@ -3,8 +3,10 @@ import {ElasticBackground} from "../../gameObjects/ElasticBackground.js";
 import {TextWithIcon} from "../../gameObjects/TextWithIcon.js";
 
 export class TasksCard extends SuperContainer {
-    constructor({task, margin = 26, onClickClaim = () => {}, onClickInvite = () => {}}) {
+    constructor({task, margin = 26, onClickClaim = () => {}, onClickInvite = () => {}, width = 630, height = 206}) {
         super();
+
+        this.options = {task, margin, onClickClaim, onClickInvite, width, height};
 
         this.name = 'TasksCard_' + task.id;
         this.task = task;
@@ -20,8 +22,8 @@ export class TasksCard extends SuperContainer {
         const borderColor = borderColorByStatus[task.status] || 0xffffff;
 
         this.background = this.create.displayObject(ElasticBackground, {
-            width: 630,
-            height: 206,
+            width,
+            height,
             style: {
                 fill: 'rgba(0, 0, 0, 0.6)',
                 border: 2,
@@ -44,7 +46,7 @@ export class TasksCard extends SuperContainer {
     createContent(task) {}
 
     resize() {
-        this.background.setSize({width: 630, height: this.content.height + this.margin * 2});
+        this.background.setSize({width: this.options.width, height: this.content.height + this.margin * 2});
     }
 
     getBorerColorByStatus(status) {

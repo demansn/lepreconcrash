@@ -49,6 +49,16 @@ export const manifest = {
 
                 {alias: 'RewardPopup', src: './assets/RewardPopup.webp'},
 
+                {alias: 'PlayerIcon', src: './assets/icons/PlayerIcon.webp'},
+                {alias: 'cap', src: './assets/icons/cap.webp'},
+                {alias: 'star', src: './assets/icons/star.webp'},
+                {alias: 'white-star', src: './assets/icons/white-star.webp'},
+                {alias: 'PlayerProfileIcon', src: './assets/icons/PlayerProfileIcon.webp'},
+                {alias: 'LeaderboardPlayerIcon', src: './assets/icons/LeaderboardPlayerIcon.webp'},
+                {alias: 'GoldCup', src: './assets/icons/GoldCup.webp'},
+                {alias: 'SilverCup', src: './assets/icons/SilverCup.webp'},
+                {alias: 'BronzeCup', src: './assets/icons/BronzeCup.webp'},
+
                 {alias: 'BottomPanelBtnActive', src: './assets/ui/bottomPanel/BottomPanelBtnActive.png'},
                 {alias: 'BottomPanelBtnDefault', src: './assets/ui/bottomPanel/BottomPanelBtnDefault.png'},
 
