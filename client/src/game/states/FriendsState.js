@@ -7,6 +7,7 @@ export class FriendsState extends ScreenState {
 
         this.screen.on('visitMyProfile', this.onClickVisitMyProfile, this);
         this.screen.on('inviteFriend', this.onClickInviteFriend, this);
+
         this.updateScreen();
     }
 
@@ -18,7 +19,14 @@ export class FriendsState extends ScreenState {
     }
 
     async updateScreen() {
+        this.setScreenData(this.logic.player.tasks);
+
         const tasks = await this.logic.getTasks();
+
+        this.setScreenData(tasks);
+    }
+
+    setScreenData(tasks) {
         const friendsTasks = tasks.filter(task => task.type === TaskType.friends);
 
         let activeFriends = 0;

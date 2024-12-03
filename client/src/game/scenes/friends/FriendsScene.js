@@ -7,24 +7,23 @@ import {TaskAction} from "../../../../../shared/TaskAction.js";
 export class FriendsScene extends ScreenScene {
     constructor() {
         super({name: 'friends'});
+
+        this.content = this.create.container();
+        this.playerInfo = this.create.displayObject(PlayerFriendsInfo, {x: 21, y: 148, parameters: {activeFriends: 0, earned: 0}});
+        this.getObjectByName('visitMyProfile').on('pointerdown', this.onClickVisitMyProfile.bind(this));
     }
 
     showData({activeFriends, earned, tasks}) {
-        if (this.content) {
-            this.content.destroy();
+        this.playerInfo.setValue({activeFriends, earned});
+
+        if (!this.tasksList) {
+            const items = [
+                this.create.displayObject(FriendsTaskCard, {parameters: {onClickInvite:  this.onClickInviteFriend.bind(this), width: 678, height: 174, task: tasks.find(task => task.id === TaskAction.INVITE_FRIEND)}}),
+                this.create.displayObject(FriendsTaskCard, { parameters: {onClickInvite:  this.onClickInviteFriend.bind(this), width: 678, height: 174, task: tasks.find(task => task.id === TaskAction.INVITE_FRIEND_PREMIUM) }})
+            ];
+
+            this.tasksList = this.create.displayObject(List, {x: 21, y: 506, parameters: {items, type: 'vertical', elementsMargin: 18}});
         }
-
-        this.content = this.create.container();
-        this.create.displayObject(PlayerFriendsInfo, {x: 21, y: 148, parameters: {activeFriends, earned}});
-
-        const items = [
-            this.create.displayObject(FriendsTaskCard, {parameters: {onClickInvite:  this.onClickInviteFriend.bind(this), width: 678, height: 174, task: tasks.find(task => task.id === TaskAction.INVITE_FRIEND)}}),
-            this.create.displayObject(FriendsTaskCard, { parameters: {onClickInvite:  this.onClickInviteFriend.bind(this), width: 678, height: 174, task: tasks.find(task => task.id === TaskAction.INVITE_FRIEND_PREMIUM) }})
-        ];
-
-        this.create.displayObject(List, {x: 21, y: 506, parameters: {items, type: 'vertical', elementsMargin: 18}});
-
-        this.getObjectByName('visitMyProfile').on('pointerdown', this.onClickVisitMyProfile.bind(this));
     }
 
     onClickVisitMyProfile() {

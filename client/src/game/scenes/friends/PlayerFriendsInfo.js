@@ -20,12 +20,15 @@ export class PlayerFriendsInfo extends SuperContainer {
         this.icon = this.create.object('PlayerIcon', {x: 36, y: 36});
         this.create.displayObject(PlayerName, {name: 'PlayerName', x: this.icon.x + this.icon.width + 24, y: this.icon.y + this.icon.height / 2});
 
-        const items = [
-            this.create.displayObject(PlayerFriendsInfoCard, {icon: 'cap', value: activeFriends, label: 'ACTIVE FRIENDS'}),
-            this.create.displayObject(PlayerFriendsInfoCard, {icon: 'coin-icon', value: earned, label: 'YOUR EARNED'}),
-        ]
+        this.activeFriendsInfo = this.create.displayObject(PlayerFriendsInfoCard, {icon: 'cap', value: activeFriends, label: 'ACTIVE FRIENDS'});
+        this.yourEarnedInfo = this.create.displayObject(PlayerFriendsInfoCard, {icon: 'coin-icon', value: earned, label: 'YOUR EARNED'});
 
-        this.create.displayObject(List, {x: 36, y: 156, parameters: {children: items, type: 'horizontal', elementsMargin: 18}});
+        this.create.displayObject(List, {x: 36, y: 156, parameters: {children: [this.activeFriendsInfo, this.yourEarnedInfo], type: 'horizontal', elementsMargin: 18}});
+    }
+
+    setValue({activeFriends, earned}) {
+        this.activeFriendsInfo.setValue(activeFriends);
+        this.yourEarnedInfo.setValue(earned);
     }
 }
 
@@ -49,8 +52,12 @@ class PlayerFriendsInfoCard extends SuperContainer {
 
         this.create.displayObject(ElasticBackground, {width: 294, height: 130, style: {fill: 0x137B09, borderRadius: 24}});
 
-        const t1 = this.create.object('TextWithIcon', {parameters: {icon, text: value, textStyle: 'PlayerFriendsInfoCardValue'}, x: 294 / 2, y: 26, pivot: {x: '%50'}});
+        this.textValue = this.create.object('TextWithIcon', {parameters: {icon, text: value, textStyle: 'PlayerFriendsInfoCardValue'}, x: 294 / 2, y: 26, pivot: {x: '%50'}});
 
-        this.create.text({text: label, style: 'PlayerFriendsInfoCardLabel', y: t1.y + t1.height + 6, alpha: 0.6, x: 294 / 2, pivot: {x: '%50'}});
+        this.create.text({text: label, style: 'PlayerFriendsInfoCardLabel', y: this.textValue.y + this.textValue.height + 6, alpha: 0.6, x: 294 / 2, pivot: {x: '%50'}});
+    }
+
+    setValue(value) {
+        this.textValue.setText(value);
     }
 }
