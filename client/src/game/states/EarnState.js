@@ -10,7 +10,6 @@ export class EarnState extends ScreenState {
     async exit() {
         super.exit();
 
-
         this.earn.off('onClickClaim');
         this.earn.off('onClickInvite');
     }
@@ -26,7 +25,6 @@ export class EarnState extends ScreenState {
         this.footer.disable();
         this.earn.disable();
 
-
         const result = await this.logic.claimTaskReward(taskId);
 
         this.scene.show('RewardDailyScene', result.task);
@@ -41,7 +39,6 @@ export class EarnState extends ScreenState {
         const tasks = await this.logic.getTasks();
 
         this.earn.showTasks(tasks);
-        console.log(tasks);
     }
 
     inviteFriend(taskId) {

@@ -144,10 +144,6 @@ export class GameLogic {
 
     }
 
-    async reconnect() {
-        await this.initSession();
-    }
-
     async getLeaderBoard() {
         return await this.api.getLeaderBoard();
     }
