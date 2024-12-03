@@ -3,8 +3,10 @@ import {ElasticBackground} from "../../gameObjects/ElasticBackground.js";
 import {MainShopItemBuyButton} from "./MainShopItemBuyButton.js";
 
 export class MainShopItem extends SuperContainer {
-    constructor({price, label, id, amount}) {
+    constructor(item) {
         super();
+
+        const {price, label, id, amount} = item;
 
         this.bg = this.create.displayObject(ElasticBackground, {width: 678, height: 456, style: {fill: 'rgba(0, 0, 0, 0.25)', borderRadius: 24, border: 2, borderColor: 0xffffff}});
 
@@ -15,5 +17,9 @@ export class MainShopItem extends SuperContainer {
         this.buyButton = this.create.object('Button', {x: 678 / 2, y: 306 + 9, params: {
                 view: new MainShopItemBuyButton({price, label, id, amount})
             }});
+
+        this.buyButton.onPress.connect(() => {
+            this.emit('buy', item);
+        });
     }
 }

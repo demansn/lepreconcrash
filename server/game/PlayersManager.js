@@ -7,16 +7,7 @@ export class PlayersManager {
         this.dbAdapter = dbAdapter;
     }
 
-    async createPlayer(playerID) {
-        const newPlayer = {
-            id: playerID,
-            balance: 200,
-            luck: 0,
-            level: 0,
-            session: null,
-            tasks: []
-        };
-
+    async createPlayer(newPlayer) {
         const playerData = await this.dbAdapter.createPlayer(newPlayer);
 
         return new Player(playerData);

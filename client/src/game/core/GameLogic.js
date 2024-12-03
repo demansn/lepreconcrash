@@ -6,7 +6,7 @@ const INVITE_URL = 'https://t.me/share/url';
 
 export class GameLogic {
     create(options) {
-        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward'], API_URL);
+        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard'], API_URL);
 
         const urlParams = new URLSearchParams(window.location.search);
 
@@ -36,13 +36,14 @@ export class GameLogic {
     }
 
     async initSession() {
-        const {player, steps, id, gameRound, link} = await this.api.initSession(this.userData, this.invite);
+        const {player, steps, id, gameRound, link, shopItems} = await this.api.initSession(this.userData, this.invite);
 
         this.sessionID = id;
         this.player = player;
         this.gameSteps = steps;
 
         this.gameRound = gameRound;
+        this.shopItems = shopItems;
 
         return {
             steps,
@@ -123,7 +124,43 @@ export class GameLogic {
         window.Telegram.WebApp.openLink(inviteLink);
     }
 
+    async buyItem(itemID) {
+        const link = await this.api.getInvoiceLink(this.player.id, itemID);
+
+        if (!link) {
+            return false;
+        }
+
+        const result = await this.#openInvoice(link);
+
+        if (result) {
+            this.player.balance = this.player.balance + this.shopItems[itemID].amount;
+        }
+
+        return result;
+    }
+
+    async update() {
+
+    }
+
     async reconnect() {
         await this.initSession();
+    }
+
+    async getLeaderBoard() {
+        return await this.api.getLeaderBoard();
+    }
+
+    async #openInvoice(link) {
+        return new Promise(resolve => {
+            window.Telegram.WebApp.openInvoice(link, (e) => {
+                if (e === 'paid') {
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            }) ;
+        });
     }
 }

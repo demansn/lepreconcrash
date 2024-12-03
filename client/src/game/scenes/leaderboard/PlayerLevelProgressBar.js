@@ -12,4 +12,8 @@ export class PlayerLevelProgressBar extends SuperContainer {
                 progress
             }});
     }
+
+    set(progress) {
+        this.progressBar.progress = progress;
+    }
 }

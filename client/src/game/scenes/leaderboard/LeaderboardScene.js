@@ -9,31 +9,7 @@ export class LeaderboardScene extends ScreenScene {
     constructor() {
         super({name: 'leaderboard'});
 
-        const levels =[{level: 1, luck: 10}, {level: 2, luck: 20}, {level: 3, luck: 30}, {level: 4, luck: 40}, {level: 5, luck: 50}]
-        const player = {
-            luck: 11,
-            level: 1,
-        };
-        const players = [
-            {name: 'Player 1', luck: 10},
-            {name: 'Player 2', luck: 20},
-            {name: 'Player 3', luck: 30},
-            {name: 'Player 4', luck: 40},
-            {name: 'Player 5', luck: 50},
-            {name: 'Player 6', luck: 60},
-            {name: 'Player 7', luck: 70},
-            {name: 'Player 8', luck: 80},
-            {name: 'Player 9', luck: 90},
-            {name: 'Player 10', luck: 100},
-            {name: 'Player 11', luck: 110},
-            {name: 'Player 12', luck: 120},
-            {name: 'Player 13', luck: 130},
-            {name: 'Player 14', luck: 140},
-            {name: 'Player 15', luck: 150},
-            {name: 'Player 16', luck: 160},
-        ];
-
-        this.create.object(PlayerLeaderBoardInfo, {x: 30, y: 100, params: {luck: player.luck, level: player.level, levels}});
+        this.playerInfo = this.create.object(PlayerLeaderBoardInfo, {x: 30, y: 100, params: {luck: 0, level: 0}});
         this.list = this.create.object(ScrollBox, {
             x: 21,
             y: 474,
@@ -42,7 +18,7 @@ export class LeaderboardScene extends ScreenScene {
                width: 678,
                height: 572,
                elementsMargin: 20,
-               items: players.map((player, index) => new PlayerItem(player, index += 1))
+               items: []
            }
         });
 
@@ -77,27 +53,32 @@ export class LeaderboardScene extends ScreenScene {
         singleSlider.rotation = Math.PI / 2;
 
         singleSlider.onUpdate.connect((value) => {
-            console.log(value);
             this.list.scrollToPosition({x: 0, y: (this.list.scrollHeight - this.list.height) / 100 * value});
-            // this.list.scrollY = -(this.list.scrollHeight - this.list.height) / 100 * value;
-            // this.list.scr
         });
 
         this.list.onScroll.connect((scrollY) => {
             singleSlider.value = -scrollY / (this.list.scrollHeight - this.list.height) * 100;
-            console.log(scrollY);
         });
 
         this.addChild(singleSlider);
     }
+
+    updateLeaderboard(player, players) {
+        this.playerInfo.set({luck: player.luck, level: player.level})
+
+        if (this.list) {
+            this.list.removeItems();
+            this.list.addItems(players.map((player, index) => new PlayerItem(player, index += 1)));
+        }
+    }
 }
 
 class PlayerItem extends SuperContainer {
-    constructor({name, luck}, place) {
+    constructor({username, luck}, place) {
         super();
 
         this.icon = this.create.object('LeaderboardPlayerIcon');
-        this.name = this.create.text({x: this.icon.width + 16, y: this.icon.height / 2, anchor: {y: 0.5},text: name, style: 'LeaderboardPlayerItemName'});
+        this.name = this.create.text({x: this.icon.width + 16, y: this.icon.height / 2, anchor: {y: 0.5},text: username, style: 'LeaderboardPlayerItemName'});
 
         this.create.object(LuckLabel, {parameters: {luck, place}, x: 618, y:  this.icon.height / 2 - 33 / 2, pivot: {x: '%100'}});
     }

@@ -2,16 +2,17 @@ import {HTTPServer} from './HTTPServer.js';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'node:path';
-import {FileDatabaseAdapter} from "./db/FileDatabaseAdapter.js";
 import {GameServer} from "./game/GameServer.js";
 import {Api, Bot} from "grammy";
 import {MongoDBAdapter} from "./db/MongoDBAdapter.js";
+import {ServiceLocator} from "./game/ServiceLocator.js";
 
 dotenv.config(path.join(process.env.PWD, '.env'));
 
-console.log(process.env);
+const bot = new Bot(process.env.BOT_TOKEN);
+await bot.api.setWebhook(process.env.WEBHOOK_URL);
 
-// const bot  = new TelagramBot(process.env.BOT_TOKEN);
+ServiceLocator.getInstance().set('logger', console);
 
 const options = {
     key: fs.readFileSync('server.key'),
@@ -27,8 +28,7 @@ const game = new GameServer(process.env.BOT_TOKEN, db);
 
 const httpServer = new HTTPServer(options);
 
-httpServer.addAPI(game, ['initSession', 'placeBet', 'cashOut', 'getTasks', 'claimTaskReward']);
-// httpServer.addAPI(bot, ['fromTelegram', 'getInvoiceLink']);
+httpServer.addAPI(game, ['initSession', 'placeBet', 'cashOut', 'getTasks', 'claimTaskReward', 'fromTelegram', 'getInvoiceLink', 'getLeaderBoard']);
 httpServer.start({port: process.env.PORT});
 
 async function onTerminate() {

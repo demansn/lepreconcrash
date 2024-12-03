@@ -1,18 +1,18 @@
 import Big from "big.js";
-import {TaskStatus} from "../../shared/TaskStatus.js";
 import {Task} from "./tasks/Task.js";
 
 export class Player {
     #balance;
     #luck;
-    #level;
+    level = 0;
 
-    constructor({balance, luck, level, id, session, tasks = []}) {
+    constructor({balance, luck, level, id, session, tasks = [], profile}) {
         this.balance = balance;
         this.luck = luck;
         this.level = level;
         this.id = id;
         this.session = session;
+        this.profile = profile;
         this.tasks = tasks.map(data => new Task(data));
     }
 
@@ -44,14 +44,6 @@ export class Player {
         this.#luck = Big(value);
     }
 
-    get level() {
-        return this.#level;
-    }
-
-    set level(value) {
-        this.#level = value;
-    }
-
     /**
      * Возвращает задания игрока, включая статус и прогресс.
      * @returns {Array} Список заданий игрока.
@@ -77,6 +69,7 @@ export class Player {
             luck: this.luck,
             level: this.level,
             session: this.session,
+            profile: this.profile,
             tasks: this.tasks.map(task => task.toObject())
         }
     }

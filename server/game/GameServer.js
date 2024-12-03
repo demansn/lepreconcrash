@@ -7,6 +7,8 @@ import {SessionExpiredError} from "../errors/SessionExpiredError.js";
 import {ServerError} from "../errors/ServerError.js";
 import {TaskAction} from "../../shared/TaskAction.js";
 import {TaskScheduler} from "./TaskScheduler.js";
+import {ShopItems} from "./shop/ShopItems.js";
+import {ServiceLocator} from "./ServiceLocator.js";
 
 export class GameServer {
     #botToken;
@@ -31,13 +33,23 @@ export class GameServer {
         if (!playerData) {
             throw new ServerError('Invalid signature');
         }
-        const playerID = playerData.user.id;
-        const isPremium = playerData.user.is_premium;
+        const user = playerData.user;
+        const playerID = user.id;
+        const isPremium = user.is_premium;
+
 
         let player = await this.#players.getPlayer(playerID);
 
         if (!player) {
-            player = await this.#players.createPlayer(playerID);
+            player = await this.#players.createPlayer({
+                id: playerID,
+                balance: 200,
+                luck: 0,
+                level: 0,
+                session: null,
+                profile: {firstName: user.first_name, lastName: user.last_name, username: user.username, lang: user.language_code, isPremium: isPremium, photo: user.photo_url},
+                tasks: []
+            });
 
             if (invite && (invite !== playerID)) {
                 await this.rewardForInviting(invite, playerID, isPremium);
@@ -58,6 +70,7 @@ export class GameServer {
             id: session.id,
             steps: this.#gameSteps,
             gameRound,
+            shopItems: ShopItems,
             player: player.toObject()
         };
     }
@@ -234,5 +247,97 @@ export class GameServer {
             task: task.toObject(),
             player: player.toObject()
         };
+    }
+
+    async getInvoiceLink(playerID, itemID) {
+        const item = this.getShopItem(itemID);
+        if (!item) {
+            return false;
+        }
+
+        const data = {
+            title: item.label,
+            description: item.label,
+            payload: JSON.stringify([playerID, itemID]),
+            currency: 'XTR',
+            prices: JSON.stringify([{amount: item.price, label: item.label}]),
+        };
+        const params = new URLSearchParams(data).toString();
+        const response = await fetch(`https://api.telegram.org/bot${this.#botToken}/createInvoiceLink?${params}`);
+        const {result} = await response.json();
+
+        return result;
+    }
+
+    async fromTelegram(data) {
+        if (data.message) {
+            const {message} = data;
+            const {successful_payment} = message;
+
+            if (successful_payment) {
+                try {
+                    const {invoice_payload} = successful_payment;
+                    const [playerID, itemID] = JSON.parse(invoice_payload);
+                    const player = await this.#players.getPlayer(playerID);
+                    const item = this.getShopItem(itemID);
+
+                    if (player) {
+                        player.addBalance(item.amount);
+
+                        await this.#players.savePlayer(player);
+
+                        const Logger = ServiceLocator.get('logger');
+
+                        Logger.info(`Player ${playerID} bought ${item.amount} for ${item.price} XTR`);
+
+                        return true;
+                    }
+                } catch(e) {
+                    // reject payment
+
+                }
+            }
+        }
+
+        if (data.pre_checkout_query) {
+            console.log(data);
+            const {pre_checkout_query} = data;
+            const body = {ok: true, pre_checkout_query_id:pre_checkout_query.id };
+            const [_, itemID] = JSON.parse(pre_checkout_query.invoice_payload);
+            const response = await fetch(
+                `https://api.telegram.org/bot${this.#botToken}/answerPreCheckoutQuery`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                }
+            );
+
+            const Logger = ServiceLocator.get('logger');
+
+            Logger.log(`Pre checkout query: ${pre_checkout_query.id} from ${pre_checkout_query.from.id} for buy ${itemID} item for ${pre_checkout_query.total_amount} XTR`);
+        }
+
+        return true;
+    }
+
+    getShopItem(id) {
+        return ShopItems.find(item => item.id === id);
+    }
+
+    async getLeaderBoard(pagination = 20) {
+        // TODO: implement pagination and sorting (request to db)
+        let players =(await this.#players.getAllPlayers()).sort((a, b) => b.balance - a.balance).slice(0, pagination);
+
+        return players.map(player => player.toObject()).map(player => {
+            const fullName = `${player.profile.firstName} ${player.profile.lastName}`;
+            const username = fullName || player.profile.username || 'Anonymous';
+            const photo = player.profile.photo || '';
+            const luck = player.luck;
+
+            return {username, luck, photo};
+        });
     }
 }

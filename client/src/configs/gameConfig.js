@@ -152,7 +152,7 @@ export const GameConfig = {
                     logic: 'GameLogic',
                 },
                 scenes: {
-                    shop: 'LeaderboardScene',
+                    screen: 'LeaderboardScene',
                     header: 'HeaderScene',
                     footer: 'Footer',
                 }
