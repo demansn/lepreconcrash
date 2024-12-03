@@ -20,8 +20,8 @@ export class EarnScene extends ScreenScene {
         this.emit('onClickClaim', taskId);
     }
 
-    onShare(taskId) {
-        this.emit('onClickShare', taskId);
+    onShare(e) {
+        this.emit('onClickShare', e);
     }
 
     onClaimInvite(taskId) {

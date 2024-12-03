@@ -19,6 +19,7 @@ export class EarnState extends ScreenState {
 
         this.earn.on('onClickClaim', this.claimTaskReward.bind(this));
         this.earn.on('onClickInvite', this.inviteFriend.bind(this));
+        this.earn.on('onClickShare', this.onClickShare.bind(this));
     }
 
     async claimTaskReward(taskId) {
@@ -43,5 +44,9 @@ export class EarnState extends ScreenState {
 
     inviteFriend(taskId) {
         this.logic.inviteFriend();
+    }
+
+    async onClickShare({value, task}) {
+        await this.logic.applyTaskAction(task, value);
     }
 }

@@ -1,9 +1,9 @@
 import {TasksCard} from "./TaskCard.js";
-import {CheckBox, Input, List} from "@pixi/ui";
+import {CheckBox, Input} from "@pixi/ui";
 import {TaskStatus} from "../../../../../shared/TaskStatus.js";
-import {SuperContainer} from "../../gameObjects/SuperContainer.js";
 import {DividerLine} from "../../gameObjects/DividerLine.js";
 import {InlineBlock} from "../../gameObjects/InlineBlock.js";
+import {TaskAction} from "../../../../../shared/TaskAction.js";
 
 export class BasicTaskCard extends TasksCard {
     createContent(task) {
@@ -17,21 +17,26 @@ export class BasicTaskCard extends TasksCard {
         this.toggleDescriptionBtn.x = 630 - 26 - this.toggleDescriptionBtn.width;
         this.toggleDescriptionBtn.y = 26;
 
-        const {description} = task;
+        const {description, actionRequired} = task;
+        const placeholders = {
+            [TaskAction.SHARE_EMAIL]: 'Enter your email',
+            [TaskAction.SHARE_PHONE]: 'Enter your phone number',
+            [TaskAction.SHARE_X_ACCOUNT]: 'Enter your x account',
+        };
 
         this.toggleDescriptionBtn.onCheck.connect(this.onChange.bind(this));
 
         this.descriptionContainer = this.content.create.object('VerticalBlock', {y: 16, parameters: {horizontalAlign: 'center', blockWidth: 630, gap: 16}});
-        this.descriptionContainer.addChild(this.createDividerLine(630));
-        this.descriptionContainer.addChild(this.createDescription(description));
-        this.descriptionContainer.addChild(this.createDividerLine(630));
-        this.descriptionContainer.addChild(this.createButtons());
-        // this.descriptionContaine.layaout()
+        this.descriptionContainer.create.object(DividerLine, { parameters: {width: 592}});
+        this.descriptionContainer.create.text({text: description, style: 'TaskCardDescriptionText'});
+        this.descriptionContainer.create.object(DividerLine, { parameters: {width: 592}});
+        this.descriptionContainer.addChild(this.createButtons(placeholders[actionRequired]));
 
         this.descriptionContainer.y = this.toggleDescriptionBtn.y + this.toggleDescriptionBtn.height + 16;
 
         this.closeDescription();
 
+        this.subscribeButton.button.onPress.connect(this.onClickSubscribe.bind(this));
         this.subscribeButton.button.enabled = task.status === TaskStatus.IN_PROGRESS;
         // this.claimRewardButton.button.enabled = task.status === TaskStatus.READY_TO_CLAIM;
     }
@@ -46,6 +51,13 @@ export class BasicTaskCard extends TasksCard {
         this.emit('changedSize');
     }
 
+    onClickSubscribe() {
+        this.onClickShare({
+            value: this.input.value,
+            task: this.task
+        })
+    }
+
     openDescription() {
         this.descriptionContainer.visible = true;
         this.resize();
@@ -56,46 +68,24 @@ export class BasicTaskCard extends TasksCard {
         this.resize();
     }
 
-    createDescription(text, width = 630) {
-        const container = new SuperContainer();
-
-        container.create.text({text, style: 'TaskCardDescriptionText'});
-
-        return container;
-    }
-
-    createDividerLine(width) {
-        const container = new SuperContainer();
-
-        container.create.displayObject(DividerLine,{ parameters: {width: 592}});
-
-        return container;
-    }
-
-    createButtons() {
+    createButtons(placeholder = 'Enter text') {
         const container = new InlineBlock({gap: 18});
         const bg = container.create.object('RoundRect', {parameters: {width: 276, height: 72, radius: 20, fill: 0xffffff}});
 
-        const input = new Input({
+        this.input = new Input({
             bg,
-            placeholder: 'Enter text',
+            placeholder,
             align: 'center',
             textStyle: {
                 fontFamily: 'AldotheApache',
-                fontSize: 27,
+                fontSize: 24,
                 fontWeight: 400,
                 fill: 0x000000,
                 align: 'center',
-            },
-            padding: {
-                top: 11,
-                right: 11,
-                bottom: 11,
-                left: 11
             }
         });
 
-        container.addChild(input);
+        container.addChild(this.input);
 
         this.subscribeButton = container.addObject('SubscribeButton');
 

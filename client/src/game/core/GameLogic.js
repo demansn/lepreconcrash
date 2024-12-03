@@ -1,4 +1,6 @@
 import {createAPI} from "../../Api.js";
+import {TaskAction} from "../../../../shared/TaskAction.js";
+import {validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../../../shared/utils.js";
 
 const INVITE_URL = 'https://t.me/share/url';
 // TODO: move to .env
@@ -138,6 +140,38 @@ export class GameLogic {
         }
 
         return result;
+    }
+
+    async applyTaskAction(task, value) {
+        let error = null;
+
+        if (task.actionRequired === TaskAction.SHARE_EMAIL && (!value || validateEmail(value))) {
+            error = 'Invalid email format. Please use the format: name@domain.com.';
+        }
+
+        if (task.actionRequired === TaskAction.SHARE_PHONE && (!value || !validatePhoneNumber(value))) {
+            error = 'Invalid phone number format. Please use the international format: +1234567890 (up to 15 digits).';
+        }
+
+        if (task.actionRequired === TaskAction.SHARE_X_ACCOUNT && (!value || !validateTwitterAccount(value))) {
+            error = 'Invalid account format. Please use the format: @username.';
+        }
+
+        if (error) {
+            try {
+                window.Telegram.WebApp.showAlert(error);
+            } catch {
+                alert(error);
+            }
+
+            return false;
+        }
+
+        return false;
+
+        // const result = await this.api.applyTaskAction(this.player.id, task.id, value);
+        //
+        // return result;
     }
 
     async update() {
