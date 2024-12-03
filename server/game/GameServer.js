@@ -24,7 +24,7 @@ export class GameServer {
         this.#players = new PlayersManager(dbAdapter);
         this.#taskScheduler = new TaskScheduler(this.#players);
 
-        this.#taskScheduler.startDailyTaskUpdaterByInterval(5);
+        this.#taskScheduler.startDailyTaskUpdaterAt();
     }
 
     async initSession(telegramInitData, invite) {
@@ -329,7 +329,7 @@ export class GameServer {
 
     async getLeaderBoard(pagination = 20) {
         // TODO: implement pagination and sorting (request to db)
-        let players =(await this.#players.getAllPlayers()).sort((a, b) => b.balance - a.balance).slice(0, pagination);
+        let players =(await this.#players.getAllPlayers()).sort((a, b) => b.luck - a.luck).slice(0, pagination);
 
         return players.map(player => player.toObject()).map(player => {
             const fullName = `${player.profile.firstName} ${player.profile.lastName}`;

@@ -22,6 +22,8 @@ export class LeaderboardScene extends ScreenScene {
            }
         });
 
+        this.getObjectByName('visitMyProfileButton').on('pointerdown', () => this.emit('visitMyProfile'));
+
         const bg = new Graphics()
             .beginFill(0x069266)
             .drawRoundedRect(0, 0, 484, 8, 11)

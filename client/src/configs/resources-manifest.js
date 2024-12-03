@@ -18,6 +18,7 @@ export const manifest = {
                 {alias: 'shop_bg', src: './assets/bg/shop_bg.jpg'},
                 {alias: 'friends_bg', src: './assets/bg/friends_bg.jpg'},
                 {alias: 'leaderboard_bg', src: './assets/bg/leaderboard_bg.jpg'},
+                {alias: 'MyProfileBackground_bg', src: './assets/bg/MyProfileBackground.jpg'},
 
                 {alias: 'daily_collect_10_bonuses_icon', src: './assets/tasks/box.webp'},
                 {alias: 'coin-icon', src: './assets/tasks/coin-icon.webp'},
@@ -58,6 +59,8 @@ export const manifest = {
                 {alias: 'GoldCup', src: './assets/icons/GoldCup.webp'},
                 {alias: 'SilverCup', src: './assets/icons/SilverCup.webp'},
                 {alias: 'BronzeCup', src: './assets/icons/BronzeCup.webp'},
+                {alias: 'CloverIcon', src: './assets/icons/CloverIcon.webp'},
+                {alias: 'PostIcon', src: './assets/icons/PostIcon.webp'},
 
                 {alias: 'BottomPanelBtnActive', src: './assets/ui/bottomPanel/BottomPanelBtnActive.png'},
                 {alias: 'BottomPanelBtnDefault', src: './assets/ui/bottomPanel/BottomPanelBtnDefault.png'},

@@ -9,7 +9,7 @@ export class PlayerLeaderBoardInfo extends SuperContainer {
         this.icon = this.create.object('PlayerProfileIcon');
         this.content = this.create.object('VerticalBlock', {x: this.icon.width + 21, y: 0 , params: {gap: 22, blockHeight: 214,  'verticalAlign': 'middle'}});
 
-        this.content.create.text({text: 'VISIT MY PROFILE >', style: 'LeaderboardVisitProfile'});
+        this.content.create.text({name: 'visitMyProfileButton', text: 'VISIT MY PROFILE >', style: 'LeaderboardVisitProfile', interactive: true});
         this.level = this.content.create.text({text: `LEVEL ${level}`, style: 'LeaderboardLevelText'});
 
         const luckTarget = leftUntilNextRank(luck);

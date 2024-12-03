@@ -5,7 +5,16 @@ export class FriendsState extends ScreenState {
     enter() {
         super.enter();
 
+        this.screen.on('visitMyProfile', this.onClickVisitMyProfile, this);
+        this.screen.on('inviteFriend', this.onClickInviteFriend, this);
         this.updateScreen();
+    }
+
+    exit() {
+        super.exit();
+
+        this.screen.off('visitMyProfile', this.onClickVisitMyProfile, this);
+        this.screen.off('inviteFriend', this.onClickInviteFriend, this);
     }
 
     async updateScreen() {
@@ -23,5 +32,13 @@ export class FriendsState extends ScreenState {
         });
 
         this.screen.showData({activeFriends, earned, tasks: friendsTasks});
+    }
+
+    onClickVisitMyProfile() {
+        this.owner.goTo('MyProfileState');
+    }
+
+    onClickInviteFriend() {
+        this.logic.inviteFriend();
     }
 }

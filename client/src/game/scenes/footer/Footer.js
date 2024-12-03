@@ -46,6 +46,10 @@ export class Footer extends BaseScene {
     }
 
     #onSelected(index) {
+        if(!this.icons[index]) {
+            return;
+        }
+
         const icon = this.icons[index].toLowerCase();
 
         this.emit('selected', this.statesIcons[icon].state);
@@ -55,9 +59,16 @@ export class Footer extends BaseScene {
         const icon = this.iconsByState[state];
         const index = this.icons.indexOf(icon);
 
-        if (index === -1 || index === this.buttons.selected) {
+        if (index === -1) {
+            this.buttons.items.forEach((item, i) => {
+                item.forceCheck(false);
+            });
             return;
         }
+        if (index === this.buttons.selected) {
+            return;
+        }
+
         this.buttons.selected = index;
         this.buttons.selectItem(index);
     }

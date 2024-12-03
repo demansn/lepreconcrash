@@ -56,6 +56,10 @@ export class SuperContainer extends Container {
         this.gsap = gsap;
     }
 
+    addObject(name, parameters, props) {
+        return this.create.object(name, {parameters, ...props});
+    }
+
     setLayer(name) {
         this.parentLayer =  layers.get(name);
     }

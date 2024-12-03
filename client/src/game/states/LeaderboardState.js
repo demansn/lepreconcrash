@@ -4,7 +4,18 @@ export class LeaderboardState extends ScreenState {
     enter() {
         super.enter();
 
+        this.screen.on('visitMyProfile', this.onClickVisitMyProfile, this);
         this.updateLeaderboard();
+    }
+
+    exit() {
+        super.exit();
+
+        this.screen.off('visitMyProfile', this.onClickVisitMyProfile, this);
+    }
+
+    onClickVisitMyProfile() {
+        this.owner.goTo('MyProfileState');
     }
 
     async updateLeaderboard() {

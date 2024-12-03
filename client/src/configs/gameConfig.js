@@ -23,6 +23,8 @@ import {EarnScene} from "../game/scenes/EarnScene.js";
 import {LeaderboardScene} from "../game/scenes/leaderboard/LeaderboardScene.js";
 import {RewardDailyScene} from "../game/scenes/RewardDailyScene.js";
 import {WinState} from "../game/states/gamePlay/substates/WinState.js";
+import {MyProfileScene} from "../game/scenes/myProfile/MyProfileScene.js";
+import {MyProfileState} from "../game/states/MyProfileState.js";
 
 export const GameConfig = {
     PixiApplication: {
@@ -157,6 +159,23 @@ export const GameConfig = {
                     footer: 'Footer',
                 }
             },
+            MyProfileState: {
+                Class: MyProfileState,
+                options: {
+                    screen: {
+                        scene: 'MyProfileScene',
+                        name: 'myProfile',
+                    }
+                },
+                context: {
+                    logic: 'GameLogic',
+                },
+                scenes: {
+                    screen: 'MyProfileScene',
+                    header: 'HeaderScene',
+                    footer: 'Footer',
+                }
+            },
         },
         enterState: 'AssetsLoading'
     },
@@ -176,6 +195,7 @@ export const GameConfig = {
             EarnScene: EarnScene,
             LeaderboardScene: LeaderboardScene,
             RewardDailyScene: RewardDailyScene,
+            MyProfileScene: MyProfileScene,
         }
     }
 };

@@ -269,4 +269,38 @@ export const Styles = {
         fill: 0xFFFFFF,
         fontWeight: 400,
     },
+
+    MyProfileUserName: {
+        fontFamily: 'AldotheApache',
+        fontSize: 80,
+        fill: 0xFFFFFF,
+        align: 'center',
+        fontWeight: 400,
+        wordWrapWidth: 668,
+        wordWrap: true,
+    },
+
+    ProfileInfoCardButton: {
+        fontFamily: 'AldotheApache',
+        fontSize: 27,
+        fill: 0xFFFFFF,
+        align: 'center',
+        fontWeight: 400,
+    },
+
+    ProfileInfoFriendsCardTitle: {
+        fontFamily: 'AldotheApache',
+        fontSize: 32,
+        fill: 0xFFFFFF,
+        align: 'center',
+        fontWeight: 400,
+    },
+
+    ProfileInfoFriendsCardSubTitle: {
+        fontFamily: 'AldotheApache',
+        fontSize: 27,
+        fill: 0xFFFFFF,
+        align: 'center',
+        fontWeight: 400,
+    }
 };
