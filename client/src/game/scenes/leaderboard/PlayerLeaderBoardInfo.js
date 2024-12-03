@@ -1,6 +1,6 @@
 import {SuperContainer} from "../../gameObjects/SuperContainer.js";
 import {PlayerLevelProgress} from "./PlayerLevelProgress.js";
-import {leftUntilNextRank} from "../../../../../shared/PlayrLevels.js";
+import {nextRankTarget} from "../../../../../shared/PlayrLevels.js";
 
 export class PlayerLeaderBoardInfo extends SuperContainer {
     constructor({luck, level}) {
@@ -12,13 +12,13 @@ export class PlayerLeaderBoardInfo extends SuperContainer {
         this.content.create.text({name: 'visitMyProfileButton', text: 'VISIT MY PROFILE >', style: 'LeaderboardVisitProfile', interactive: true});
         this.level = this.content.create.text({text: `LEVEL ${level}`, style: 'LeaderboardLevelText'});
 
-        const luckTarget = leftUntilNextRank(luck);
+        const luckTarget = nextRankTarget(luck);
 
         this.progress = this.content.create.object(PlayerLevelProgress, {params: {luck, luckTarget}});
     }
 
     set({luck, level}) {
-        const luckTarget = leftUntilNextRank(luck);
+        const luckTarget = nextRankTarget(luck);
 
         this.level.text = `LEVEL ${level}`;
         this.progress.set({luck, luckTarget});

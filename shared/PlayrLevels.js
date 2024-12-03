@@ -40,3 +40,13 @@ export const leftUntilNextRank = (luck) => {
     return 0;
 }
 
+export const nextRankTarget = (luck) => {
+    for (let i = 0; i < PlayerRankLevels.length; i++) {
+        if (luck < PlayerRankLevels[i]) {
+            return PlayerRankLevels[i];
+        }
+    }
+
+    return 0;
+}
+
