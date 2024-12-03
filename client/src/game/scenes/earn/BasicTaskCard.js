@@ -1,8 +1,9 @@
 import {TasksCard} from "./TaskCard.js";
-import {CheckBox, List} from "@pixi/ui";
+import {CheckBox, Input, List} from "@pixi/ui";
 import {TaskStatus} from "../../../../../shared/TaskStatus.js";
 import {SuperContainer} from "../../gameObjects/SuperContainer.js";
 import {DividerLine} from "../../gameObjects/DividerLine.js";
+import {InlineBlock} from "../../gameObjects/InlineBlock.js";
 
 export class BasicTaskCard extends TasksCard {
     createContent(task) {
@@ -20,18 +21,19 @@ export class BasicTaskCard extends TasksCard {
 
         this.toggleDescriptionBtn.onCheck.connect(this.onChange.bind(this));
 
-        this.descriptionContainer = this.content.create.displayObject(List, {parameters: {type: 'vertical', vertPadding: 16, elementsMargin: 16}});
+        this.descriptionContainer = this.content.create.object('VerticalBlock', {y: 16, parameters: {horizontalAlign: 'center', blockWidth: 630, gap: 16}});
         this.descriptionContainer.addChild(this.createDividerLine(630));
         this.descriptionContainer.addChild(this.createDescription(description));
         this.descriptionContainer.addChild(this.createDividerLine(630));
         this.descriptionContainer.addChild(this.createButtons());
+        // this.descriptionContaine.layaout()
 
         this.descriptionContainer.y = this.toggleDescriptionBtn.y + this.toggleDescriptionBtn.height + 16;
 
         this.closeDescription();
 
         this.subscribeButton.button.enabled = task.status === TaskStatus.IN_PROGRESS;
-        this.claimRewardButton.button.enabled = task.status === TaskStatus.READY_TO_CLAIM;
+        // this.claimRewardButton.button.enabled = task.status === TaskStatus.READY_TO_CLAIM;
     }
 
     onChange(value) {
@@ -57,7 +59,7 @@ export class BasicTaskCard extends TasksCard {
     createDescription(text, width = 630) {
         const container = new SuperContainer();
 
-        container.create.text({text, style: 'TaskCardDescriptionText', x: width / 2, anchor: {x: 0.5}});
+        container.create.text({text, style: 'TaskCardDescriptionText'});
 
         return container;
     }
@@ -65,18 +67,37 @@ export class BasicTaskCard extends TasksCard {
     createDividerLine(width) {
         const container = new SuperContainer();
 
-        container.create.displayObject(DividerLine,{x: width / 2 - 592 / 2, parameters: {width: 592}});
+        container.create.displayObject(DividerLine,{ parameters: {width: 592}});
 
         return container;
     }
 
     createButtons() {
-        const container = new SuperContainer();
+        const container = new InlineBlock({gap: 18});
+        const bg = container.create.object('RoundRect', {parameters: {width: 276, height: 72, radius: 20, fill: 0xffffff}});
 
-        this.subscribeButton = container.create.object('SubscribeButton', {x: 18});
-        this.claimRewardButton = container.create.object('ClaimRewardButton', {x: 16});
+        const input = new Input({
+            bg,
+            placeholder: 'Enter text',
+            align: 'center',
+            textStyle: {
+                fontFamily: 'AldotheApache',
+                fontSize: 27,
+                fontWeight: 400,
+                fill: 0x000000,
+                align: 'center',
+            },
+            padding: {
+                top: 11,
+                right: 11,
+                bottom: 11,
+                left: 11
+            }
+        });
 
-        this.claimRewardButton.x = this.subscribeButton.x + this.subscribeButton.width + 18;
+        container.addChild(input);
+
+        this.subscribeButton = container.addObject('SubscribeButton');
 
         return container;
     }
