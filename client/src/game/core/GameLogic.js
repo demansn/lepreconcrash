@@ -3,8 +3,6 @@ import {TaskAction} from "../../../../shared/TaskAction.js";
 import {validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../../../shared/utils.js";
 
 const INVITE_URL = 'https://t.me/share/url';
-// TODO: move to .env
-// const API_URL = 'https://99e62295e3f6.ngrok.app';
 
 export class GameLogic {
     create(options) {
@@ -23,6 +21,9 @@ export class GameLogic {
         if (ENV !== 'dev') {
             this.cheat = undefined;
         }
+
+        window.Telegram.WebApp.isVerticalSwipesEnabled = false;
+        window.Telegram.WebApp.lockOrientation('portrait');
 
         this.userData = this.getUserData();
     }
@@ -123,7 +124,7 @@ export class GameLogic {
     inviteFriend() {
         const inviteLink = this.createInviteLink();
 
-        window.Telegram.WebApp.openLink(inviteLink);
+        window.Telegram.WebApp.openTelegramLink(inviteLink);
     }
 
     async buyItem(itemID) {
@@ -167,9 +168,7 @@ export class GameLogic {
             return false;
         }
 
-        return false;
-
-        // const result = await this.api.applyTaskAction(this.player.id, task.id, value);
+        const result = await this.api.applyTaskAction(this.player.id, task.actionRequired, value);
         //
         // return result;
     }

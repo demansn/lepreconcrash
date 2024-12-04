@@ -89,14 +89,13 @@ export class Level extends SuperContainer {
         const platform = this.getPlatformByNumber(targetPlatformNumber);
         const nexPlatform = this.getPlatformByNumber(targetPlatformNumber + 1);
         const timeline = gsap.timeline();
-        const isBonusStep = bonus.step === step || isWin;
 
         if (!isLose) {
             let jumpTimeline = this.hero.jumpTo(platform).add([
                 platform.hideWinValue(),
                 nexPlatform && nexPlatform.showWinValue(nextStepWin),
                 () => platform.toDark()
-            ], 'jump-half')
+            ], 'jump-half');
 
             timeline.add([
                 () => standPlatform.toLight(),
@@ -137,6 +136,8 @@ export class Level extends SuperContainer {
     }
 
     moveTo(position, force = false) {
+        gsap.killTweensOf(this.movementLayer);
+
         if (force) {
             this.movementLayer.x = -position.x + 110;
             this.updateParallax();

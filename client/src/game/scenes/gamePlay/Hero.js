@@ -23,6 +23,8 @@ export class Hero extends SuperContainer {
         gsap.killTweensOf(this.scale);
         gsap.killTweensOf(this.position);
 
+        this.setNormalState();
+
         const timeline = gsap.timeline();
         const dx = Math.abs(this.x - position.x);
         const dy = Math.abs(this.y - position.y);
@@ -51,6 +53,7 @@ export class Hero extends SuperContainer {
         gsap.killTweensOf(this);
         gsap.killTweensOf(this.scale);
         gsap.killTweensOf(this.position);
+        this.setNormalState();
 
         const timeline = gsap.timeline();
         const dx = Math.abs(this.x - position.x);

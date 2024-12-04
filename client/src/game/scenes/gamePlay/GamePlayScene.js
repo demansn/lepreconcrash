@@ -119,7 +119,7 @@ export class GamePlayScene extends BaseScene {
                 } else {
                     this.hud.roundInfo.animateToZero()
                 }
-            }, '-=0.75')
+            }, '-=0.95')
             .add(() => {
                 if (result.isLose) {
                     this.lose();
