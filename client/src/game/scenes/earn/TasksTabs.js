@@ -69,7 +69,7 @@ export class TasksTabs extends SuperContainer {
     }
 
     resize() {
-        const height = Math.min(this.tabs.children[this.selectedTabIndex].height + 138);
+        const height = Math.min(this.tabs.children[this.selectedTabIndex].getHeight()+ 138);
 
         this.background.setSize({height, width: 678});
     }

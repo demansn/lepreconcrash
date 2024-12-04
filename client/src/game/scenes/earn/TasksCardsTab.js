@@ -33,8 +33,14 @@ export class TasksCardsTab extends SuperContainer {
         return this.create.displayObject(constucrorsByType[task.type], {task, ...params});
     }
 
+    getHeight() {
+        this.list.arrangeChildren();
+
+        return this.list.height;
+    }
+
     updateTaskCard(task) {
-        const card = this.list.visibleItems.find(card => card.task.id === task.id);
+        const card = this.list.children.find(card => card.task.id === task.id);
 
         if (!card) {
             return;
@@ -45,7 +51,7 @@ export class TasksCardsTab extends SuperContainer {
 
     updateTasksCards(tasks) {
         tasks.forEach(task => this.updateTaskCard(task));
-        this.resize();
+        window.setTimeout(() =>this.resize(), 1);
     }
 
     addTasksCards(tasks){
@@ -61,9 +67,6 @@ export class TasksCardsTab extends SuperContainer {
     }
 
     resize() {
-        // this.list.list.arrangeChildren();
-        // this.list.resize(true);
-        // this.list.scrollTop();
         this.emit('changedSize');
     }
 }
