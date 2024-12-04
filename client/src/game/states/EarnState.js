@@ -38,8 +38,8 @@ export class EarnState extends ScreenState {
     }
 
     async loadTasks() {
+        this.earn.showTasks(this.logic.player.tasks);
         const tasks = await this.logic.getTasks();
-
         this.earn.showTasks(tasks);
     }
 

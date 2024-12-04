@@ -1,5 +1,5 @@
 import {SuperContainer} from "../../gameObjects/SuperContainer.js";
-import {ScrollBox} from "@pixi/ui";
+import {List, ScrollBox} from "@pixi/ui";
 import {DailyTaskCard} from "./DailyTaskCard.js";
 import {BasicTaskCard} from "./BasicTaskCard.js";
 import {FriendsTaskCard} from "./FriendsTaskCard.js";
@@ -13,18 +13,14 @@ export class TasksCardsTab extends SuperContainer {
         this.onClickShare = onClickShare;
         this.onClickInvite = onClickInvite;
 
-        this.list = this.addChild(new ScrollBox({
+        this.list = this.addChild(new List({
             elementsMargin: 16,
             topPadding: 2,
             leftPadding: 4,
             rightPadding: 4,
-            bottomPadding: 100,
-            scroll: 'vertical',
-            width: 634,
-            height,
         }));
 
-        tasks.forEach(task => this.list.addItem(this.createTaskCard(task, {onClickClaim, onClickShare, onClickInvite})));
+        tasks.forEach(task => this.list.addChild(this.createTaskCard(task, {onClickClaim, onClickShare, onClickInvite})));
     }
 
     createTaskCard(task, params) {
@@ -58,14 +54,16 @@ export class TasksCardsTab extends SuperContainer {
 
             card.on('changedSize', this.resize.bind(this));
 
-            this.list.addItem(card);
+            this.list.addChild(card);
         });
+
+        this.resize();
     }
 
     resize() {
-        this.list.list.arrangeChildren();
-        this.list.resize(true);
-        this.list.scrollTop();
+        // this.list.list.arrangeChildren();
+        // this.list.resize(true);
+        // this.list.scrollTop();
         this.emit('changedSize');
     }
 }

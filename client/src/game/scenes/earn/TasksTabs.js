@@ -18,6 +18,7 @@ export class TasksTabs extends SuperContainer {
         this.tabsByTaskType[TaskType.friends] = this.addTasksTab();// 'friends'
         this.selectTab(0);
         this.isCreatedTasks = false;
+        this.selectedTabIndex = 0;
     }
 
     addTasksCards(tasks) {
@@ -25,6 +26,7 @@ export class TasksTabs extends SuperContainer {
             this.tabsByTaskType[type].addTasksCards(tasks.filter(task => task.type === type));
         }
         this.isCreatedTasks = true;
+        this.resize();
     }
 
     updateTasksCards(tasks) {
@@ -67,7 +69,7 @@ export class TasksTabs extends SuperContainer {
     }
 
     resize() {
-        const height = Math.min(this.tabs.children[this.selectedTabIndex].height + 128);
+        const height = Math.min(this.tabs.children[this.selectedTabIndex].height + 138);
 
         this.background.setSize({height, width: 678});
     }
