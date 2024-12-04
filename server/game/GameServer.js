@@ -9,6 +9,9 @@ import {TaskAction} from "../../shared/TaskAction.js";
 import {TaskScheduler} from "./TaskScheduler.js";
 import {ShopItems} from "./shop/ShopItems.js";
 import {ServiceLocator} from "./ServiceLocator.js";
+import {Bot} from "grammy";
+import {validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../shared/utils.js";
+
 
 export class GameServer {
     #botToken;
@@ -25,6 +28,7 @@ export class GameServer {
         this.#taskScheduler = new TaskScheduler(this.#players);
 
         this.#taskScheduler.startDailyTaskUpdaterAt();
+        // this.#taskScheduler.startDailyTaskUpdaterByInterval(2);
     }
 
     async initSession(telegramInitData, invite) {
@@ -35,9 +39,7 @@ export class GameServer {
         }
         const user = playerData.user;
         const playerID = user.id;
-        const isPremium = user.is_premium;
-
-
+        const isPremium = user.is_premium
         let player = await this.#players.getPlayer(playerID);
 
         if (!player) {
@@ -81,7 +83,6 @@ export class GameServer {
 
         if (inviter) {
             const tasks = inviter.updateTaskOnAction(action);
-
             if (tasks.length) {
                 tasks.forEach(task => {
                     if (task.isReadyToClaim()) {
@@ -218,14 +219,13 @@ export class GameServer {
         return player.getTasks();
     }
 
-    async claimTaskReward(sessionID, taskId) {
-        const gameSession = this.#sessions.get(sessionID);
+    async claimTaskReward(playerId, taskId) {
+        const player = await this.#players.getPlayer(playerId);
 
-        if (!gameSession) {
-            throw new SessionExpiredError();
+        if (!player) {
+            throw new Error(`Player with ID ${playerId} not found.`);
         }
 
-        const player = await this.#players.getPlayer(gameSession.playerID);
         const task = player.getTask(taskId);
 
         if (!task) {
@@ -339,5 +339,37 @@ export class GameServer {
 
             return {username, luck, photo};
         });
+    }
+
+    async applyTaskAction(playerID, taskAction, value) {
+        const player = await this.#players.getPlayer(playerID);
+
+        if (!player) {
+            throw new ServerError('Player not found');
+        }
+
+        switch (taskAction) {
+            case TaskAction.SHARE_EMAIL:
+                if (!value || !validateEmail(value)) {
+                    throw new Error('Invalid email format. Please use the format: user@domain.com.');
+                }
+                break;
+            case TaskAction.SHARE_PHONE:
+                if (!value || !validatePhoneNumber(value)) {
+                    throw new Error('Invalid phone number format. Please use the international format: +1234567890 (up to 15 digits).');
+                }
+                break;
+            case TaskAction.SHARE_X_ACCOUNT:
+                if (!value || !validateTwitterAccount(value)) {
+                    throw new Error('Invalid account format. Please use the format: @username.');
+                }
+                break;
+        }
+
+        const tasks = player.updateTaskOnAction(taskAction, value).map(task => task.toObject());
+
+        await this.#players.savePlayer(player);
+
+        return tasks;
     }
 }

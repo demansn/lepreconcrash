@@ -61,7 +61,6 @@ export class TasksCard extends SuperContainer {
     }
 
     update(task) {
-        console.log('update', task);
         this.background.setStyle({borderColor: this.getBorerColorByStatus(task.status)});
         this.content.removeChildren();
 

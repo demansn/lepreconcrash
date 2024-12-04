@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,  minimum-scale=1.0, initial-scale=1, maximum-scale=1, user-scalable=no, user-scalable=0">
+    <meta name="viewport" content="width=device-width,  minimum-scale=1.0, initial-scale=1.0, maximum-scale=1, user-scalable=no, user-scalable=0">
+
     <meta name="description" content="Leprecon Crash">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="./css/index.css"  rel="stylesheet" />
@@ -10,6 +11,13 @@
 </head>
 <body >
 <div id="root" style="width: 720px; height: 1280px;"></div>
+<div id="popupContainer">
+    <div id="popup">
+        <h2 id="popupTitle">Share your details</h2>
+        <input id="popupInput" type="text" placeholder="Enter your details here" />
+        <button id="popupShareButton">Share</button>
+    </div>
+</div>
 <script src="js/index.js"></script>
 <script>
     const ratio =  window.innerHeight / 1280;

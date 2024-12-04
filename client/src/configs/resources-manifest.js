@@ -20,12 +20,12 @@ export const manifest = {
                 {alias: 'leaderboard_bg', src: './assets/bg/leaderboard_bg.jpg'},
                 {alias: 'MyProfileBackground_bg', src: './assets/bg/MyProfileBackground.jpg'},
 
-                {alias: 'daily_collect_10_bonuses_icon', src: './assets/tasks/box.webp'},
+                {alias: 'grab_10_bonus_icon', src: './assets/tasks/box.webp'},
                 {alias: 'coin-icon', src: './assets/tasks/coin-icon.webp'},
                 {alias: 'invite_premium_friend_icon', src: './assets/tasks/dime.webp'},
                 {alias: 'share_email_address_icon', src: './assets/tasks/dime_mail.webp'},
                 {alias: 'share_x_account_icon', src: './assets/tasks/dime_x.webp'},
-                {alias: 'share_phone_icon', src: './assets/tasks/dime_phone.webp'},
+                {alias: 'share_phone_number_icon', src: './assets/tasks/dime_phone.webp'},
                 {alias: 'invite_friend_icon', src: './assets/tasks/invite.webp'},
                 {alias: 'daily_play_3_games_icon', src: './assets/tasks/play.webp'},
                 {alias: 'daily_login_icon', src: './assets/tasks/time.webp'},
@@ -61,6 +61,7 @@ export const manifest = {
                 {alias: 'BronzeCup', src: './assets/icons/BronzeCup.webp'},
                 {alias: 'CloverIcon', src: './assets/icons/CloverIcon.webp'},
                 {alias: 'PostIcon', src: './assets/icons/PostIcon.webp'},
+                {alias: 'invite_friend_premium_icon', src: './assets/icons/InvitePremiumAccaunt.webp'},
 
                 {alias: 'BottomPanelBtnActive', src: './assets/ui/bottomPanel/BottomPanelBtnActive.png'},
                 {alias: 'BottomPanelBtnDefault', src: './assets/ui/bottomPanel/BottomPanelBtnDefault.png'},

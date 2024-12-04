@@ -6,7 +6,7 @@ const INVITE_URL = 'https://t.me/share/url';
 
 export class GameLogic {
     create(options) {
-        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard'], API_URL);
+        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction'], API_URL);
 
         const urlParams = new URLSearchParams(window.location.search);
 
@@ -91,6 +91,14 @@ export class GameLogic {
         return {player, gameRound};
     }
 
+    getPlayerBalance() {
+        return  {
+            balance: this.player.balance,
+            luck: this.player.luck,
+            level: this.player.level
+        }
+    }
+
     getInfo() {
         return {
            ...this.player,
@@ -102,8 +110,8 @@ export class GameLogic {
         return await this.api.getTasks(this.player.id);
     }
 
-    claimTaskReward(taskId) {
-        const result = this.api.claimTaskReward(this.sessionID, taskId);
+    async claimTaskReward(taskId) {
+        const result = await this.api.claimTaskReward(this.player.id, taskId);
 
         if (result.task) {
             this.player.balance = result.player.balance;
@@ -146,7 +154,7 @@ export class GameLogic {
     async applyTaskAction(task, value) {
         let error = null;
 
-        if (task.actionRequired === TaskAction.SHARE_EMAIL && (!value || validateEmail(value))) {
+        if (task.actionRequired === TaskAction.SHARE_EMAIL && (!value || !validateEmail(value))) {
             error = 'Invalid email format. Please use the format: name@domain.com.';
         }
 
@@ -164,13 +172,10 @@ export class GameLogic {
             } catch {
                 alert(error);
             }
-
             return false;
         }
 
-        const result = await this.api.applyTaskAction(this.player.id, task.actionRequired, value);
-        //
-        // return result;
+        return await this.api.applyTaskAction(this.player.id, task.actionRequired, value);
     }
 
     async update() {

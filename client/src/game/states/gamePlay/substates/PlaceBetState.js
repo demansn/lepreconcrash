@@ -21,6 +21,8 @@ export class PlaceBetState extends GameBaseState {
             this.scene.call('GamePlayScene', 'wait');
             const {round} = await this.logic.placeBet(bet);
 
+            this.scene.call('HeaderScene', 'set', this.logic.getPlayerBalance());
+
             this.scene.call('GamePlayScene', 'play', {
                 gameRound: round,
                 info: this.logic.getInfo()

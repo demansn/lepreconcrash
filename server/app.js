@@ -28,7 +28,7 @@ const game = new GameServer(process.env.BOT_TOKEN, db);
 
 const httpServer = new HTTPServer(options);
 
-httpServer.addAPI(game, ['initSession', 'placeBet', 'cashOut', 'getTasks', 'claimTaskReward', 'fromTelegram', 'getInvoiceLink', 'getLeaderBoard']);
+httpServer.addAPI(game, ['initSession', 'placeBet', 'cashOut', 'getTasks', 'claimTaskReward', 'fromTelegram', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction']);
 httpServer.start({port: process.env.PORT});
 
 async function onTerminate() {

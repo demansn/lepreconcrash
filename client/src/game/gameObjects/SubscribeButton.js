@@ -7,8 +7,7 @@ export class SubscribeButton extends SuperContainer {
 
         this.button = this.create.displayObject(FancyButton, {
             parameters: {
-                defaultView: 'default_small_btn',
-                disabledView: 'disabled_small_btn',
+                defaultView: 'claim_button_bg',
                 text: this.create.text({text: 'SUBSCRIBE', style: 'ClaimBtnText'}),
                 anchor: 0.5,
                 animations: {

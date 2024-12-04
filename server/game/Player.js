@@ -1,5 +1,7 @@
 import Big from "big.js";
 import {Task} from "./tasks/Task.js";
+import {TaskAction} from "../../shared/TaskAction.js";
+import {TaskStatus} from "../../shared/TaskStatus.js";
 
 export class Player {
     #balance;
@@ -58,8 +60,22 @@ export class Player {
         return this.tasks.find(task => task.id === id);
     }
 
-    updateTaskOnAction(action) {
-        return this.tasks.map(task => task.updateOnAction(action)).filter(Boolean);
+    updateTaskOnAction(action, value) {
+        const updatedTasks = this.tasks.map(task => task.updateOnAction(action)).filter(Boolean);
+
+        if (updatedTasks.length && value) {
+            if (action === TaskAction.SHARE_EMAIL) {
+                this.profile.email = value;
+            }
+            if (action === TaskAction.SHARE_X_ACCOUNT) {
+                this.profile.xAccaunt = value;
+            }
+            if (action === TaskAction.SHARE_PHONE) {
+                this.profile.phone = value;
+            }
+        }
+
+        return updatedTasks;
     }
 
     toObject() {

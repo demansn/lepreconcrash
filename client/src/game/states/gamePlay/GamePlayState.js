@@ -12,7 +12,7 @@ export class GamePlayState extends StateWithFooter {
             this.goTo('InitGamePlayState');
         }
 
-        this.header.set(this.logic.getInfo());
+        this.header.set(this.logic.getPlayerBalance());
         this.scene.show('GamePlayScene');
     }
 
@@ -25,6 +25,8 @@ export class GamePlayState extends StateWithFooter {
     async cashOut() {
         try {
             const {gameRound} = await this.logic.cashOut();
+
+            this.scene.call('HeaderScene', 'animateTo', this.logic.getPlayerBalance());
 
             this.gamePlayScene.cashOut(this.logic.getInfo(), gameRound).add(() => {
                 this.gamePlayScene.reset();

@@ -25,3 +25,80 @@ body, html, #root {
      width: 100%;
      height: 100%;
  }
+
+#popupContainer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: flex-start;
+    backdrop-filter: blur(8.100000381469727px);
+}
+
+#popup {
+    margin-top: 64px;
+    margin-left: 2px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    width: 336px;
+    text-align: center;
+    position: relative;
+    border-radius: 24px;
+    border: 2px solid #FFE20B;
+    background: rgba(0, 0, 0, 0.60);
+    backdrop-filter: blur(10.100000381469727px);
+}
+
+/* Заголовок */
+#popup h2 {
+    margin: 0 0 15px;
+    font-size: 20px;
+    color: white;
+    font-family: "AldotheApache";
+}
+
+/* Поле ввода */
+#popup input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #FFF;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+#popup input:focus {
+    outline: none;
+    border-color: #FFF;
+}
+
+#popup button {
+    padding: 10px 20px;
+    color: #fff;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    border-radius: 10px;
+    background: linear-gradient(261deg, #FFE20B -8.11%, #E07904 89.61%), #3DB232;
+    font-family: "AldotheApache";
+}
+
+#popup .close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s;
+}
