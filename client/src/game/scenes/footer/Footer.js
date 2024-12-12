@@ -61,6 +61,7 @@ export class Footer extends BaseScene {
 
         if (index === -1) {
             this.buttons.items.forEach((item, i) => {
+                this.buttons.selected = -1;
                 item.forceCheck(false);
             });
             return;

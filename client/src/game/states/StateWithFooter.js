@@ -5,9 +5,11 @@ export class StateWithFooter extends GameBaseState {
         this.initFooter();
         this.scene.on('HeaderScene', 'clickBalance', (state) =>  {
             this.changeState('ShopState');
+            this.scene.call('Footer', 'select', 'ShopState');
         });
         this.scene.on('HeaderScene', 'clickLack', (state) =>  {
             this.changeState('MyProfileState');
+            this.scene.call('Footer', 'select', 'MyProfileState');
         });
     }
 

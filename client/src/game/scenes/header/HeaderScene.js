@@ -17,14 +17,14 @@ export class HeaderScene extends BaseScene {
         this.balance.y = 20;
         this.balance.interactive = true;
         this.balance.buttonMode = true;
-        this.balance.on('click', this.onClickBalance, this);
+        this.balance.on('pointerdown', this.onClickBalance, this);
 
         this.lack = new LackPanel();
         this.lack.x = GameConfig.PixiApplication.width - this.lack.width - 20;
         this.lack.y = 20;
         this.lack.interactive = true;
         this.lack.buttonMode = true;
-        this.lack.on('click', this.onClickLack, this);
+        this.lack.on('pointerdown', this.onClickLack, this);
         this.addChild(this.lack);
     }
 
