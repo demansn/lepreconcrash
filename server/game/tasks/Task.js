@@ -17,6 +17,11 @@ export class Task {
         this.data.updatedAt = new Date().toISOString();
     }
 
+    /**
+     * Update task progress on action.
+     * @param {TaskAction} action - task action
+     * @returns {Task}
+     */
     updateOnAction(action) {
         if (this.data.actionRequired === action && (this.data.status === TaskStatus.IN_PROGRESS || this.isRepeatable())) {
             this.data.progress += 1;
@@ -44,7 +49,8 @@ export class Task {
             return 0;
         }
 
-        const reward = this.data.progress * this.data.reward;
+        const amount = this.data.progress / this.data.goal;
+        const reward = amount * this.data.reward;
 
         this.data.counted += this.data.progress;
 

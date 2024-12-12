@@ -11,6 +11,8 @@ export class BalancePanel extends SuperContainer {
 
         this.valueText = this.create.text({text: '0', style: 'balancePanelValue', x: this.bg.width * 0.45, y:  this.bg.height / 2, anchor: {y: 0.5}});
         this.value = 0;
+
+        this.create.object('Green+', {x: this.bg.width-5, y:  5, anchor: 0.5});
     }
 
     setValue(value) {

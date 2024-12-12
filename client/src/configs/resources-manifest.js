@@ -14,6 +14,7 @@ export const manifest = {
             assets: [
                 // {alias: 'bg', src: './assets/background.png'},
                 {alias: 'bg', src: './assets/Back.png'},
+                {alias: 'Green+', src: './assets/Green+.png'},
                 {alias: 'earn_bg', src: './assets/bg/earn_bg.jpg'},
                 {alias: 'shop_bg', src: './assets/bg/shop_bg.jpg'},
                 {alias: 'friends_bg', src: './assets/bg/friends_bg.jpg'},
@@ -50,6 +51,7 @@ export const manifest = {
 
                 {alias: 'RewardPopup', src: './assets/RewardPopup.webp'},
 
+                // ICONS
                 {alias: 'PlayerIcon', src: './assets/icons/PlayerIcon.webp'},
                 {alias: 'cap', src: './assets/icons/cap.webp'},
                 {alias: 'star', src: './assets/icons/star.webp'},
@@ -62,6 +64,33 @@ export const manifest = {
                 {alias: 'CloverIcon', src: './assets/icons/CloverIcon.webp'},
                 {alias: 'PostIcon', src: './assets/icons/PostIcon.webp'},
                 {alias: 'invite_friend_premium_icon', src: './assets/icons/InvitePremiumAccaunt.webp'},
+                {alias: 'GoldIcon', src: './assets/icons/GoldIcon.webp'},
+                {alias: 'BagGoldIcon', src: './assets/icons/BagGoldIcon.webp'},
+                {alias: 'PotGoldIcon', src: './assets/icons/PotGoldIcon.webp'},
+                {alias: 'ShareEmailIcon', src: './assets/icons/ShareEmailIcon.webp'},
+                {alias: 'SharePhoneIcon', src: './assets/icons/SharePhoneIcon.webp'},
+                {alias: 'ShareXIcon', src: './assets/icons/ShareXIcon.webp'},
+                {alias: 'InvitePremiumFriendTaskIcon', src: './assets/icons/InvitePremiumFriendTaskIcon.webp'},
+                {alias: 'InviteFriendTaskIcon', src: './assets/icons/InviteFriendTaskIcon.webp'},
+
+                // POPUPS
+                {alias: 'GoldLabelBackground', src: './assets/popups/GoldLabelBackground.webp'},
+                {alias: 'MainItemShop', src: './assets/popups/MainItemShop.webp'},
+                {alias: 'RewardPopupBackground', src: './assets/popups/RewardPopupBackground.webp'},
+
+                {alias: 'ProfilePhotoFrame', src: './assets/ProfilePhotoFrame.webp'},
+                {alias: 'ProfilePhoto', src: './assets/icons/ProfilePhoto.png'},
+
+                {alias: 'Copper', src: './assets/levels/Copper.webp'},
+                {alias: 'Diamond', src: './assets/levels/Diamond.webp'},
+                {alias: 'Fairy', src: './assets/levels/Fairy.webp'},
+                {alias: 'Gold', src: './assets/levels/Gold.webp'},
+                {alias: 'Iron', src: './assets/levels/Iron.webp'},
+                {alias: 'Pearl', src: './assets/levels/Pearl.webp'},
+                {alias: 'Silver', src: './assets/levels/Silver.webp'},
+                {alias: 'Stone', src: './assets/levels/Stone.webp'},
+                {alias: 'Plastic', src: './assets/levels/Plastic.webp'},
+                {alias: 'Wooden', src: './assets/levels/Wooden.webp'},
 
                 {alias: 'BottomPanelBtnActive', src: './assets/ui/bottomPanel/BottomPanelBtnActive.png'},
                 {alias: 'BottomPanelBtnDefault', src: './assets/ui/bottomPanel/BottomPanelBtnDefault.png'},

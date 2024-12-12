@@ -7,7 +7,7 @@ export class ShopScene extends ScreenScene {
     constructor() {
         super({name: 'shop'});
 
-        this.items = this.create.displayObject(List, {x: 21, y: 148, parameters: {topPadding: 1, bottomPadding: 1, elementsMargin: 21}});
+        this.items = this.create.displayObject(List, {x: 21, y: 128, parameters: {topPadding: 1, bottomPadding: 1, elementsMargin: 21}});
 
         this.isCreated = false;
     }

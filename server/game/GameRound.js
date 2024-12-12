@@ -51,6 +51,10 @@ export class GameRound {
         return this.result.steps[step];
     }
 
+    isFirstStep() {
+        return this.currentStep === 1;
+    }
+
     isEndStep() {
         return this.currentStep === this.result.lastStep;
     }
@@ -119,6 +123,7 @@ export class GameRound {
             win: this.#getCurrentWin(),
             bonus:this.result.bonus,
             isBonus: this.isBonusStep(),
+            isBonusCollected: this.result.bonus.step <= this.currentStep,
             luck: this.getRoundLuck(),
             bet: this.result.betAmount
         };

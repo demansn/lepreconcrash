@@ -1,15 +1,59 @@
 import {SuperContainer} from "../gameObjects/SuperContainer.js";
 import {CheckBox} from "@pixi/ui";
 
+class OnboardingPage extends SuperContainer {
+    constructor(bg) {
+        super();
+
+        this.bg = this.create.object(bg);
+    }
+}
+
+class OnboardingPage1 extends OnboardingPage {
+    constructor({onNext}) {
+        super('OnboardingPage-1');
+
+        const btn = this.create.object('RoundRect', {x: 's30%', y: 's70%', params: { width: 300, height: 150, radius: 20, fill: 0x000000},alpha: 0.01, interactive: true});
+
+        btn.on('pointerdown', () => {
+            onNext();
+        });
+    }
+}
+
+class OnboardingPage2 extends OnboardingPage {
+    constructor({onNext}) {
+        super('OnboardingPage-2');
+        const btn = this.create.object('RoundRect', {x: 's30%', y: 's70%', params: { width: 300, height: 150, radius: 20, fill: 0x000000},alpha: 0.01, interactive: true});
+
+        btn.on('pointerdown', () => {
+            onNext();
+        });
+
+        let btn2 = this.create.object('RoundRect', {x: 's28%', y: 's12%', params: { width: 300, height: 300, radius: 20, fill: 0x000000},alpha:0.01, interactive: true});
+
+        btn2.on('pointerdown', () => {
+            onNext();
+        });
+    }
+}
+
+class OnboardingPage3 extends OnboardingPage {
+    constructor() {
+        super('OnboardingPage-3');
+    }
+}
+
+
 export class OnboardingScene extends SuperContainer {
     constructor() {
         super();
 
-        const pages = ['OnboardingPage-1', 'OnboardingPage-2', 'OnboardingPage-3'];
+        const pages = [OnboardingPage1, OnboardingPage2, OnboardingPage3];
         this.pages = [];
 
         for (let i = 0; i < pages.length; i++) {
-            this.pages.push(this.create.sprite({texture: pages[i], visible: false}));
+            this.pages.push(this.create.displayObject(pages[i],{visible: false, onNext: () => this.nextPage(), onPrev: () => this.previousPage()}));
         }
 
         const PrevNextButtonOptions = {

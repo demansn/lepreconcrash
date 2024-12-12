@@ -63,15 +63,13 @@ export class MongoDBAdapter {
         playerData.tasks = this.tasksTemplate.map(task => ({
             id: task.id,
             type: task.type,
-            title: task.title,
-            description: task.description,
             reward: task.reward,
-            goal: task.goal || null,
+            goal: task.goal,
+            actionRequired: task.actionRequired,
+            repeatable: task.repeatable,
             progress: 0,
             counted: 0,
             status: "in_progress",
-            actionRequired: task.actionRequired,
-            repeatable: task.repeatable,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
         }));

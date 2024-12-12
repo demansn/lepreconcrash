@@ -3,7 +3,7 @@ import {ElasticBackground} from "../../gameObjects/ElasticBackground.js";
 import {List} from "@pixi/ui";
 
 export class PlayerFriendsInfo extends SuperContainer {
-    constructor({activeFriends = 0, earned = 0}) {
+    constructor({activeFriends = 0, earned = 0, userName = 'Player'}) {
         super();
 
         this.bg = this.create.displayObject(ElasticBackground, {
@@ -17,8 +17,8 @@ export class PlayerFriendsInfo extends SuperContainer {
             }
         });
 
-        this.icon = this.create.object('PlayerIcon', {x: 36, y: 36});
-        this.create.displayObject(PlayerName, {name: 'PlayerName', x: this.icon.x + this.icon.width + 24, y: this.icon.y + this.icon.height / 2});
+        this.icon = this.create.object('PlayerPhoto', {x: 36, y: 36});
+        this.userName = this.create.displayObject(PlayerName, {name: userName, x: this.icon.x + this.icon.width + 24, y: this.icon.y + this.icon.height / 2});
 
         this.activeFriendsInfo = this.create.displayObject(PlayerFriendsInfoCard, {icon: 'cap', value: activeFriends, label: 'ACTIVE FRIENDS'});
         this.yourEarnedInfo = this.create.displayObject(PlayerFriendsInfoCard, {icon: 'coin-icon', value: earned, label: 'YOUR EARNED'});
@@ -26,9 +26,11 @@ export class PlayerFriendsInfo extends SuperContainer {
         this.create.displayObject(List, {x: 36, y: 156, parameters: {children: [this.activeFriendsInfo, this.yourEarnedInfo], type: 'horizontal', elementsMargin: 18}});
     }
 
-    setValue({activeFriends, earned}) {
+    setValue({activeFriends, earned, userName}) {
         this.activeFriendsInfo.setValue(activeFriends);
         this.yourEarnedInfo.setValue(earned);
+        this.userName.setValue(userName);
+
     }
 }
 
@@ -38,11 +40,15 @@ export class PlayerName extends SuperContainer {
 
         this.name = 'PlayerName'
 
-         const t1 = this.create.text({text: `HI, ${name}`.toUpperCase(), style: 'HiPlayerNameStyle'});
+         const t1 = this.textValue = this.create.text({text: `HI, ${name}`.toUpperCase(), style: 'HiPlayerNameStyle'});
 
-        this.create.text({name: 'visitMyProfile', text: 'VISIT MY PROFILE >', style: 'VisitMyProfileStyle', y: t1.height + 8, alpha: 0.5, interactive: true, buttonMode: true});
+         this.create.text({name: 'visitMyProfile', text: 'VISIT MY PROFILE >', style: 'VisitMyProfileStyle', y: t1.height + 8, alpha: 0.5, interactive: true, buttonMode: true});
 
          this.pivot.y = this.height / 2;
+    }
+
+    setValue(text) {
+        this.textValue.text = `HI, ${text}`.toUpperCase();
     }
 }
 

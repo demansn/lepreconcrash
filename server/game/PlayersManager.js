@@ -1,6 +1,4 @@
 import {Player} from "./Player.js";
-import {TaskStatus} from "../../shared/TaskStatus.js";
-import {TaskType} from "../../shared/TaskType.js";
 
 export class PlayersManager {
     constructor(dbAdapter) {
@@ -59,7 +57,7 @@ export class PlayersManager {
      * Обновляет ежедневные задания для игрока.
      * @param {Player} player - Экземпляр класса Player.
      */
-    updateDailyTasks(player) {
+    updateDailyTasks(player, nextDailyUpdate) {
         const lastUpdated = new Date(player.lastDailyUpdate || 0);
         const now = new Date();
 
@@ -70,6 +68,7 @@ export class PlayersManager {
                 }
             });
             player.lastDailyUpdate = now.toISOString();
+            player.nextDailyUpdate = nextDailyUpdate;
         }
     }
 

@@ -1,9 +1,9 @@
 export const ShopItems = [
     {
-        price: 200,
-        label: '200 Game',
-        id: '200',
-        amount: 2000,
+        price: 20,
+        label: '20 Game',
+        id: '20',
+        amount: 200,
         isMain: true
     },
     {

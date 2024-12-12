@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import {initDataToObj} from "../shared/utils.js";
 
 export function validateSignature(telegramInitData, botToken) {
     const initData = new URLSearchParams(telegramInitData);
@@ -14,14 +15,6 @@ export function validateSignature(telegramInitData, botToken) {
     const computedHash = crypto.createHmac('sha256', secretKey).update(dataToCheck).digest('hex');
 
     return computedHash === hash ? initDataToObj(initData) : null;
-}
-
-function initDataToObj(initData) {
-    const data = Object.fromEntries(new URLSearchParams(initData));
-
-    data.user = JSON.parse(data.user);
-
-    return data;
 }
 
 export function toFixed(value) {

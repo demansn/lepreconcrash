@@ -15,10 +15,16 @@ export class HeaderScene extends BaseScene {
         this.addChild(this.balance);
         this.balance.x = 20;
         this.balance.y = 20;
+        this.balance.interactive = true;
+        this.balance.buttonMode = true;
+        this.balance.on('click', this.onClickBalance, this);
 
         this.lack = new LackPanel();
         this.lack.x = GameConfig.PixiApplication.width - this.lack.width - 20;
         this.lack.y = 20;
+        this.lack.interactive = true;
+        this.lack.buttonMode = true;
+        this.lack.on('click', this.onClickLack, this);
         this.addChild(this.lack);
     }
 
@@ -36,5 +42,13 @@ export class HeaderScene extends BaseScene {
 
     setBalance(value) {
         this.balance.setValue(value);
+    }
+
+    onClickBalance() {
+        this.emit('clickBalance');
+    }
+
+    onClickLack() {
+        this.emit('clickLack');
     }
 }

@@ -50,3 +50,17 @@ export const nextRankTarget = (luck) => {
     return 0;
 }
 
+export const LevelsIcon = {
+    0: 'Wooden',
+    1: 'Wooden',
+    2: 'Stone',
+    3: 'Plastic',
+    4: 'Iron',
+    5: 'Copper',
+    6: 'Silver',
+    7: 'Gold',
+    8: 'Pearl',
+    9: 'Diamond',
+    10: 'Fairy'
+};
+

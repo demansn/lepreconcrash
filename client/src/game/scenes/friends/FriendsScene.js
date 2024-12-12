@@ -9,12 +9,12 @@ export class FriendsScene extends ScreenScene {
         super({name: 'friends'});
 
         this.content = this.create.container();
-        this.playerInfo = this.create.displayObject(PlayerFriendsInfo, {x: 21, y: 148, parameters: {activeFriends: 0, earned: 0}});
+        this.playerInfo = this.create.displayObject(PlayerFriendsInfo, {x: 21, y: 148, parameters: {activeFriends: 0, earned: 0, userName: 'PlayerName'}});
         this.getObjectByName('visitMyProfile').on('pointerdown', this.onClickVisitMyProfile.bind(this));
     }
 
-    showData({activeFriends, earned, tasks}) {
-        this.playerInfo.setValue({activeFriends, earned});
+    showData({activeFriends, earned, tasks, userName}) {
+        this.playerInfo.setValue({activeFriends, earned, userName});
 
         if (!this.tasksList) {
             const items = [

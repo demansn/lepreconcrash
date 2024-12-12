@@ -1,7 +1,6 @@
 import Big from "big.js";
 import {Task} from "./tasks/Task.js";
 import {TaskAction} from "../../shared/TaskAction.js";
-import {TaskStatus} from "../../shared/TaskStatus.js";
 
 export class Player {
     #balance;

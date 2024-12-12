@@ -1,11 +1,13 @@
 import {ScreenState} from "./ScreenState.js";
 import {TaskAction} from "../../../../shared/TaskAction.js";
+import {nextMidnight, scheduleAtTime} from "../../../../shared/utils.js";
 
 export class EarnState extends ScreenState {
     async enter() {
         super.enter();
 
         this.init();
+        this.timer = scheduleAtTime(() => this.loadTasks(), nextMidnight().toISOString());
     }
 
     async exit() {
@@ -13,6 +15,8 @@ export class EarnState extends ScreenState {
 
         this.earn.off('onClickClaim');
         this.earn.off('onClickInvite');
+
+        clearTimeout(this.timer);
     }
 
     async init() {
@@ -56,10 +60,13 @@ export class EarnState extends ScreenState {
         const placeholder = placeholders[task.actionRequired];
         const title = task.description;
         const value = await this.showPopup(title, placeholder);
-        const updatedTasks = await this.logic.applyTaskAction(task, value);
 
-        if (updatedTasks) {
-            this.earn.updateTasks(updatedTasks);
+        if (value) {
+            const updatedTasks = await this.logic.applyTaskAction(task, value);
+
+            if (updatedTasks) {
+                this.earn.updateTasks(updatedTasks);
+            }
         }
     }
 
@@ -69,16 +76,22 @@ export class EarnState extends ScreenState {
             const popupTitle = document.getElementById('popupTitle');
             const popupInput = document.getElementById('popupInput');
             const popupShareButton = document.getElementById('popupShareButton');
+            const closeButton = document.getElementById('popupCloseButton');
 
             popupTitle.textContent = title;
             popupInput.placeholder = placeholder;
             popupInput.value = '';
 
+            closeButton.onclick = () => {
+                popupContainer.style.display = 'none';
+                resolve();
+            };
+
             document.getElementById('popupContainer').style.display = 'flex';
             document.getElementById('popupInput').focus();
-            document.getElementById('popupShareButton').onclick = () => {
+            popupShareButton.onclick = () => {
                 const value = document.getElementById('popupInput').value;
-                document.getElementById('popupContainer').style.display = 'none';
+                popupContainer.style.display = 'none';
                 resolve(value);
             };
         })

@@ -4,6 +4,7 @@ import {SuperContainer} from "../../gameObjects/SuperContainer.js";
 import {ScrollBox, Slider} from "@pixi/ui";
 import {InlineBlock} from "../../gameObjects/InlineBlock.js";
 import {Graphics} from "pixi.js";
+import {getPlayerRankLevel, LevelsIcon} from "../../../../../shared/PlayrLevels.js";
 
 export class LeaderboardScene extends ScreenScene {
     constructor() {
@@ -79,6 +80,9 @@ class PlayerItem extends SuperContainer {
     constructor({username, luck}, place) {
         super();
 
+        const level = getPlayerRankLevel(luck);
+
+        // this.icon = this.create.object(LevelsIcon[level || 0], {scale: 0.3});
         this.icon = this.create.object('LeaderboardPlayerIcon');
         this.name = this.create.text({x: this.icon.width + 16, y: this.icon.height / 2, anchor: {y: 0.5},text: username, style: 'LeaderboardPlayerItemName'});
 

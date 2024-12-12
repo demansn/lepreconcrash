@@ -1,5 +1,7 @@
 import {TasksCard} from "./TaskCard.js";
 import {TaskStatus} from "../../../../../shared/TaskStatus.js";
+import {CountdownTimer} from "../../common/CountdownTimer.js";
+import {nextMidnight} from "../../../../../shared/utils.js";
 
 export class DailyTaskCard extends TasksCard {
     createContent(task) {
@@ -32,7 +34,21 @@ export class DailyTaskCard extends TasksCard {
                 this.status.text = 'CLAIMED';
                 this.background.alpha = 0.5;
                 this.info.alpha = 0.5;
+
+                this.countdown = new CountdownTimer(nextMidnight().toISOString());
+                this.countdown.on('tick', timeLeft => {
+                    this.status.text = timeLeft;
+                });
                 break;
+        }
+    }
+
+    destroy(_options) {
+        super.destroy(_options);
+
+        if (this.countdown) {
+            this.countdown.removeAllListeners();
+            this.countdown.stop();
         }
     }
 }

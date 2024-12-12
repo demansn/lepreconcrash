@@ -71,6 +71,12 @@ export class Platform extends  SuperContainer {
         this.winValue.setValue(value);
         this.winValue.scale.set(0);
 
+        if (this.bonus.alpha === 1) {
+            this.winValue.y -= this.isFinal ? 70 : 50;
+        } else {
+            this.winValue.y = -75;
+        }
+
         if (force) {
             this.winValue.scale.set(1);
             this.winValue.alpha = 1;
@@ -87,7 +93,9 @@ export class Platform extends  SuperContainer {
         return gsap.timeline([
             gsap.to(this.winValue, {duration: 0.1, alpha: 1}),
             gsap.to(this.winValue.scale, {duration: 0.1, x: 0, y: 0})
-        ]);
+        ]).add(() => {
+            this.winValue.y = -75;
+        })
     }
 
     setPosition({x, y}) {

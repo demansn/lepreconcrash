@@ -1,6 +1,7 @@
 import {createAPI} from "../../Api.js";
 import {TaskAction} from "../../../../shared/TaskAction.js";
-import {validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../../../shared/utils.js";
+import {initDataToObj, initDataToString, validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../../../shared/utils.js";
+import Tasks from "../../../../shared/task_templates.json"
 
 const INVITE_URL = 'https://t.me/share/url';
 
@@ -8,15 +9,19 @@ export class GameLogic {
     create(options) {
         this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction'], API_URL);
 
-        const urlParams = new URLSearchParams(window.location.search);
+        this.parameters = new URLSearchParams(window.location.search);
 
         this.cheat = {
-            bonusStep: urlParams.has('bonusStep')  ? Number(urlParams.get('bonusStep')) :  undefined,
-            loseStep: urlParams.has('loseStep')  ? Number(urlParams.get('loseStep')) :  undefined,
-            winStep: urlParams.has('winStep')  ? Number(urlParams.get('winStep')) :  undefined,
+            bonusStep: this.parameters .has('bonusStep')  ? Number(this.parameters .get('bonusStep')) :  undefined,
+            loseStep: this.parameters .has('loseStep')  ? Number(this.parameters .get('loseStep')) :  undefined,
+            winStep: this.parameters .has('winStep')  ? Number(this.parameters .get('winStep')) :  undefined,
         };
 
-        this.invite = urlParams.has('tgWebAppStartParam') ? Number(urlParams.get('tgWebAppStartParam')): undefined;
+        this.invite = this.parameters .has('tgWebAppStartParam') ? Number(this.parameters .get('tgWebAppStartParam')): undefined;
+
+        if (ENV === 'dev') {
+            this.invite = this.parameters .has('startapp') ? Number(this.parameters .get('startapp')): this.invite;
+        }
 
         if (ENV !== 'dev') {
             this.cheat = undefined;
@@ -33,6 +38,14 @@ export class GameLogic {
 
         if (ENV === 'dev' && !userData) {
             userData = USER_DATA;
+
+            if (this.parameters.has('userID')) {
+                userData = initDataToObj(userData);
+
+                userData.user.id = this.parameters.get('userID');
+
+                userData = initDataToString(userData);
+            }
         }
 
         return userData;
@@ -43,6 +56,8 @@ export class GameLogic {
 
         this.sessionID = id;
         this.player = player;
+        this.player.tasks = this.transformTasks(player.tasks);
+
         this.gameSteps = steps;
 
         this.gameRound = gameRound;
@@ -57,7 +72,7 @@ export class GameLogic {
     }
 
     async placeBet(bet) {
-        const {player, gameRound} = await this.api.placeBet(bet, this.sessionID, this.cheat);
+        const {player, gameRound} = await this.api.placeBet(bet, this.player.id, this.cheat);
 
         this.player.balance = player.balance;
         this.player.luck = player.luck;
@@ -72,7 +87,7 @@ export class GameLogic {
     }
 
     async nextStep() {
-        const {gameRound} = await this.api.nextStep(this.sessionID);
+        const {gameRound} = await this.api.nextStep(this.player.id);
 
         this.gameRound = gameRound;
 
@@ -80,7 +95,7 @@ export class GameLogic {
     }
 
     async cashOut() {
-        const {player, gameRound} = await this.api.cashOut(this.sessionID);
+        const {player, gameRound} = await this.api.cashOut(this.player.id);
 
         this.player.balance = player.balance;
         this.player.luck = player.luck;
@@ -107,7 +122,11 @@ export class GameLogic {
     }
 
     async getTasks() {
-        return await this.api.getTasks(this.player.id);
+        const tasks = await this.api.getTasks(this.player.id);
+
+        this.player.tasks = this.transformTasks(tasks);
+
+        return this.player.tasks;
     }
 
     async claimTaskReward(taskId) {
@@ -115,6 +134,15 @@ export class GameLogic {
 
         if (result.task) {
             this.player.balance = result.player.balance;
+            result.task = this.transformTask(result.task);
+
+            this.player.tasks = this.player.tasks.map(t => {
+                if (t.id === taskId) {
+                    return result.task;
+                }
+
+                return t;
+            });
         }
 
         return result;
@@ -122,7 +150,7 @@ export class GameLogic {
 
     createInviteLink() {
         //https://t.me/share/url?url=https://t.me/catizenbot/gameapp?startapp=rp_38841232&text=
-        const playerID = 432530856; //this.player.id;
+        const playerID = this.player.id;
         const url = decodeURIComponent(`${TELEGRAM_GAME_URL}?startapp=${playerID}`);
         const text = encodeURIComponent('Join the game!');
 
@@ -175,7 +203,21 @@ export class GameLogic {
             return false;
         }
 
-        return await this.api.applyTaskAction(this.player.id, task.actionRequired, value);
+        let tasksResult = await this.api.applyTaskAction(this.player.id, task.actionRequired, value);
+
+        if (tasksResult) {
+            tasksResult = this.transformTasks(tasksResult);
+
+            this.player.tasks = this.player.tasks.map(t => {
+                if (t.id === task.id) {
+                    return tasksResult.find(rt => rt.id === task.id);
+                }
+
+                return t;
+            });
+        }
+
+        return tasksResult;
     }
 
     async update() {
@@ -184,6 +226,30 @@ export class GameLogic {
 
     async getLeaderBoard() {
         return await this.api.getLeaderBoard();
+    }
+
+    transformTasks(tasks) {
+        return tasks.map(t => {
+            const metaData =  Tasks.find(task => task.id === t.id) || {};
+
+            return {...metaData, ...t};
+        });
+    }
+
+    transformTask(task) {
+        const metaData =  Tasks.find(t => t.id === task.id) || {};
+
+        return {...metaData, ...task};
+    }
+
+    getProfilePhotoURL() {
+        // try {
+        //     return  window.Telegram.WebApp.initDataUnsafe.user.photo_url || './assets/icons/PlayerIcon.webp'
+        // } catch {
+        //     return './assets/icons/PlayerIcon.webp';
+        // }
+
+        return './assets/icons/PlayerIcon.webp';
     }
 
     async #openInvoice(link) {
@@ -196,5 +262,11 @@ export class GameLogic {
                 }
             }) ;
         });
+    }
+
+    getUserName() {
+        const fullName = this.player.profile.firstName + ' ' + this.player.profile.lastName;
+
+        return fullName ||  this.player.profile.username || 'User';
     }
 }

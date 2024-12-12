@@ -15,7 +15,7 @@ export class PlayerLevelProgress extends SuperContainer {
 
     set({luck, luckTarget}) {
         this.levelText.set({luck, luckTarget});
-        this.progressBar.set({progress: luck / luckTarget * 100});
+        this.progressBar.set(luck / luckTarget * 100);
         this.content.layout();
     }
 }

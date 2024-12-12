@@ -74,6 +74,10 @@ export class StateMachine {
     }
 
     async goTo(name) {
+        if (this.currentState === name) {
+            return;
+        }
+
         if (this.currentState) {
             await this.#states[this.currentState].exit();
         }

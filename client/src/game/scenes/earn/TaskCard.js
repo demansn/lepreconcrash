@@ -71,10 +71,10 @@ export class TasksCard extends SuperContainer {
 }
 
 class TaskInfo extends SuperContainer {
-    constructor({id, title, reward}) {
+    constructor({id, title, reward, icon}) {
         super();
 
-        this.icon = this.create.sprite({texture: `${id}_icon`, anchor: {y: 0.5}});
+        this.icon = this.create.sprite({texture: icon, anchor: {y: 0.5}});
         this.container = this.create.container();
 
         this.title =  this.container.create.text({text: title, style: 'TaskInfoText'});

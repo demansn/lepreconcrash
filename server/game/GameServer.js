@@ -9,9 +9,9 @@ import {TaskAction} from "../../shared/TaskAction.js";
 import {TaskScheduler} from "./TaskScheduler.js";
 import {ShopItems} from "./shop/ShopItems.js";
 import {ServiceLocator} from "./ServiceLocator.js";
-import {Bot} from "grammy";
-import {validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../shared/utils.js";
+import {initDataToObj, validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../shared/utils.js";
 
+const Logger = console;
 
 export class GameServer {
     #botToken;
@@ -20,10 +20,12 @@ export class GameServer {
     #gameSteps = GameSteps.map(({number, multiplier}) => multiplier);
     #math = new GameMath(GameSteps);
     #taskScheduler;
+    #isDev = false;
 
-    constructor(botToken, dbAdapter) {
+    constructor(botToken, dbAdapter, isDev) {
         this.#botToken = botToken;
         this.#sessions = new GameSessionsManager(dbAdapter);
+        this.#isDev = isDev;
         this.#players = new PlayersManager(dbAdapter);
         this.#taskScheduler = new TaskScheduler(this.#players);
 
@@ -32,9 +34,10 @@ export class GameServer {
     }
 
     async initSession(telegramInitData, invite) {
-        const playerData = validateSignature(telegramInitData, this.#botToken);
+        const playerData = this.#isDev ? initDataToObj(telegramInitData) : validateSignature(telegramInitData, this.#botToken);
 
         if (!playerData) {
+            Logger.log(`Invalid signature for data: ${telegramInitData}`);
             throw new ServerError('Invalid signature');
         }
         const user = playerData.user;
@@ -53,12 +56,20 @@ export class GameServer {
                 tasks: []
             });
 
+            Logger.log(`Player ${playerID} created`);
+
             if (invite && (invite !== playerID)) {
                 await this.rewardForInviting(invite, playerID, isPremium);
             }
-        } else {
+
             player.updateTaskOnAction(TaskAction.CLAIM_DAILY_REWARD);
             await this.#players.savePlayer(player);
+        } else {
+            const task = player.updateTaskOnAction(TaskAction.CLAIM_DAILY_REWARD);
+
+            if (task) {
+                await this.#players.savePlayer(player);
+            }
         }
 
         const session = this.#sessions.getSession(playerID, player.session);
@@ -87,8 +98,13 @@ export class GameServer {
                 tasks.forEach(task => {
                     if (task.isReadyToClaim()) {
                         const reward = task.claimReward();
+                        const beforeBalance = inviter.balance;
 
                         inviter.addBalance(reward);
+
+                        const afterBalance = inviter.balance;
+
+                        Logger.log(`Player ${invite} claimed reward ${reward} for task ${task.id}, invited ${invited}, isPremium: ${isPremium} before b=${beforeBalance} after b=${afterBalance}`);
                     }
                 });
             }
@@ -97,13 +113,8 @@ export class GameServer {
         }
     }
 
-    async placeBet(bet, sessionID, cheat) {
-        const gameSession = this.#sessions.get(sessionID);
-
-        if (!gameSession) {
-            throw new SessionExpiredError();
-        }
-
+    async placeBet(bet, playerID, cheat) {
+        const gameSession = await this.getSession(playerID);
         const player = await this.#players.getPlayer(gameSession.playerID);
 
         if (!player) {
@@ -124,7 +135,7 @@ export class GameServer {
 
         let cheatData = undefined;
 
-        if (cheat && process.env.NODE_ENV === 'development') {
+        if (cheat && this.#isDev) {
             cheatData = cheat;
         }
 
@@ -140,12 +151,8 @@ export class GameServer {
         };
     }
 
-    async nextStep(sessionID) {
-        const gameSession = this.#sessions.get(sessionID);
-
-        if (!gameSession) {
-            throw new SessionExpiredError();
-        }
+    async nextStep(playerID) {
+        const gameSession = await this.getSession(playerID);
 
         if (!gameSession.hasGameRound()) {
             throw new ServerError('Not placed bet!');
@@ -153,18 +160,17 @@ export class GameServer {
 
         const gameRound = gameSession.nextStep();
 
-        if (gameRound.isWin || gameRound.isBonus) {
+        if (gameRound.isWin || gameRound.isLose) {
             const player = await this.#players.getPlayer(gameSession.playerID);
 
-            if (gameRound.isBonus) {
-                player.updateTaskOnAction(TaskAction.COLLECT_BONUS);
-            }
-
             if (gameRound.isWin) {
+                player.updateTaskOnAction(TaskAction.COLLECT_BONUS);
                 player.addBalance(gameRound.win);
                 player.addLuck(gameRound.luck);
                 player.level = this.#math.getLuckLevel(player.luck);
+            }
 
+            if (gameRound.isLose) {
                 player.updateTaskOnAction(TaskAction.PLAY_GAME);
             }
 
@@ -174,8 +180,8 @@ export class GameServer {
         return {gameRound};
     }
 
-    async cashOut(sessionID) {
-        const gameSession = this.#sessions.get(sessionID);
+    async cashOut(playerID) {
+        const gameSession = await this.getSession(playerID);
 
         if (!gameSession) {
             throw new SessionExpiredError();
@@ -196,6 +202,10 @@ export class GameServer {
 
             player.updateTaskOnAction(TaskAction.PLAY_GAME);
 
+            if (result.isBonusCollected) {
+                player.updateTaskOnAction(TaskAction.COLLECT_BONUS);
+            }
+
             await this.#players.savePlayer(player);
         }
 
@@ -203,6 +213,22 @@ export class GameServer {
             player: player.toObject(),
             gameRound: result
         };
+    }
+
+    async getSession(playerID) {
+        let gameSession = this.#sessions.get(playerID);
+
+        if (!gameSession) {
+            const player = await this.#players.getPlayer(playerID);
+
+            if (player && player.session) {
+                gameSession = this.#sessions.getSession(playerID, player.session);
+            } else {
+                throw new SessionExpiredError();
+            }
+        }
+
+        return gameSession;
     }
 
     async saveState() {
@@ -240,6 +266,8 @@ export class GameServer {
         player.addBalance(reward);
 
         await this.#players.savePlayer(player);
+
+        Logger.log(`Player ${playerId} claimed reward ${reward} for task ${taskId}`);
 
         return {
             success: true,
@@ -300,7 +328,6 @@ export class GameServer {
         }
 
         if (data.pre_checkout_query) {
-            console.log(data);
             const {pre_checkout_query} = data;
             const body = {ok: true, pre_checkout_query_id:pre_checkout_query.id };
             const [_, itemID] = JSON.parse(pre_checkout_query.invoice_payload);

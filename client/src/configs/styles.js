@@ -209,8 +209,10 @@ export const Styles = {
 
     MainShopItemPrice: {
         fontFamily: 'AldotheApache',
-        fontSize: 170,
+        fontSize: 150,
         fill: 0xffffff,
+        stroke: '#3b050f',
+        strokeThickness: 10,
         fontWeight: 400,
         align: 'center',
     },
@@ -218,7 +220,7 @@ export const Styles = {
     MainShopItemBuyButton: {
         fontFamily: 'AldotheApache',
         fontSize: 30,
-        fill: 0xffffff,
+        fill: 0x3b050f,
         fontWeight: 400,
     },
 

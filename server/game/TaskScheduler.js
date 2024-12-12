@@ -80,7 +80,7 @@ export class TaskScheduler {
                 } catch (error) {
                     console.error(`Error updating daily tasks:`, error);
                 }
-            }, 24 * 60 * 60 * 1000); // 24 часа
+            }, 24 * 60 * 60 * 1000);
         }, timeUntilNextRun);
     }
 

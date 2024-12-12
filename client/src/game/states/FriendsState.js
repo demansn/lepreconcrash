@@ -39,7 +39,7 @@ export class FriendsState extends ScreenState {
             }
         });
 
-        this.screen.showData({activeFriends, earned, tasks: friendsTasks});
+        this.screen.showData({activeFriends, earned, tasks: friendsTasks,  userName: this.logic.getUserName()});
     }
 
     onClickVisitMyProfile() {

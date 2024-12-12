@@ -92,11 +92,11 @@ body, html, #root {
 
 #popup .close-btn {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 0;
+    right: -2px;
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 26px;
     font-weight: bold;
     color: #999;
     cursor: pointer;

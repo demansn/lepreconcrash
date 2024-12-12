@@ -3,6 +3,12 @@ import {GameBaseState} from "./GameBaseState.js";
 export class StateWithFooter extends GameBaseState {
     enter() {
         this.initFooter();
+        this.scene.on('HeaderScene', 'clickBalance', (state) =>  {
+            this.changeState('ShopState');
+        });
+        this.scene.on('HeaderScene', 'clickLack', (state) =>  {
+            this.changeState('MyProfileState');
+        });
     }
 
     initFooter() {
@@ -18,5 +24,6 @@ export class StateWithFooter extends GameBaseState {
 
     exit() {
         this.scene.offAll('Footer', ['selected']);
+        this.scene.offAll('HeaderScene', ['clickBalance', 'clickLack']);
     }
 }
