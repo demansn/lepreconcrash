@@ -6,9 +6,9 @@ export class MainShopItemBuyButton extends SuperContainer {
         super();
 
         this.bg = this.create.object('GoldLabelBackground', {y: 0});
-        this.content = this.create.object('InlineBlock', {params: {lineWidth: 410, lineHeight: 92, horizontalAlign: 'center', verticalAlign: 'middle', gap: 38}, y:  20});
+        this.content = this.create.object('InlineBlock', {params: {lineWidth: 410, lineHeight: 92, horizontalAlign: 'center', verticalAlign: 'middle', gap: 20}, y:  20});
 
-        this.amount = this.content.create.object('InlineBlock', {params: {verticalAlign: 'middle', gap: 9}});
+        this.amount = this.content.create.object('InlineBlock', {params: {verticalAlign: 'middle', gap: 4}});
 
         const block = this.content.create.object('VerticalBlock', {params: {gap: 5}});
 

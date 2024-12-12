@@ -1,5 +1,6 @@
 import {SuperContainer} from "../../gameObjects/SuperContainer.js";
 import {MainShopItemBuyButton} from "./MainShopItemBuyButton.js";
+import {OutlineFilter} from "pixi-filters";
 
 export class MainShopItem extends SuperContainer {
     constructor(item) {
@@ -11,7 +12,8 @@ export class MainShopItem extends SuperContainer {
 
         this.price = this.create.object('InlineBlock', {y: 30, params: {lineWidth: 678, lineHeight: 230, horizontalAlign: 'center', verticalAlign: 'middle', gap: 8}});
         this.price.create.text({text: amount, style: 'MainShopItemPrice'});
-        this.price.create.object('coin-icon', {scale: 2.5});
+        const icon = this.price.create.object('coin-icon', {scale: 2.5, filters: [new OutlineFilter(2, 0x3b050f, 1)]});
+        icon.filters = [new OutlineFilter(10, 0x3b050f, 1)];
         this.price.layout();
 
         this.buyButton = this.create.object('Button', {x: 678 / 2, y: 306 + 9, params: {

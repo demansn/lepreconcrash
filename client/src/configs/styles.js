@@ -218,7 +218,7 @@ export const Styles = {
 
     MainShopItemBuyButton: {
         fontFamily: 'AldotheApache',
-        fontSize: 30,
+        fontSize: 35,
         fill: 0x3b050f,
         fontWeight: 400,
     },
