@@ -14,6 +14,8 @@ export class GamePlayState extends StateWithFooter {
 
         this.header.set(this.logic.getPlayerBalance());
         this.scene.show('GamePlayScene');
+
+        this.scene.show('RewardDailyScene', {reward: 100});
     }
 
     exit() {

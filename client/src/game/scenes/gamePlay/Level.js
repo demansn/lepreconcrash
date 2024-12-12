@@ -42,7 +42,7 @@ export class Level extends SuperContainer {
     }
 
     set({bonusStep, currentStep = 0, nextStepWin} = {}) {
-        if (bonusStep !== undefined) {
+        if (bonusStep !== undefined && bonusStep > currentStep) {
             this.setBonusToPlatform(bonusStep);
         }
 

@@ -15,5 +15,6 @@ export class OnboardingState extends GameBaseState {
         this.scene.offAll('OnboardingScene', ['play']);
         this.scene.show('Footer');
         this.scene.show('HeaderScene');
+        localStorage.setItem('onboarding', 'true');
     }
 }

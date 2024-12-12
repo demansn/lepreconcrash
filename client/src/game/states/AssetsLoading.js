@@ -21,7 +21,13 @@ export class AssetsLoading extends GameBaseState {
 
         await Assets.load({ alias: 'PlayerPhoto', src: this.logic.getProfilePhotoURL()});
 
-        this.owner.goTo('OnboardingState');
+        if (localStorage.getItem('onboarding')) {
+            this.scene.show('Footer');
+            this.scene.show('HeaderScene');
+            this.owner.goTo('GamePlayState');
+        } else {
+            this.owner.goTo('OnboardingState');
+        }
     }
 
     async startLoading() {

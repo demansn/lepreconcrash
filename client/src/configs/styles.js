@@ -136,18 +136,17 @@ export const Styles = {
         align: 'center',
         wordWrapWidth: 400,
         wordWrap: true,
-        shadow: true,
-        shadowColor: '#003923',
-        shadowBlur: 20,
-        shadowOffsetX: 0,
-        shadowOffsetY: 1,
+        stroke: '#3b050f',
+        strokeThickness: 8,
         // 0px 1px 20px #003923
     },
     RewardPopupValue: {
         fontFamily: 'AldotheApache',
-        fontSize: 120,
+        fontSize: 110,
         fill: 0xFF7700,
         align: 'center',
+        // stroke: '#3b050f',
+        // strokeThickness: 8,
         fontWeight: 400,
     },
 
