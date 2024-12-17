@@ -1,13 +1,21 @@
 import {ScreenScene} from "../ScreenScene.js";
 import {SuperContainer} from "../../gameObjects/SuperContainer.js";
 import {ElasticBackground} from "../../gameObjects/ElasticBackground.js";
+import {Graphics} from "pixi.js";
 
 export class MyProfileScene extends ScreenScene {
     constructor() {
         super({name: 'MyProfileBackground'});
 
         this.profilePhoto= this.create.container({x: 's50%', y: 322});
-        this.profilePhoto.create.object('ProfilePhoto', {anchor: {x: 0.5, y: 0.5}});
+
+        const playerPhoto = this.profilePhoto.create.object('PlayerPhoto', {anchor: 0.5, width: 360, height: 360});
+
+        playerPhoto.mask = this.create.graphics({x: 's50%', y: 322})
+        playerPhoto.mask.beginFill(0x000000);
+        playerPhoto.mask.drawCircle(0, 0, 360  / 2);
+        playerPhoto.mask.endFill();
+
         this.profilePhoto.create.object('ProfilePhotoFrame', {anchor: {x: 0.5, y: 0.5},  scale: 0.5});
 
         this.content = this.create.object('VerticalBlock', {y: 600, params: {gap: 20, verticalAlign: 'top', horizontalAlign: 'center', blockWidth: 720, blockHeight: 565}});

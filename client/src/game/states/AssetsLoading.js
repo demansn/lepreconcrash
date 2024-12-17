@@ -13,13 +13,17 @@ export class AssetsLoading extends GameBaseState {
     }
 
     async init() {
-        await Assets.init({ manifest });
+        await Assets.init({manifest});
         await Assets.loadBundle('preloader');
         this.scene.show('LoadingScene');
         await this.startLoading();
         await this.logic.initSession();
 
-        await Assets.load({ alias: 'PlayerPhoto', src: this.logic.getProfilePhotoURL()});
+        if (this.logic.hasUserPhoto()) {
+            await Assets.load({alias: 'PlayerPhoto', src: await this.logic.getProfilePhotoURL()});
+        } else {
+            await Assets.load({alias: 'PlayerPhoto', src: './assets/icons/ProfilePhoto.png'});
+        }
 
         if (localStorage.getItem('onboarding')) {
             this.scene.show('Footer');

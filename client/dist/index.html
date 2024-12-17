@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,  minimum-scale=1.0, initial-scale=1, maximum-scale=1, user-scalable=no, user-scalable=0">
     <meta name="description" content="Lappi GO!">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/TONSolutions/telemetree-pixel@main/telemetree-pixel.js"></script>
     <link href="./css/index.css"  rel="stylesheet" />
     <title>Lappi GO!</title>
 </head>
@@ -14,9 +15,27 @@
         <h2 id="popupTitle">Share your details</h2>
         <input id="popupInput" type="text" placeholder="Enter your details here" />
         <button id="popupShareButton">Share</button>
-        <button class="close-btn" >×</button>
+        <button id="popupCloseButton" class="close-btn" >×</button>
     </div>
 </div>
+<script>
+    const telemetreeBuilder = telemetree({
+        projectId: "48e3d90a-cb28-4e0f-b1e3-0aed295fd4b2",
+        apiKey: "e79cc87a-1546-45c6-906d-9000de451f4a",
+        appName: "Leppi GO",
+        isTelegramContext: true,
+    });
+
+    telemetreeBuilder.track('test', {});
+</script>
 <script src="js/index.js"></script>
+<script>
+    const ratio =  window.innerWidth / 720;
+
+    const element = document.getElementById('root');
+
+    element.style.width = `${720 * ratio}px`;
+    element.style.height = `${1280 * ratio}px`;
+</script>
 </body>
 </html>

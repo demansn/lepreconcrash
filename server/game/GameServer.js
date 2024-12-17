@@ -10,6 +10,7 @@ import {TaskScheduler} from "./TaskScheduler.js";
 import {ShopItems} from "./shop/ShopItems.js";
 import {ServiceLocator} from "./ServiceLocator.js";
 import {initDataToObj, validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../shared/utils.js";
+import {Buffer} from 'node:buffer';
 
 const Logger = console;
 
@@ -48,7 +49,7 @@ export class GameServer {
         if (!player) {
             player = await this.#players.createPlayer({
                 id: playerID,
-                balance: 200,
+                balance: 100,
                 luck: 0,
                 level: 0,
                 session: null,
@@ -398,5 +399,19 @@ export class GameServer {
         await this.#players.savePlayer(player);
 
         return tasks;
+    }
+
+    async getUserPhoto(url) {
+        try {
+            const response = await fetch(url);
+            const buffer = await response.arrayBuffer();
+            const base64 = Buffer.from(buffer).toString('base64');
+            const contentType = response.headers.get('content-type');
+
+            return `data:${contentType};base64,${base64}`;
+        } catch (error) {
+            console.error('Ошибка при получении фото:', error);
+            throw new Error('Не удалось получить изображение');
+        }
     }
 }

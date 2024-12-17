@@ -7,7 +7,7 @@ const INVITE_URL = 'https://t.me/share/url';
 
 export class GameLogic {
     create(options) {
-        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction'], API_URL);
+        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto'], API_URL);
 
         this.parameters = new URLSearchParams(window.location.search);
 
@@ -242,14 +242,18 @@ export class GameLogic {
         return {...metaData, ...task};
     }
 
-    getProfilePhotoURL() {
-        // try {
-        //     return  window.Telegram.WebApp.initDataUnsafe.user.photo_url || './assets/icons/PlayerIcon.webp'
-        // } catch {
-        //     return './assets/icons/PlayerIcon.webp';
-        // }
+    hasUserPhoto() {
+        try {
+            return window.Telegram.WebApp.initDataUnsafe.user.photo_url;
+        } catch (e) {
+            return false;
+        }
+    }
 
-        return './assets/icons/PlayerIcon.webp';
+    async getProfilePhotoURL() {
+        if (window.Telegram.WebApp.initDataUnsafe.user.photo_url) {
+            return await this.api.getUserPhoto(window.Telegram.WebApp.initDataUnsafe.user.photo_url)
+        }
     }
 
     async #openInvoice(link) {

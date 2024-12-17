@@ -38,7 +38,7 @@ export class RoundWinInfo extends SuperContainer {
             x: -(this.bg.width / 2 + 90)
         });
 
-        this.luckText = this.create.displayObject(CloverValue,{
+        this.luckText = this.create.displayObject(CloverValue, {
             x: this.bg.width / 2 + 40
         });
 
@@ -56,7 +56,7 @@ export class RoundWinInfo extends SuperContainer {
             this.emit('click');
         });
 
-        this.cashGrabAnimation = this.button.create.animation({animation: 'Fx10', alpha: 0, anchor: 0.5, scale: {x: 1.1, y:1.1}});
+        this.cashGrabAnimation = this.button.create.animation({animation: 'Fx10', alpha: 0, anchor: 0.5, scale: {x: 1.1, y: 1.1}});
         this.cashGrabAnimation.stop();
         this.cashGrabAnimation.animationSpeed = -0.5;
 
@@ -99,7 +99,7 @@ export class RoundWinInfo extends SuperContainer {
     }
 
     animateValue(valueName, value, onUpdate) {
-       return gsap.to(this, {duration: 0.2, [valueName]: value}).eventCallback('onUpdate', onUpdate);
+        return gsap.to(this, {duration: 0.2, [valueName]: value}).eventCallback('onUpdate', onUpdate);
     }
 
     disable() {
@@ -156,3 +156,4 @@ export class GrabGoldIcon extends SuperContainer {
         });
     }
 }
+

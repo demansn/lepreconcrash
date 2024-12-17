@@ -1,6 +1,7 @@
 import {SuperContainer} from "../../gameObjects/SuperContainer.js";
 import {ElasticBackground} from "../../gameObjects/ElasticBackground.js";
 import {List} from "@pixi/ui";
+import {Graphics} from "pixi.js";
 
 export class PlayerFriendsInfo extends SuperContainer {
     constructor({activeFriends = 0, earned = 0, userName = 'Player'}) {
@@ -17,7 +18,21 @@ export class PlayerFriendsInfo extends SuperContainer {
             }
         });
 
-        this.icon = this.create.object('PlayerPhoto', {x: 36, y: 36});
+        const bg = this.create.graphics({x: 36, y: 36});
+        bg.beginFill(0xffffff);
+        bg.drawCircle(100 / 2,   100 / 2,  104 / 2);
+        bg.endFill();
+
+        this.icon = this.create.object('PlayerPhoto', {x: 36, y: 36, width: 100, height: 100});
+
+
+
+        this.icon.mask = new Graphics();
+        this.icon.mask.beginFill(0x000000);
+        this.icon.mask.drawCircle(36 + 100 / 2,  36 + 100 / 2,  100 / 2);
+        this.icon.mask.endFill();
+        this.addChild(this.icon.mask);
+
         this.userName = this.create.displayObject(PlayerName, {name: userName, x: this.icon.x + this.icon.width + 24, y: this.icon.y + this.icon.height / 2});
 
         this.activeFriendsInfo = this.create.displayObject(PlayerFriendsInfoCard, {icon: 'cap', value: activeFriends, label: 'ACTIVE FRIENDS'});
@@ -30,7 +45,6 @@ export class PlayerFriendsInfo extends SuperContainer {
         this.activeFriendsInfo.setValue(activeFriends);
         this.yourEarnedInfo.setValue(earned);
         this.userName.setValue(userName);
-
     }
 }
 

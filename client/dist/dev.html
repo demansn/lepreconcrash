@@ -6,6 +6,7 @@
 
     <meta name="description" content="Leprecon Crash">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/TONSolutions/telemetree-pixel@main/telemetree-pixel.js"></script>
     <link href="./css/index.css"  rel="stylesheet" />
     <title>Leprecon Crash</title>
 </head>
@@ -19,6 +20,16 @@
         <button id="popupCloseButton" class="close-btn" >×</button>
     </div>
 </div>
+<script>
+    const telemetreeBuilder = telemetree({
+        projectId: "48e3d90a-cb28-4e0f-b1e3-0aed295fd4b2",
+        apiKey: "e79cc87a-1546-45c6-906d-9000de451f4a",
+        appName: "Leppi GO",
+        isTelegramContext: true,
+    });
+
+    telemetreeBuilder.track('test', {});
+</script>
 <script src="js/index.js"></script>
 <script>
     const ratio =  window.innerHeight / 1280;

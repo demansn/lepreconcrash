@@ -1,7 +1,7 @@
 export const ShopItems = [
     {
         price: 20,
-        label: '20 Game',
+        label: '20 Games',
         id: '20',
         amount: 200,
         isMain: true
@@ -15,19 +15,19 @@ export const ShopItems = [
     {
         price: 5,
         amount: 50,
-        label: '5 Game',
+        label: '5 Games',
         id: '5'
     },
     {
         price: 10,
         amount: 100,
-        label: '10 Game',
+        label: '10 Games',
         id: '10'
     },
     {
         price: 50,
         amount: 500,
-        label: '50 Game',
+        label: '50 Games',
         id: '50'
     }
 ];

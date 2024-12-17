@@ -6,11 +6,15 @@ export class PlayerLevelProgress extends SuperContainer {
     constructor({luck, luckTarget}) {
         super();
 
-        this.content = this.create.object('InlineBlock', {params: {gap: 4, verticalAlign: 'middle', lineHeight: 30}});
+        const row = this.create.object('VerticalBlock', {params: {gap:-20}});
+        const line  = row.create.object('InlineBlock', {params: {gap: 4, verticalAlign: 'middle', lineHeight: 30}});
 
-        this.levelText = this.content.create.object(PlayerLevelText, {params: {luck, luckTarget}});
-        this.content.create.object('cloverTop', {scale: 0.3})
-        this.progressBar = this.content.create.object(PlayerLevelProgressBar, {params: {progress: luck / luckTarget * 100}});
+        this.levelText = line.create.object(PlayerLevelText, {params: {luck, luckTarget}});
+        line.create.object('cloverTop', {scale: 0.3})
+
+        this.progressBar = row.create.object(PlayerLevelProgressBar, {params: {progress: luck / luckTarget * 100}});
+
+        this.content = line;
     }
 
     set({luck, luckTarget}) {
