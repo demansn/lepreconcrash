@@ -30,6 +30,17 @@ Mather.registerObjectFactory('RoundRect', (parameters) => {
     return graphics;
 });
 
+Mather.registerObjectFactory('Line', (parameters) => {
+    const {size, length, fill} = parameters;
+
+    const graphics = new Graphics();
+    graphics.beginFill(fill);
+    graphics.drawRect(0, -size, length, size);
+    graphics.endFill();
+
+    return graphics;
+});
+
 Mather.registerObjectFactory('Button', (parameters) => new FancyButton({
     defaultView: parameters.view,
     anchor: 0.5,
@@ -92,3 +103,5 @@ Mather.registerObjectFactory('TaskPanelBackground', ({width = 678, height =1} = 
             }
     });
 });
+
+

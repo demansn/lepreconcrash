@@ -53,9 +53,10 @@ body, html, #root {
     border: 2px solid #FFE20B;
     background: rgba(0, 0, 0, 0.60);
     backdrop-filter: blur(10.100000381469727px);
+    left: 50%;
+    translate: -50%;
 }
 
-/* Заголовок */
 #popup h2 {
     margin: 0 0 15px;
     font-size: 20px;
@@ -97,9 +98,147 @@ body, html, #root {
     right: -2px;
     background: none;
     border: none;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: bold;
-    color: #999;
+    color: gray;
     cursor: pointer;
     transition: color 0.3s;
 }
+
+#popup .close-btn:hover {
+    color: white;
+}
+
+/* Основной контейнер */
+#gameRulesPopupContainer {
+    display: none; /* Можно включать/выключать через JS */
+    position: fixed;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background-color: rgba(0, 0, 0, 0.9); /* Черный фон с прозрачностью */
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Сам попап */
+#gameRulesPopup {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    border: 2px solid #FFE20B; /* Желтые закругленные границы */
+    border-radius: 16px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: "AldotheApache", Arial, sans-serif;
+    overflow-y: auto; /* Скроллируемый контент */
+    position: relative;
+}
+
+/* Заголовок */
+#gameRulesTitle {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: #FFE20B; /* Желтый заголовок */
+}
+
+/* Текст и содержимое */
+#gameRulesContent {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 16px;
+    line-height: 1.6;
+    color: white;
+    padding-right: 10px;
+}
+
+/* Стили списка */
+#gameRulesContent ol {
+    padding-left: 20px;
+}
+
+#gameRulesContent li {
+    margin-bottom: 10px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    font-weight: bold;
+    color: gray;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: white;
+}
+
+/* Основной контейнер */
+#faqPopupContainer {
+    display: none; /* По умолчанию скрыт через JS */
+    position: fixed;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background-color: rgba(0, 0, 0, 0.9); /* Черный фон */
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+}
+
+/* Сам попап */
+#faqPopup {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    border: 2px solid #FFE20B; /* Желтые границы */
+    border-radius: 16px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: "AldotheApache", Arial, sans-serif;
+    overflow-y: auto; /* Прокрутка */
+    position: relative;
+}
+
+/* Заголовок */
+#faqTitle {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: #FFE20B; /* Желтый заголовок */
+}
+
+/* Содержимое с прокруткой */
+#faqContent {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 16px;
+    line-height: 1.6;
+    color: white;
+    padding-right: 10px;
+}
+
+#faqContent ol {
+    padding-left: 20px;
+}
+
+#faqContent li {
+    margin-bottom: 10px;
+}
+

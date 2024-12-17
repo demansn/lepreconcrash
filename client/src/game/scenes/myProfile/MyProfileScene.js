@@ -18,7 +18,7 @@ export class MyProfileScene extends ScreenScene {
 
         this.profilePhoto.create.object('ProfilePhotoFrame', {anchor: {x: 0.5, y: 0.5},  scale: 0.5});
 
-        this.content = this.create.object('VerticalBlock', {y: 600, params: {gap: 20, verticalAlign: 'top', horizontalAlign: 'center', blockWidth: 720, blockHeight: 565}});
+        this.content = this.create.object('VerticalBlock', {y: 560, params: {gap: 20, verticalAlign: 'top', horizontalAlign: 'center', blockWidth: 720, blockHeight: 565}});
 
         this.userName = this.content.create.text({text: 'User Name',  style: 'MyProfileUserName'});
 
@@ -26,7 +26,30 @@ export class MyProfileScene extends ScreenScene {
 
         this.playerProgressCard = cardsLine.create.object(ProfileInfoLevelCard, {params: {level: 0, luck: 0, onClick: () => this.onClickCheckProgress()}});
         this.playerFriendsCard = cardsLine.create.object(ProfileInfoFriendsCard, {params: {onClick: () => this.onClickInvite()}});
+
+        this.content.create.object(AboutGameLine);
+
+        //
+        const buttonsLine = this.content.create.container();
+        const gameRulesBtn =  buttonsLine.create.object('Button', {params: {view: new LinkButtonView({label: 'GAME RULES'})}});
+        const faqBtn = buttonsLine.create.object('Button', {params: {view: new LinkButtonView({label: 'FAQ'})}});
+
+        gameRulesBtn.x += gameRulesBtn.width / 2;
+        faqBtn.x = gameRulesBtn.x + gameRulesBtn.width + 20;
+        gameRulesBtn.y = faqBtn.y = 44;
+
+        gameRulesBtn.onPress.connect(() => this.onClickGameRules());
+        faqBtn.onPress.connect(() => this.onClickFAQ());
+
         this.content.layout();
+    }
+
+    onClickFAQ() {
+        this.emit('faq');
+    }
+
+    onClickGameRules() {
+        this.emit('gameRules');
     }
 
     onClickInvite() {
@@ -100,4 +123,23 @@ export class ProfileInfoLevelCard extends ProfileInfoCard {
     }
 }
 
+class AboutGameLine extends SuperContainer {
+    constructor() {
+        super();
+
+        this.content = this.create.object('InlineBlock', {params: {gap: 3, horizontalAlign: 'left', verticalAlign: 'bottom', lineHeight: 60}});
+
+        this.content.create.text({text: 'ABOUT GAME', style: 'AboutGameLineTitle'});
+        this.content.create.object('Line', {params: {fill: 0xffffff, length:324, size: 2}});
+    }
+}
+
+class LinkButtonView extends SuperContainer {
+    constructor({label}) {
+        super();
+        this.create.object(ElasticBackground, {parameters: {width: 330, height: 88, style: {fill: 'rgba(0, 0, 0, 0.25)', border: 4, borderRadius: 24, borderColor: 0x06F2A4}}, alpha: 0.6});
+        this.create.text({text: label, style: 'LinkButtonTitle', anchor: {y: 0.5}, x: 26, y: 44});
+        this.create.object('LinkButton', {x: 248, y: 44, anchor: { y: 0.5}});
+    }
+}
 

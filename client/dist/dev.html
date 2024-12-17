@@ -20,6 +20,123 @@
         <button id="popupCloseButton" class="close-btn" >×</button>
     </div>
 </div>
+<!-- Попап для Game Rules -->
+<div id="gameRulesPopupContainer">
+    <div id="gameRulesPopup">
+        <button id="gameRulesCloseButton" class="close-btn">&times;</button>
+        <h2 id="gameRulesTitle">Game Rules</h2>
+        <div id="gameRulesContent">
+            <ol>
+                <li><strong>Game Start</strong>
+                    <ul>
+                        <li>Each player receives 100 coins upon registration.</li>
+                        <li>The bet for each round is fixed at 10 coins.</li>
+                    </ul>
+                </li>
+                <li><strong>Gameplay</strong>
+                    <ul>
+                        <li>The player controls a Leprechaun who jumps across the level (stumps, stones, platforms, etc.).</li>
+                        <li>With each successful jump, the bet multiplier increases.</li>
+                        <li>The goal is to make as many jumps as possible and earn more coins.</li>
+                    </ul>
+                </li>
+                <li><strong>Risks</strong>
+                    <ul>
+                        <li>Each round has a hidden <strong>CRASH</strong> — a random losing step.</li>
+                        <li>The probability of losing increases with each step.</li>
+                    </ul>
+                </li>
+                <li><strong>Winning</strong>
+                    <ul>
+                        <li>Winnings = <strong>bet × step multiplier</strong>.</li>
+                        <li>The player can collect their winnings at any time by pressing <strong>Cash Out</strong>.</li>
+                    </ul>
+                </li>
+                <li><strong>Luck (Clover)</strong>
+                    <ul>
+                        <li>Each successful jump adds 1 <strong>Luck</strong> point to the round balance.</li>
+                    </ul>
+                </li>
+                <li><strong>Bonuses</strong>
+                    <ul>
+                        <li>A bonus element (a pot of Luck) may appear on the path.</li>
+                    </ul>
+                </li>
+                <li><strong>Math</strong>
+                    <ul>
+                        <li>The game consists of <strong>24 steps</strong> per round.</li>
+                        <li>A <strong>CRASH</strong> occurs randomly with a probability of <strong>1 in 25</strong> per step.</li>
+                    </ul>
+                </li>
+                <li><strong>Additional Tasks and Balance Refill</strong>
+                    <ul>
+                        <li>Players can earn more gold by completing <strong>social tasks</strong>, <strong>in-game quests</strong>, and <strong>inviting friends</strong>.</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+<div id="faqPopupContainer">
+    <div id="faqPopup">
+        <button id="faqCloseButton" class="close-btn">&times;</button>
+        <h2 id="faqTitle">FAQ: Leprechaun Jump Game</h2>
+        <div id="faqContent">
+            <ol>
+                <li><strong>How do I start the game?</strong>
+                    <ul>
+                        <li>Press START button to make a bet. It is fixed - 10 coins for each round.</li>
+                    </ul>
+                </li>
+                <li><strong>What is the goal of the game?</strong>
+                    <ul>
+                        <li>Guide the Leprechaun through a series of jumps, increase your winnings with each step, and cash out before hitting a hidden CRASH. Improve your level to become the top player!</li>
+                    </ul>
+                </li>
+                <li><strong>How does the betting and winning system work?</strong>
+                    <ul>
+                        <li>Winnings are calculated as <strong>bet × step multiplier</strong>. You can cash out anytime before CRASH to add your round balance to your main balance.</li>
+                    </ul>
+                </li>
+                <li><strong>What is CRASH, and how does it work?</strong>
+                    <ul>
+                        <li>CRASH is a hidden losing step randomly placed on the 24-step path. The chance of reaching the final step with a maximum multiplier of <strong>x20</strong> is <strong>4%</strong>.</li>
+                    </ul>
+                </li>
+                <li><strong>What is Luck, and how do I earn it?</strong>
+                    <ul>
+                        <li>Luck (Clover) is a secondary resource earned with each successful jump (+1 per step). Luck contributes to rankings, levels, and bonuses, but is lost if you hit a CRASH.</li>
+                    </ul>
+                </li>
+                <li><strong>Are there any bonuses?</strong>
+                    <ul>
+                        <li>Bonus elements like the <strong>Pot of Luck</strong> appear randomly on the path. The further the pot, the more Luck it provides, but it’s also lost if CRASH occurs before cashing out.</li>
+                    </ul>
+                </li>
+                <li><strong>What happens if I hit a CRASH?</strong>
+                    <ul>
+                        <li>You lose your bet and all progress from the current round, including collected gold and Luck.</li>
+                    </ul>
+                </li>
+                <li><strong>How can I earn more gold?</strong>
+                    <ul>
+                        <li>Complete <strong>social tasks</strong>, participate in <strong>in-game quests</strong>, invite friends, or purchase gold using <strong>Telegram stars</strong>.</li>
+                    </ul>
+                </li>
+                <li><strong>How is the leaderboard calculated?</strong>
+                    <ul>
+                        <li>The leaderboard ranks players based on their accumulated Luck. The more you play and win, the higher your position.</li>
+                    </ul>
+                </li>
+                <li><strong>Will you have a token?</strong>
+                    <ul>
+                        <li><strong>NO</strong></li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
 <script>
     const telemetreeBuilder = telemetree({
         projectId: "48e3d90a-cb28-4e0f-b1e3-0aed295fd4b2",

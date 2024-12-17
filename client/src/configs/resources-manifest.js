@@ -13,6 +13,7 @@ export const manifest = {
             name: 'game',
             assets: [
                 // {alias: 'bg', src: './assets/background.png'},
+                {alias: 'LinkButton', src: './assets/LinkButton.webp'},
                 {alias: 'bg', src: './assets/Back.png'},
                 {alias: 'Green+', src: './assets/Green+.png'},
                 {alias: 'earn_bg', src: './assets/bg/earn_bg.jpg'},

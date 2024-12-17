@@ -303,5 +303,20 @@ export const Styles = {
         fill: 0xFFFFFF,
         align: 'center',
         fontWeight: 400,
+    },
+
+    AboutGameLineTitle: {
+        fontFamily: 'AldotheApache',
+        fontSize: 64,
+        fill: 0xFFFFFF,
+        align: 'center',
+        fontWeight: 400,
+    },
+
+    LinkButtonTitle: {
+        fontFamily: 'AldotheApache',
+        fontSize: 36,
+        fill: 0xFFFFFF,
+        fontWeight: 400,
     }
 };
