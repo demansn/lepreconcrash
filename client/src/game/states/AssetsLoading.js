@@ -2,6 +2,7 @@ import {Assets} from "pixi.js";
 import {manifest} from "../../configs/resources-manifest.js";
 import {toFixed} from "../utils.js";
 import {GameBaseState} from "./GameBaseState.js";
+import {sound} from "@pixi/sound";
 
 export class AssetsLoading extends GameBaseState {
     enter() {
@@ -32,6 +33,8 @@ export class AssetsLoading extends GameBaseState {
         } else {
             this.owner.goTo('OnboardingState');
         }
+
+        sound.play('mainMusic', {loop: true});
     }
 
     async startLoading() {
