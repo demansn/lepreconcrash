@@ -1,6 +1,7 @@
 import {ScreenState} from "./ScreenState.js";
 import {TaskAction} from "../../../../shared/TaskAction.js";
 import {nextMidnight, scheduleAtTime} from "../../../../shared/utils.js";
+import {ShareInfoPopup} from "../popups/ShareInfoPopup.js";
 
 export class EarnState extends ScreenState {
     async enter() {
@@ -71,29 +72,6 @@ export class EarnState extends ScreenState {
     }
 
     showPopup(title, placeholder) {
-        return new Promise(resolve => {
-            const popupContainer = document.getElementById('popupContainer');
-            const popupTitle = document.getElementById('popupTitle');
-            const popupInput = document.getElementById('popupInput');
-            const popupShareButton = document.getElementById('popupShareButton');
-            const closeButton = document.getElementById('popupCloseButton');
-
-            popupTitle.textContent = title;
-            popupInput.placeholder = placeholder;
-            popupInput.value = '';
-
-            closeButton.onclick = () => {
-                popupContainer.style.display = 'none';
-                resolve();
-            };
-
-            document.getElementById('popupContainer').style.display = 'flex';
-            document.getElementById('popupInput').focus();
-            popupShareButton.onclick = () => {
-                const value = document.getElementById('popupInput').value;
-                popupContainer.style.display = 'none';
-                resolve(value);
-            };
-        })
+        return ShareInfoPopup.show({title, placeholder});
     }
 }

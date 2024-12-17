@@ -152,7 +152,7 @@ export class GameLogic {
         //https://t.me/share/url?url=https://t.me/catizenbot/gameapp?startapp=rp_38841232&text=
         const playerID = this.player.id;
         const url = decodeURIComponent(`${TELEGRAM_GAME_URL}?startapp=${playerID}`);
-        const text = encodeURIComponent('Join the game!');
+        const text = encodeURIComponent('Join me on a golden journey in Lappi GO—every step brings rewards! Start playing now >>');
 
         return `${INVITE_URL}?url=${url}&text=${text}`;
     }
