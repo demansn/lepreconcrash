@@ -5,14 +5,14 @@ dotenv.config();
 export function createBuildSettings(options) {
     return {
         entryPoints: [
-            'src/index.js',
+            'src/main.js',
         ],
         jsx: 'automatic',
         loader: {
             '.jsx': 'jsx',
             '.js': 'jsx'
         },
-        outfile: 'dist/js/index.js',
+        outfile: 'dist/js/main.js',
         define: {
             'TELEGRAM_GAME_URL':  JSON.stringify(process.env.TELEGRAM_GAME_URL),
             'API_URL':  JSON.stringify(process.env.API_URL),
