@@ -15,8 +15,8 @@ export class ShareInfoPopup {
 
     show({title, placeholder}) {
         this.title.textContent = title;
-        this.placeholder = placeholder;
-        this.value = '';
+        this.input.value = '';
+        this.input.placeholder = placeholder;
         this.popupContainer.style.display = 'block';
 
         return new Promise(resolve => {
