@@ -1,4 +1,7 @@
 import {Game} from "./Game.js";
 
 window.Telegram.WebApp.expand();
-Game.start();
+
+const game = Game.start();
+
+game.scale();

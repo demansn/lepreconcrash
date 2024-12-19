@@ -18,4 +18,17 @@ export class Game {
     static start() {
         return new Game();
     }
+
+    scale() {
+        let ratio =  window.innerHeight / 1280;
+
+        if (720 * ratio > window.innerWidth) {
+            ratio = window.innerWidth / 720;
+        }
+
+        const element = document.getElementById('root');
+
+        element.style.width = `${720 * ratio}px`;
+        element.style.height = `${1280 * ratio}px`;
+    }
 }
