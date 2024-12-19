@@ -81,7 +81,9 @@ class TaskInfo extends SuperContainer {
         this.rewards = this.container.create.displayObject(TextWithIcon, {y: this.title.height + 16,  parameters: {
                 text: reward,
                 textStyle: 'TaskInfoText',
-                icon: 'coin-icon'
+                icon: 'CoinIcon',
+                iconWidth: 35,
+                iconHeight: 35,
             }});
 
         this.container.x = this.icon.width + 36;

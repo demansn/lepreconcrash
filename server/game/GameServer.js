@@ -23,12 +23,13 @@ export class GameServer {
     #taskScheduler;
     #isDev = false;
 
-    constructor(botToken, dbAdapter, isDev) {
+    constructor(botToken, dbAdapter, isDev, clientURL) {
         this.#botToken = botToken;
         this.#sessions = new GameSessionsManager(dbAdapter);
         this.#isDev = isDev;
         this.#players = new PlayersManager(dbAdapter);
         this.#taskScheduler = new TaskScheduler(this.#players);
+        this.clientURL = clientURL;
 
         this.#taskScheduler.startDailyTaskUpdaterAt();
         // this.#taskScheduler.startDailyTaskUpdaterByInterval(2);
@@ -287,6 +288,10 @@ export class GameServer {
         const data = {
             title: item.label,
             description: item.label,
+            // todo move to config
+            "photo_url": `${this.clientURL}/assets/icons/ShopItem.png`,
+            "photo_width": 150,
+            "photo_height": 150,
             payload: JSON.stringify([playerID, itemID]),
             currency: 'XTR',
             prices: JSON.stringify([{amount: item.price, label: item.label}]),

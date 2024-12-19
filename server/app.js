@@ -25,7 +25,7 @@ const db = new MongoDBAdapter(process.env.MONGO_URL, process.env.MONGO_DB_NAME, 
 await db.connect();
 // const fileDB = new FileDatabaseAdapter('./', taskTemplate);
 
-const game = new GameServer(process.env.BOT_TOKEN, db, isDev);
+const game = new GameServer(process.env.BOT_TOKEN, db, isDev, process.env.CLIENT_DOMAIN);
 
 const httpServer = new HTTPServer(options);
 

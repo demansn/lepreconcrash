@@ -1,12 +1,20 @@
 import {SuperContainer} from "./SuperContainer.js";
 
 export class TextWithIcon extends SuperContainer {
-    constructor({text, textStyle, icon, gap = 8}) {
+    constructor({text, textStyle, icon, gap = 8, iconWidth, iconHeight}) {
         super();
 
         this.value = this.create.text({text: text, style: textStyle});
         this.icon = this.create.object(icon);
         this.gap = gap;
+
+        if (iconWidth) {
+            this.icon.width = iconWidth
+        }
+
+        if (iconHeight) {
+            this.icon.height = iconHeight
+        }
 
         this.icon.y = this.value.height / 2 - this.icon.height / 2;
 

@@ -20,7 +20,7 @@ export class RewardDailyScene extends BaseScene {
         this.lineReward = this.create.object('InlineBlock', {x: 's50%', y: 's44%', params: {horizontalAlign: 'center', verticalAlign: 'middle', gap: 8, lineHeight: 200}});
         this.reward =  this.lineReward .create.text({text: 0, style: 'RewardPopupValue'});
 
-       const coinIcon =  this.lineReward .create.object('coin-icon', {scale: 1.5});
+       const coinIcon =  this.lineReward .create.object('CoinIcon', {scale: 1.5, width: 60, height: 60});
 
         coinIcon.filters = [new OutlineFilter(1, 0x3b050f, 1)];
 

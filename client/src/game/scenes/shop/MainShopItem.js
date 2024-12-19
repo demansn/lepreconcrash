@@ -12,7 +12,7 @@ export class MainShopItem extends SuperContainer {
 
         this.price = this.create.object('InlineBlock', {y: 30, params: {lineWidth: 678, lineHeight: 230, horizontalAlign: 'center', verticalAlign: 'middle', gap: 8}});
         this.price.create.text({text: amount, style: 'MainShopItemPrice'});
-        const icon = this.price.create.object('coin-icon', {scale: 2.5, filters: [new OutlineFilter(2, 0x3b050f, 1)]});
+        const icon = this.price.create.object('CoinIcon', {width: 100, height: 100,  filters: [new OutlineFilter(2, 0x3b050f, 1)]});
         icon.filters = [new OutlineFilter(10, 0x3b050f, 1)];
         this.price.layout();
 

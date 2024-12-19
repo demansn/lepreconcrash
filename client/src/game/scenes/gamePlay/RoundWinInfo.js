@@ -144,8 +144,10 @@ export class GrabGoldIcon extends SuperContainer {
         super();
 
         this.icon = this.create.sprite({
-            texture: 'goldIconCenter',
-            anchor: {y: 0.5}
+            texture: 'CoinIcon',
+            anchor: {y: 0.5},
+            width: 40,
+            height: 40,
         });
 
         this.text = this.create.text({

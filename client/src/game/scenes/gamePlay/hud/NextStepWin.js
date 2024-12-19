@@ -6,7 +6,7 @@ export class NextStepWin extends SuperContainer {
 
         this.container = this.create.container({x: 0, y: 0});
         this.valueText = this.container.create.text({text: '+0', style: 'nextStepWin', anchor: {y: 0.5}});
-        this.icon = this.container.create.sprite( {texture: 'goldIconCenter', anchor: {y: 0.5}});
+        this.icon = this.container.create.sprite( {texture: 'CoinIcon', anchor: {y: 0.5}, width: 40, height: 40});
     }
 
     setValue(value) {

@@ -22,8 +22,6 @@ export const manifest = {
                 {alias: 'leaderboard_bg', src: './assets/bg/leaderboard_bg.jpg'},
                 {alias: 'MyProfileBackground_bg', src: './assets/bg/MyProfileBackground.png'},
 
-                {alias: 'coin-icon', src: './assets/tasks/coin-icon.webp'},
-
                 {alias: 'task_progress_bg', src: './assets/tasks/task_progress_bg.webp'},
                 {alias: 'task_progress_fill', src: './assets/tasks/task_progress_fill.webp'},
                 {alias: 'claim_button_bg', src: './assets/tasks/claim_button_bg.webp'},
@@ -65,6 +63,7 @@ export const manifest = {
                 {alias: 'ShareXIcon', src: './assets/icons/ShareXIcon.webp'},
                 {alias: 'InvitePremiumFriendTaskIcon', src: './assets/icons/InvitePremiumFriendTaskIcon.webp'},
                 {alias: 'InviteFriendTaskIcon', src: './assets/icons/InviteFriendTaskIcon.webp'},
+                {alias: 'CoinIcon', src: './assets/icons/Coin-icon.png'},
 
                 // POPUPS
                 {alias: 'GoldLabelBackground', src: './assets/popups/GoldLabelBackground.webp'},
@@ -123,7 +122,6 @@ export const manifest = {
                 {alias: 'goButton', src: './assets/Go.png'},
                 {alias: 'centerButton', src: './assets/CashGrab.png'},
                 {alias: 'cloverTop', src: './assets/CloverTop.png'},
-                {alias: 'goldIconCenter', src: './assets/CoinCashGrab.png'},
                 {alias: 'goldCloverCenter', src: './assets/CloverCashGrab.png'},
                 {alias: 'FinalCash', src: './assets/Final Cash.png'},
                 {alias: 'Rays', src: './assets/Rays.png'},
