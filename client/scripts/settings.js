@@ -20,6 +20,7 @@ export function createBuildSettings(options) {
             'USER_DATA':  JSON.stringify(process.env.USER_DATA),
             'TELEMETREE_PROJECT_ID':  JSON.stringify(process.env.TELEMETREE_PROJECT_ID),
             'TELEMETREE_API_KEY':  JSON.stringify(process.env.TELEMETREE_API_KEY),
+            'TELEMETREE_APP_NAME':  JSON.stringify(process.env.TELEMETREE_APP_NAME),
         },
         bundle: true,
         ...options
