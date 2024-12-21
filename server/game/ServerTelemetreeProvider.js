@@ -11,10 +11,10 @@ export class ServerTelemetreeProvider extends Provider {
         await this.telemetree.initialize();
     }
 
-    async track(event, data) {
+    async track(event, data = {}) {
         if (this.telemetree) {
-            this.telemetree.track({
-                event_type:event,
+            await this.telemetree.track({
+                event_type: event,
                 event_data: {
                    ...data
                 }
@@ -25,7 +25,7 @@ export class ServerTelemetreeProvider extends Provider {
     async trackUpdate(message) {
         try {
             // Track the update
-            // const response = await this.telemetree.trackUpdate(message);
+            const response = await this.telemetree.trackUpdate(message);
         } catch (error) {
             console.error('Failed to track message:', error);
         }

@@ -427,9 +427,9 @@ export class GameServer {
         }
     }
 
-    track(event, data) {
+    async track(event, data) {
         try {
-            this.#analytics.track(event, data);
+             await this.#analytics.track(event, data);
         } catch (e) {
             Logger.error(`Failed to track event: ${event}, data: ${JSON.stringify(data)}, error: ${e}`);
         }
