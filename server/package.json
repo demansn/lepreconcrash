@@ -15,6 +15,7 @@
   "description": "",
   "dependencies": {
     "@grammyjs/runner": "^2.0.3",
+    "@tonsolutions/telemetree-node": "^0.2.7",
     "big.js": "^6.2.2",
     "dotenv": "^16.4.5",
     "grammy": "^1.31.0",

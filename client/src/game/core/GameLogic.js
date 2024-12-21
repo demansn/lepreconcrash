@@ -6,6 +6,10 @@ import Tasks from "../../../../shared/task_templates.json"
 const INVITE_URL = 'https://t.me/share/url';
 
 export class GameLogic {
+    constructor(dependencies) {
+
+        this.analytics = dependencies.resolve('AnalystService');
+    }
     create(options) {
         this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto'], API_URL);
 
@@ -63,16 +67,28 @@ export class GameLogic {
         this.gameRound = gameRound;
         this.shopItems = shopItems;
 
+        this.analytics.track('initSession', {
+            username: player.profile.username,
+            playerId: player.id,
+            balance: player.balance,
+            luck: player.luck
+        });
+
         return {
             steps,
             player: player,
             gameRound,
             link
-        }
+        };
     }
 
     async placeBet(bet) {
         const {player, gameRound} = await this.api.placeBet(bet, this.player.id, this.cheat);
+
+        this.analytics.track('placeBet', {
+            username: this.player.profile.username,
+            playerId: this.player.id
+        });
 
         this.player.balance = player.balance;
         this.player.luck = player.luck;
@@ -91,11 +107,35 @@ export class GameLogic {
 
         this.gameRound = gameRound;
 
+        if (gameRound.isLose) {
+            this.analytics.track('crash', {
+                username: this.player.profile.username,
+                playerId: this.player.id,
+                step: gameRound.step
+            });
+        } else if (gameRound.isWin) {
+            this.analytics.track('win', {
+                username: this.player.profile.username,
+                playerId: this.player.id,
+                step: gameRound.step,
+                win: gameRound.win,
+                luck: gameRound.luck
+            });
+        }
+
         return gameRound;
     }
 
     async cashOut() {
         const {player, gameRound} = await this.api.cashOut(this.player.id);
+
+        this.analytics.track('cashOut', {
+            username: player.profile.username,
+            playerId: player.id,
+            step: gameRound.step,
+            win: gameRound.win,
+            luck: gameRound.luck
+        });
 
         this.player.balance = player.balance;
         this.player.luck = player.luck;
@@ -136,6 +176,13 @@ export class GameLogic {
             this.player.balance = result.player.balance;
             result.task = this.transformTask(result.task);
 
+            this.analytics.track('claim', {
+                username: this.player.profile.username,
+                playerId: this.player.id,
+                task: result.task.id,
+                reward: result.task.reward
+            });
+
             this.player.tasks = this.player.tasks.map(t => {
                 if (t.id === taskId) {
                     return result.task;
@@ -174,6 +221,13 @@ export class GameLogic {
 
         if (result) {
             this.player.balance = this.player.balance + this.shopItems[itemID].amount;
+
+            this.analytics.track('buy', {
+                username: this.player.profile.username,
+                playerId: this.player.id,
+
+                amount: this.shopItems[itemID].amount
+            });
         }
 
         return result;
@@ -261,6 +315,7 @@ export class GameLogic {
             window.Telegram.WebApp.openInvoice(link, (e) => {
                 if (e === 'paid') {
                     resolve(true);
+
                 } else {
                     resolve(false);
                 }

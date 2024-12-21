@@ -1,5 +1,6 @@
 import {Application} from "pixi.js";
 import {Stage} from "@pixi/layers";
+import {Stats} from "pixi-stats";
 
 export class PixiApplication {
     async create(options) {
@@ -13,6 +14,10 @@ export class PixiApplication {
 
         if (!this.container) {
             this.container = document.body;
+        }
+
+        if (ENV === 'dev') {
+            this.stats = new Stats(this.app.renderer);
         }
 
         this.container.appendChild(this.app.view);

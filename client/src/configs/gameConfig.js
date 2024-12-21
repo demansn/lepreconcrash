@@ -25,8 +25,22 @@ import {RewardDailyScene} from "../game/scenes/RewardDailyScene.js";
 import {WinState} from "../game/states/gamePlay/substates/WinState.js";
 import {MyProfileScene} from "../game/scenes/myProfile/MyProfileScene.js";
 import {MyProfileState} from "../game/states/MyProfileState.js";
+import {TelemetreeProvider} from "../analitics/TelemetreeProvider.js";
 
 export const GameConfig = {
+    AnalystService: {
+        providers: [
+            {
+                name: 'TelemetreeProvider',
+                Constructor: TelemetreeProvider,
+                options: {
+                    projectId: TELEMETREE_PROJECT_ID,
+                    apiKey: TELEMETREE_API_KEY,
+                    appName: TELEMETREE_APP_NAME,
+                }
+            },
+        ]
+    },
     PixiApplication: {
             containerId: 'root',
             width: 712,

@@ -23,6 +23,10 @@ export class ServiceLocator {
         return ServiceLocator.getInstance().get(name);
     }
 
+    static set(name, service) {
+        return ServiceLocator.getInstance().set(name, service);
+    }
+
     static getInstance() {
         if (!ServiceLocator.instance) {
             ServiceLocator.instance = new ServiceLocator();

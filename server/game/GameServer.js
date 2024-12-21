@@ -22,6 +22,10 @@ export class GameServer {
     #math = new GameMath(GameSteps);
     #taskScheduler;
     #isDev = false;
+    /**
+     * @type {AnalystService}
+     */
+    #analytics;
 
     constructor(botToken, dbAdapter, isDev, clientURL) {
         this.#botToken = botToken;
@@ -30,6 +34,8 @@ export class GameServer {
         this.#players = new PlayersManager(dbAdapter);
         this.#taskScheduler = new TaskScheduler(this.#players);
         this.clientURL = clientURL;
+
+        this.#analytics = ServiceLocator.get('analytics');
 
         this.#taskScheduler.startDailyTaskUpdaterAt();
         // this.#taskScheduler.startDailyTaskUpdaterByInterval(2);
@@ -59,6 +65,7 @@ export class GameServer {
             });
 
             Logger.log(`Player ${playerID} created`);
+            this.track('newUser', {playerId: playerID, username: user.username});
 
             if (invite && (invite !== playerID)) {
                 await this.rewardForInviting(invite, playerID, isPremium);
@@ -107,6 +114,7 @@ export class GameServer {
                         const afterBalance = inviter.balance;
 
                         Logger.log(`Player ${invite} claimed reward ${reward} for task ${task.id}, invited ${invited}, isPremium: ${isPremium} before b=${beforeBalance} after b=${afterBalance}`);
+                        this.track('inviteReward', {playerId: invite, reward, invited, isPremium});
                     }
                 });
             }
@@ -304,6 +312,12 @@ export class GameServer {
     }
 
     async fromTelegram(data) {
+        try {
+            this.#analytics.getProvider('telemetree').trackUpdate(data);
+        } catch (e) {
+            Logger.error(`Failed to track update: ${e}`);
+        }
+
         if (data.message) {
             const {message} = data;
             const {successful_payment} = message;
@@ -327,8 +341,8 @@ export class GameServer {
                         return true;
                     }
                 } catch(e) {
+                    Logger.error(`Failed to process payment: ${e} for data: ${JSON.stringify(data)}`);
                     // reject payment
-
                 }
             }
         }
@@ -415,8 +429,16 @@ export class GameServer {
 
             return `data:${contentType};base64,${base64}`;
         } catch (error) {
-            console.error('Ошибка при получении фото:', error);
-            throw new Error('Не удалось получить изображение');
+            Logger.error(`Failed to get user photo from url: ${url}, error: ${error}`);
+            return '';
+        }
+    }
+
+    track(event, data) {
+        try {
+            this.#analytics.track(event, data);
+        } catch (e) {
+            Logger.error(`Failed to track event: ${event}, data: ${JSON.stringify(data)}, error: ${e}`);
         }
     }
 }
