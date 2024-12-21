@@ -2,7 +2,6 @@ import {TelemetreeClient} from "@tonsolutions/telemetree-node";
 import {Provider} from "../../shared/AnalystService.js";
 
 export class ServerTelemetreeProvider extends Provider {
-
     async initialize({projectId, apiKey}) {
         this.telemetree = new TelemetreeClient(
             projectId,
@@ -13,12 +12,16 @@ export class ServerTelemetreeProvider extends Provider {
 
     async track(event, data = {}) {
         if (this.telemetree) {
-            await this.telemetree.track({
-                event_type: event,
-                event_data: {
-                   ...data
-                }
-            });
+            try {
+                await this.telemetree.track({
+                    event_type: event,
+                    event_data: {
+                        ...data
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to track event:', error);
+            }
         }
     }
 
