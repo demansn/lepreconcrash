@@ -70,7 +70,12 @@ export class GameServer {
                     loses: 0
                 },
                 metadata,
-                profile: {firstName: user.first_name, lastName: user.last_name, username: user.username, lang: user.language_code, isPremium: isPremium, photo: user.photo_url},
+                profile: {
+                    firstName: user.first_name,
+                    lastName: user.last_name,
+                    username: user.username,
+                    lang: user.language_code,
+                    isPremium: isPremium},
                 tasks: []
             });
 
