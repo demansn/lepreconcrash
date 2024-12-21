@@ -17,12 +17,12 @@ export class GameSessionsManager {
         return this.#playerSessions.get(id) || this.#sessionIdMap.get(id);
     }
 
-    getSession(playerID, sessionData) {
+    getSession(playerID, sessionData, gameNumber = 0) {
         if (this.#sessionIdMap.has(playerID)) {
             return this.#sessionIdMap.get(playerID);
         }
 
-        return this.#createAndAddSession(playerID, sessionData ? sessionData : {});
+        return this.#createAndAddSession(playerID, sessionData ? sessionData : {}, gameNumber);
     }
 
     async saveAll() {
@@ -31,8 +31,8 @@ export class GameSessionsManager {
         }
     }
 
-    #createAndAddSession(playerID, {id, gameRound} = {}) {
-        const session = new GameSession({id, playerID, onExpire: this.#sessionOnExpire.bind(this), gameRound});
+    #createAndAddSession(playerID, {id, gameRound} = {}, gameNumber) {
+        const session = new GameSession({id, playerID, onExpire: this.#sessionOnExpire.bind(this), gameRound, gameNumber});
 
         this.#playerSessions.set(session.id, session);
         this.#sessionIdMap.set(playerID, session);

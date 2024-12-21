@@ -7,13 +7,14 @@ export class Player {
     #luck;
     level = 0;
 
-    constructor({balance, luck, level, id, session, tasks = [], profile}) {
+    constructor({balance, luck, level, id, session, tasks = [], profile, gameCounter = {total: 0, wins: 0, loses: 0}}) {
         this.balance = balance;
         this.luck = luck;
         this.level = level;
         this.id = id;
         this.session = session;
         this.profile = profile;
+        this.gameCounter = gameCounter || {total: 0, wins: 0, loses: 0};
         this.tasks = tasks.map(data => new Task(data));
     }
 
@@ -43,6 +44,15 @@ export class Player {
 
     set luck(value) {
         this.#luck = Big(value);
+    }
+
+    addGame(isWin) {
+        this.gameCounter.total++;
+        if (isWin) {
+            this.gameCounter.wins++;
+        } else {
+            this.gameCounter.loses++;
+        }
     }
 
     /**
@@ -85,7 +95,8 @@ export class Player {
             level: this.level,
             session: this.session,
             profile: this.profile,
-            tasks: this.tasks.map(task => task.toObject())
+            tasks: this.tasks.map(task => task.toObject()),
+            gameCounter: this.gameCounter,
         }
     }
 }

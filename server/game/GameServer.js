@@ -11,6 +11,7 @@ import {ShopItems} from "./shop/ShopItems.js";
 import {ServiceLocator} from "./ServiceLocator.js";
 import {initDataToObj, validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../shared/utils.js";
 import {Buffer} from 'node:buffer';
+import {GameShop} from "./GameShop.js";
 
 const Logger = console;
 
@@ -21,6 +22,10 @@ export class GameServer {
     #gameSteps = GameSteps.map(({number, multiplier}) => multiplier);
     #math = new GameMath(GameSteps);
     #taskScheduler;
+    /**
+     * @type {GameShop}
+     */
+    #shop;
     #isDev = false;
     /**
      * @type {AnalystService}
@@ -32,16 +37,15 @@ export class GameServer {
         this.#sessions = new GameSessionsManager(dbAdapter);
         this.#isDev = isDev;
         this.#players = new PlayersManager(dbAdapter);
+        this.#shop= new GameShop(dbAdapter, botToken, clientURL);
         this.#taskScheduler = new TaskScheduler(this.#players);
         this.clientURL = clientURL;
-
         this.#analytics = ServiceLocator.get('analytics');
-
         this.#taskScheduler.startDailyTaskUpdaterAt();
         // this.#taskScheduler.startDailyTaskUpdaterByInterval(2);
     }
 
-    async initSession(telegramInitData, invite) {
+    async initSession(telegramInitData, invite, metadata) {
         const playerData = this.#isDev ? initDataToObj(telegramInitData) : validateSignature(telegramInitData, this.#botToken);
 
         if (!playerData) {
@@ -60,6 +64,12 @@ export class GameServer {
                 luck: 0,
                 level: 0,
                 session: null,
+                gameCounter: {
+                    total: 0,
+                    wins: 0,
+                    loses: 0
+                },
+                metadata,
                 profile: {firstName: user.first_name, lastName: user.last_name, username: user.username, lang: user.language_code, isPremium: isPremium, photo: user.photo_url},
                 tasks: []
             });
@@ -81,7 +91,7 @@ export class GameServer {
             }
         }
 
-        const session = this.#sessions.getSession(playerID, player.session);
+        const session = this.#sessions.getSession(playerID, player.session, player.gameCounter.total);
         const gameRound = session.getGameRoundInfo();
 
         if (player.session) {
@@ -114,7 +124,7 @@ export class GameServer {
                         const afterBalance = inviter.balance;
 
                         Logger.log(`Player ${invite} claimed reward ${reward} for task ${task.id}, invited ${invited}, isPremium: ${isPremium} before b=${beforeBalance} after b=${afterBalance}`);
-                        this.track('inviteReward', {playerId: invite, reward, invited, isPremium});
+                        this.track('claim', {task: task.id, reward});
                     }
                 });
             }
@@ -184,6 +194,10 @@ export class GameServer {
                 player.updateTaskOnAction(TaskAction.PLAY_GAME);
             }
 
+            if (gameRound.isLose || gameRound.isWin) {
+                player.addGame(gameRound.isWin || false);
+            }
+
             await this.#players.savePlayer(player);
         }
 
@@ -210,6 +224,7 @@ export class GameServer {
             player.addLuck(result.luck);
             player.level =this.#math.getLuckLevel(player.luck);
 
+            player.addGame(true);
             player.updateTaskOnAction(TaskAction.PLAY_GAME);
 
             if (result.isBonusCollected) {
@@ -232,7 +247,7 @@ export class GameServer {
             const player = await this.#players.getPlayer(playerID);
 
             if (player && player.session) {
-                gameSession = this.#sessions.getSession(playerID, player.session);
+                gameSession = this.#sessions.getSession(playerID, player.session, player.gameCounter.total);
             } else {
                 throw new SessionExpiredError();
             }
@@ -288,27 +303,9 @@ export class GameServer {
     }
 
     async getInvoiceLink(playerID, itemID) {
-        const item = this.getShopItem(itemID);
-        if (!item) {
-            return false;
-        }
+        const session = await this.getSession(playerID);
 
-        const data = {
-            title: item.label,
-            description: item.label,
-            // todo move to config
-            "photo_url": `${this.clientURL}/assets/icons/ShopItem.png`,
-            "photo_width": 150,
-            "photo_height": 150,
-            payload: JSON.stringify([playerID, itemID]),
-            currency: 'XTR',
-            prices: JSON.stringify([{amount: item.price, label: item.label}]),
-        };
-        const params = new URLSearchParams(data).toString();
-        const response = await fetch(`https://api.telegram.org/bot${this.#botToken}/createInvoiceLink?${params}`);
-        const {result} = await response.json();
-
-        return result;
+        return await this.#shop.getInvoiceLink(playerID, itemID, session.gameNumber);
     }
 
     async fromTelegram(data) {
@@ -324,10 +321,10 @@ export class GameServer {
 
             if (successful_payment) {
                 try {
-                    const {invoice_payload} = successful_payment;
-                    const [playerID, itemID] = JSON.parse(invoice_payload);
+                    const {invoice_payload, telegram_payment_charge_id, order_info} = successful_payment;
+                    const [playerID, itemID, purchaseId] = JSON.parse(invoice_payload);
                     const player = await this.#players.getPlayer(playerID);
-                    const item = this.getShopItem(itemID);
+                    const item = this.#shop.getShopItem(itemID);
 
                     if (player) {
                         player.addBalance(item.amount);
@@ -336,13 +333,13 @@ export class GameServer {
 
                         const Logger = ServiceLocator.get('logger');
 
-                        Logger.info(`Player ${playerID} bought ${item.amount} for ${item.price} XTR`);
+                       await this.#shop.confirmPurchase(purchaseId, {paymentID: telegram_payment_charge_id});
+                        Logger.info(`Player ${playerID} bought ${item.amount} for ${item.price} XTR , purchaseId: ${purchaseId}`);
 
                         return true;
                     }
                 } catch(e) {
                     Logger.error(`Failed to process payment: ${e} for data: ${JSON.stringify(data)}`);
-                    // reject payment
                 }
             }
         }
@@ -368,10 +365,6 @@ export class GameServer {
         }
 
         return true;
-    }
-
-    getShopItem(id) {
-        return ShopItems.find(item => item.id === id);
     }
 
     async getLeaderBoard(pagination = 20) {

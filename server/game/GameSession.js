@@ -11,7 +11,8 @@ export class GameSession {
             playerID,
             onExpire = () => {},
             gameRound = null,
-            id = GameSession.generateSessionID()
+            id = GameSession.generateSessionID(),
+            gameNumber = 0
         } = properties;
 
         this.playerID = playerID;
@@ -19,6 +20,7 @@ export class GameSession {
         this.id = id;
         this.timeoutTime = 1000 * 60 * 5;
         this.timeout = null;
+        this.gameNumber = gameNumber;
 
         this.gameRound = gameRound ? new GameRound(gameRound) : null;
     }

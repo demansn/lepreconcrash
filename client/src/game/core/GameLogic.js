@@ -14,6 +14,7 @@ export class GameLogic {
         this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto'], API_URL);
 
         this.parameters = new URLSearchParams(window.location.search);
+        this.platform = window.Telegram.WebApp.platform;
 
         this.cheat = {
             bonusStep: this.parameters .has('bonusStep')  ? Number(this.parameters .get('bonusStep')) :  undefined,
@@ -56,20 +57,22 @@ export class GameLogic {
     }
 
     async initSession() {
-        const {player, steps, id, gameRound, link, shopItems} = await this.api.initSession(this.userData, this.invite);
+        const {country} = await this.getGeoLocation();
+        const medadata = {
+            country,
+            platform: this.platform
+        };
+        const {player, steps, id, gameRound, link, shopItems} = await this.api.initSession(this.userData, this.invite, medadata);
 
         this.sessionID = id;
         this.player = player;
         this.player.tasks = this.transformTasks(player.tasks);
-
         this.gameSteps = steps;
 
         this.gameRound = gameRound;
         this.shopItems = shopItems;
 
         this.analytics.track('initSession', {
-            username: player.profile.username,
-            playerId: player.id,
             balance: player.balance,
             luck: player.luck
         });
@@ -87,7 +90,8 @@ export class GameLogic {
 
         this.analytics.track('placeBet', {
             username: this.player.profile.username,
-            playerId: this.player.id
+            playerId: this.player.id,
+            balance: player.balance,
         });
 
         this.player.balance = player.balance;
@@ -129,12 +133,20 @@ export class GameLogic {
     async cashOut() {
         const {player, gameRound} = await this.api.cashOut(this.player.id);
 
+        let bonus = {};
+
+        if (gameRound.step === gameRound.bonus.step) {
+            bonus = {
+                bonusStep: gameRound.bonus.step,
+                bonusLuck: gameRound.bonus.luck
+            };
+        }
+
         this.analytics.track('cashOut', {
-            username: player.profile.username,
-            playerId: player.id,
             step: gameRound.step,
             win: gameRound.win,
-            luck: gameRound.luck
+            luck: gameRound.luck,
+            ...bonus
         });
 
         this.player.balance = player.balance;
@@ -177,8 +189,6 @@ export class GameLogic {
             result.task = this.transformTask(result.task);
 
             this.analytics.track('claim', {
-                username: this.player.profile.username,
-                playerId: this.player.id,
                 task: result.task.id,
                 reward: result.task.reward
             });
@@ -223,9 +233,7 @@ export class GameLogic {
             this.player.balance = this.player.balance + this.shopItems[itemID].amount;
 
             this.analytics.track('buy', {
-                username: this.player.profile.username,
-                playerId: this.player.id,
-
+                price: this.shopItems[itemID].price,
                 amount: this.shopItems[itemID].amount
             });
         }
@@ -327,5 +335,16 @@ export class GameLogic {
         const fullName = this.player.profile.firstName + ' ' + this.player.profile.lastName;
 
         return fullName ||  this.player.profile.username || 'User';
+    }
+
+    async getGeoLocation() {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+
+        return {
+            country: data.country_code,
+            region: data.region,
+            city: data.city,
+        };
     }
 }

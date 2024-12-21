@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import {MongoClient, ObjectId} from "mongodb";
 
 export class MongoDBAdapter {
     /**
@@ -10,6 +10,7 @@ export class MongoDBAdapter {
         this.client = new MongoClient(connectionString, { useUnifiedTopology: true });
         this.dbName = dbName;
         this.playersCollection = null;
+        this.purchasesCollection = null;
         this.tasksTemplate = taskTemplate;
     }
 
@@ -20,6 +21,7 @@ export class MongoDBAdapter {
         await this.client.connect();
         const db = this.client.db(this.dbName);
         this.playersCollection = db.collection("players");
+        this.purchasesCollection = db.collection("purchases");
         this.tasksTemplateCollection =
         console.log("Connected to MongoDB");
     }
@@ -109,5 +111,21 @@ export class MongoDBAdapter {
         if (result.matchedCount === 0) {
             throw new Error(`Player with ID ${id} not found`);
         }
+    }
+
+    async addPurchasedItem(item) {
+        const result = await this.purchasesCollection.insertOne({
+            ...item,
+            createdAt: new Date().toISOString(),
+        });
+
+        return result.insertedId.toString();
+    }
+
+   async updatePurchase(purchaseID, data) {
+        return  await this.purchasesCollection.updateOne(
+            { _id: new ObjectId(purchaseID) },
+            { $set: {...data} }
+        );
     }
 }

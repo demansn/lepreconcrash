@@ -134,7 +134,7 @@ export class GameRound {
     }
 
     getRoundLuck() {
-        return this.currentStep + 1 + this.bonusLuck;
+        return this.currentStep + this.bonusLuck;
     }
 
     toObject() {
