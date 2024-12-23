@@ -36,7 +36,7 @@ export class PlayerFriendsInfo extends SuperContainer {
         this.userName = this.create.displayObject(PlayerName, {name: userName, x: this.icon.x + this.icon.width + 24, y: this.icon.y + this.icon.height / 2});
 
         this.activeFriendsInfo = this.create.displayObject(PlayerFriendsInfoCard, {icon: 'cap', value: activeFriends, label: 'ACTIVE FRIENDS'});
-        this.yourEarnedInfo = this.create.displayObject(PlayerFriendsInfoCard, {icon: 'CoinIcon', iconSize: 40, value: earned, label: 'YOUR EARNED'});
+        this.yourEarnedInfo = this.create.displayObject(PlayerFriendsInfoCard, {icon: 'CoinIcon', iconSize: 40, value: earned, label: 'YOU EARNED'});
 
         this.create.displayObject(List, {x: 36, y: 156, parameters: {children: [this.activeFriendsInfo, this.yourEarnedInfo], type: 'horizontal', elementsMargin: 18}});
     }
