@@ -314,17 +314,12 @@ export class GameServer {
     }
 
     async fromTelegram(data) {
-        try {
-            this.#analytics.getProvider('telemetree').trackUpdate(data);
-        } catch (e) {
-            Logger.error(`Failed to track update: ${e}`);
-        }
-
         if (data.message) {
             const {message} = data;
             const {successful_payment} = message;
 
             if (successful_payment) {
+                this.trackUpdate(data);
                 try {
                     const {invoice_payload, telegram_payment_charge_id, order_info} = successful_payment;
                     const [playerID, itemID, purchaseId] = JSON.parse(invoice_payload);
@@ -350,6 +345,7 @@ export class GameServer {
         }
 
         if (data.pre_checkout_query) {
+            this.trackUpdate(data);
             const {pre_checkout_query} = data;
             const body = {ok: true, pre_checkout_query_id:pre_checkout_query.id };
             const [_, itemID] = JSON.parse(pre_checkout_query.invoice_payload);
@@ -437,6 +433,17 @@ export class GameServer {
              await this.#analytics.track(event, data);
         } catch (e) {
             Logger.error(`Failed to track event: ${event}, data: ${JSON.stringify(data)}, error: ${e}`);
+        }
+    }
+
+    async trackUpdate(data) {
+        const {message} = data;
+        try {
+            if (message && message.from && message.from.id) {
+                this.#analytics.getProvider('telemetree').trackUpdate(data);
+            }
+        } catch (e) {
+            Logger.error(`Failed to track update: ${e}`);
         }
     }
 }

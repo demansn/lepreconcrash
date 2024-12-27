@@ -5,7 +5,6 @@ import "./game/gameObjects/index.js";
 
 export class Game {
     constructor() {
-        console.log('Game started');
         this.core = new Core(CoreConfig);
         this.config = GameConfig;
         this.start();

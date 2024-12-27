@@ -64,6 +64,12 @@ export class GameLogic {
         };
         const {player, steps, id, gameRound, link, shopItems} = await this.api.initSession(this.userData, this.invite, medadata);
 
+        try {
+            await this.analytics.getProvider('TelemetreeProvider').initSession();
+        } catch (e) {
+            console.error(e);
+        }
+
         this.sessionID = id;
         this.player = player;
         this.player.tasks = this.transformTasks(player.tasks);
@@ -72,10 +78,12 @@ export class GameLogic {
         this.gameRound = gameRound;
         this.shopItems = shopItems;
 
-        this.analytics.track('initSession', {
-            balance: player.balance,
-            luck: player.luck
-        });
+        if (player) {
+            this.analytics.track('initSession', {
+                balance: player.balance,
+                luck: player.luck
+            });
+        }
 
         return {
             steps,
