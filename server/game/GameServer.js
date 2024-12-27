@@ -46,70 +46,76 @@ export class GameServer {
     }
 
     async initSession(telegramInitData, invite, metadata) {
-        const playerData = this.#isDev ? initDataToObj(telegramInitData) : validateSignature(telegramInitData, this.#botToken);
+        try {
+            const playerData = this.#isDev ? initDataToObj(telegramInitData) : validateSignature(telegramInitData, this.#botToken);
 
-        if (!playerData) {
-            Logger.log(`Invalid signature for data: ${telegramInitData}`);
-            throw new ServerError('Invalid signature');
-        }
-        const user = playerData.user;
-        const playerID = user.id;
-        const isPremium = user.is_premium
-        let player = await this.#players.getPlayer(playerID);
-
-        if (!player) {
-            player = await this.#players.createPlayer({
-                id: playerID,
-                balance: 100,
-                luck: 0,
-                level: 0,
-                session: null,
-                gameCounter: {
-                    total: 0,
-                    wins: 0,
-                    loses: 0
-                },
-                metadata,
-                profile: {
-                    firstName: user.first_name,
-                    lastName: user.last_name,
-                    username: user.username,
-                    lang: user.language_code,
-                    isPremium: isPremium},
-                tasks: []
-            });
-
-            Logger.log(`Player ${playerID} created`);
-            this.track('newUser', {playerId: playerID, username: user.username});
-
-            if (invite && (invite !== playerID)) {
-                await this.rewardForInviting(invite, playerID, isPremium);
+            if (!playerData) {
+                Logger.log(`Invalid signature for data: ${telegramInitData}`);
+                throw new ServerError('Invalid signature');
             }
+            const user = playerData.user;
+            const playerID = user.id;
+            const isPremium = user.is_premium
+            let player = await this.#players.getPlayer(playerID);
 
-            player.updateTaskOnAction(TaskAction.CLAIM_DAILY_REWARD);
-            await this.#players.savePlayer(player);
-        } else {
-            const task = player.updateTaskOnAction(TaskAction.CLAIM_DAILY_REWARD);
+            if (!player) {
+                player = await this.#players.createPlayer({
+                    id: playerID,
+                    balance: 100,
+                    luck: 0,
+                    level: 0,
+                    session: null,
+                    gameCounter: {
+                        total: 0,
+                        wins: 0,
+                        loses: 0
+                    },
+                    metadata,
+                    profile: {
+                        firstName: user.first_name,
+                        lastName: user.last_name,
+                        username: user.username,
+                        lang: user.language_code,
+                        isPremium: isPremium
+                    },
+                    tasks: []
+                });
 
-            if (task) {
+                Logger.log(`Player ${playerID} created`);
+                this.track('newUser', {playerId: playerID, username: user.username});
+
+                if (invite && (invite !== playerID)) {
+                    await this.rewardForInviting(invite, playerID, isPremium);
+                }
+
+                player.updateTaskOnAction(TaskAction.CLAIM_DAILY_REWARD);
                 await this.#players.savePlayer(player);
+            } else {
+                const task = player.updateTaskOnAction(TaskAction.CLAIM_DAILY_REWARD);
+
+                if (task) {
+                    await this.#players.savePlayer(player);
+                }
             }
+
+            const session = this.#sessions.getSession(playerID, player.session, player.gameCounter.total);
+            const gameRound = session.getGameRoundInfo();
+
+            if (player.session) {
+                await this.#players.updatePlayer(playerID, {...player.toObject(), session: null});
+            }
+
+            return {
+                id: session.id,
+                steps: this.#gameSteps,
+                gameRound,
+                shopItems: ShopItems,
+                player: player.toObject()
+            };
+        } catch (e) {
+            Logger.error(`Failed to init session: ${e}`);
+            throw e;
         }
-
-        const session = this.#sessions.getSession(playerID, player.session, player.gameCounter.total);
-        const gameRound = session.getGameRoundInfo();
-
-        if (player.session) {
-           await this.#players.updatePlayer(playerID, {...player.toObject(), session: null});
-        }
-
-        return {
-            id: session.id,
-            steps: this.#gameSteps,
-            gameRound,
-            shopItems: ShopItems,
-            player: player.toObject()
-        };
     }
 
     async rewardForInviting(invite, invited, isPremium) {
