@@ -82,7 +82,7 @@ export class GameServer {
                 });
 
                 Logger.log(`Player ${playerID} created`);
-                this.track('newUser', {playerId: playerID, username: user.username});
+                // this.track('newUser', {playerId: playerID, username: user.username});
 
                 if (invite && (invite !== playerID)) {
                     await this.rewardForInviting(invite, playerID, isPremium);
@@ -135,7 +135,7 @@ export class GameServer {
                         const afterBalance = inviter.balance;
 
                         Logger.log(`Player ${invite} claimed reward ${reward} for task ${task.id}, invited ${invited}, isPremium: ${isPremium} before b=${beforeBalance} after b=${afterBalance}`);
-                        this.track('claim', {task: task.id, reward});
+                        // this.track('claim', {task: task.id, reward});
                     }
                 });
             }
