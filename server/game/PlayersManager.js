@@ -23,7 +23,7 @@ export class PlayersManager {
             return undefined;
         }
 
-        return new Player(playerData);
+        return new Player(playerData, this.dbAdapter.getTasks());
     }
 
     /**
@@ -31,7 +31,7 @@ export class PlayersManager {
      * @param {Player} player - Экземпляр класса Player.
      */
     async savePlayer(player) {
-        await this.dbAdapter.updatePlayer(player.id, player.toObject());
+        await this.dbAdapter.updatePlayer(player.id, player.toSaveObject());
     }
 
     /**
@@ -82,5 +82,18 @@ export class PlayersManager {
             this.updateDailyTasks(player);
             await this.savePlayer(player);
         }
+    }
+
+    async getTopPlayer() {
+        const players = await this.dbAdapter.getTopPlayers();
+
+        return players.map(player => {
+            const fullName = `${player.profile.firstName || ''} ${player.profile.lastName || ''}`.trim();
+            const username = fullName || player.profile.username || 'Anonymous';
+            const photo = player.profile.photo || '';
+            const luck = player.luck;
+
+            return { username, luck, photo };
+        });
     }
 }

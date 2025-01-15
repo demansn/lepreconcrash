@@ -50,11 +50,11 @@ const db = new MongoDBAdapter(process.env.MONGO_URL, process.env.MONGO_DB_NAME, 
 await db.connect();
 // const fileDB = new FileDatabaseAdapter('./', taskTemplate);
 
-const game = new GameServer(process.env.BOT_TOKEN, db, isDev, process.env.CLIENT_DOMAIN);
+const game = new GameServer(process.env.BOT_TOKEN, db, isDev, process.env.CLIENT_DOMAIN, '@leppigo_channel');
 
 const httpServer = new HTTPServer(options);
 
-httpServer.addAPI(game, ['initSession', 'placeBet', 'cashOut', 'getTasks', 'claimTaskReward', 'fromTelegram', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction']);
+httpServer.addAPI(game, ['initSession', 'placeBet', 'cashOut', 'getTasks', 'claimTaskReward', 'fromTelegram', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'checkTask']);
 httpServer.start({port: process.env.PORT});
 
 async function onTerminate() {

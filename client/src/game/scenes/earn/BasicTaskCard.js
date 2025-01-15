@@ -8,6 +8,13 @@ export class BasicTaskCard extends TasksCard {
                 this.subscribeButton = this.content.create.object('SubscribeButton', {x: 26, y: 206 - 46});
                 this.subscribeButton.button.onPress.connect(this.onClickSubscribe.bind(this));
                 break;
+            case TaskStatus.NEED_CHECK:
+                this.subscribeButton = this.content.create.object('SubscribeButton', {x: 26, y: 206 - 46});
+                this.subscribeButton.button.onPress.connect(this.onClickSubscribe.bind(this));
+
+                this.checkButton = this.content.create.object('CheckButtonButton', {x: 26, y: 300 - 46});
+                this.checkButton.button.onPress.connect(this.onClickCheckBtn.bind(this));
+                break;
             case TaskStatus.READY_TO_CLAIM:
                 this.claimButton = this.content.create.object('ClaimButton', {x: 26, y: 206 - 46});
                 this.claimButton.button.onPress.connect(() => {
@@ -21,6 +28,10 @@ export class BasicTaskCard extends TasksCard {
                 this.info.alpha = 0.5;
                 break;
         }
+    }
+
+    onClickCheckBtn() {
+        this.onClickCheck({task: this.task});
     }
 
     onClickSubscribe() {

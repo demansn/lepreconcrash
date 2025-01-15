@@ -6,12 +6,13 @@ import {FriendsTaskCard} from "./FriendsTaskCard.js";
 import {TaskType} from "../../../../../shared/TaskType.js";
 
 export class TasksCardsTab extends SuperContainer {
-    constructor({tasks, height = 900, onClickClaim, onClickShare, onClickInvite}) {
+    constructor({tasks, height = 900, onClickClaim, onClickShare, onClickInvite, onClickCheck}) {
         super();
 
         this.onClickClaim = onClickClaim;
         this.onClickShare = onClickShare;
         this.onClickInvite = onClickInvite;
+        this.onClickCheck = onClickCheck;
 
         this.list = this.addChild(new List({
             elementsMargin: 16,
@@ -20,7 +21,7 @@ export class TasksCardsTab extends SuperContainer {
             rightPadding: 4,
         }));
 
-        tasks.forEach(task => this.list.addChild(this.createTaskCard(task, {onClickClaim, onClickShare, onClickInvite})));
+        tasks.forEach(task => this.list.addChild(this.createTaskCard(task, {onClickClaim, onClickShare, onClickInvite, onClickCheck})));
     }
 
     createTaskCard(task, params) {
@@ -56,7 +57,7 @@ export class TasksCardsTab extends SuperContainer {
 
     addTasksCards(tasks){
         tasks.forEach(task => {
-            const card = this.createTaskCard(task, {onClickClaim: this.onClickClaim, onClickShare: this.onClickShare, onClickInvite: this.onClickInvite});
+            const card = this.createTaskCard(task, {onClickClaim: this.onClickClaim, onClickShare: this.onClickShare, onClickInvite: this.onClickInvite, onClickCheck: this.onClickCheck});
 
             card.on('changedSize', this.resize.bind(this));
 

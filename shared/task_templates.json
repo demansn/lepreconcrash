@@ -5,7 +5,7 @@
         "title": "Claim daily rewards",
         "description": "Log in daily to claim your reward!",
         "icon": "GoldIcon",
-        "reward": 20,
+        "reward": 10,
         "goal": 1,
         "progress": 0,
         "counted": 0,
@@ -18,7 +18,7 @@
         "title": "Play 5 games today",
         "description": "Play 5 games to claim your daily reward!",
         "icon": "BagGoldIcon",
-        "reward": 30,
+        "reward": 20,
         "goal": 5,
         "progress": 0,
         "counted": 0,
@@ -31,7 +31,7 @@
         "title": "Grab 10 Lucky Pots",
         "description": "Collect 10 Lucky Pots today to earn a bonus!",
         "icon": "PotGoldIcon",
-        "reward": 50,
+        "reward": 30,
         "goal": 10,
         "progress": 0,
         "counted": 0,
@@ -39,43 +39,36 @@
         "actionRequired": "collect_bonus"
     },
     {
-        "id": "share_phone_number",
+        "id": "subscribe_twitter",
         "type": "basic",
-        "title": "Share phone number",
-        "description": "Share your phone number to get a special reward.",
-        "icon": "SharePhoneIcon",
-        "reward": 50,
-        "goal": 1,
-        "progress": 0,
-        "counted": 0,
-        "status": "in_progress",
-        "actionRequired": "share_phone"
-    },
-    {
-        "id": "share_x_account",
-        "type": "basic",
-        "title": "Share X account",
-        "description": "Link your X account to receive extra rewards.",
+        "title": "Subscribe Twitter",
+        "description": "Subscribe Twitter to receive bonus rewards.",
         "icon": "ShareXIcon",
-        "reward": 30,
-        "goal": 1,
-        "progress": 0,
-        "counted": 0,
-        "status": "in_progress",
-        "actionRequired": "share_x_account"
-    },
-    {
-        "id": "share_email_address",
-        "type": "basic",
-        "title": "Share email address",
-        "description": "Share your email to receive a bonus reward.",
-        "icon": "ShareEmailIcon",
+        "metadata": {
+            "url": "https://x.com/LappiGO_game"
+        },
         "reward": 20,
         "goal": 1,
         "progress": 0,
         "counted": 0,
         "status": "in_progress",
-        "actionRequired": "share_email"
+        "actionRequired": "subscribe_twitter"
+    },
+    {
+        "id": "subscribe_telegram_channel",
+        "type": "basic",
+        "title": "Subscribe Telegram channel",
+        "description": "Subscribe Telegram channel to receive a bonus reward.",
+        "icon": "ShareEmailIcon",
+        "metadata": {
+            "url": "https://t.me/leppigo_channel"
+        },
+        "reward": 20,
+        "goal": 1,
+        "progress": 0,
+        "counted": 0,
+        "status": "in_progress",
+        "actionRequired": "subscribe_telegram_channel"
     },
     {
         "id": "invite_friend",

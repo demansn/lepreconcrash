@@ -3,7 +3,14 @@ import {ElasticBackground} from "../../gameObjects/ElasticBackground.js";
 import {TextWithIcon} from "../../gameObjects/TextWithIcon.js";
 
 export class TasksCard extends SuperContainer {
-    constructor({task, margin = 26, onClickClaim = () => {}, onClickInvite = () => {}, onClickShare = () => {}, width = 630, height = 206}) {
+    constructor({
+                    task, margin = 26,
+                    onClickClaim = () => {},
+                    onClickInvite = () => {},
+                    onClickShare = () => {},
+                    onClickCheck = () => {},
+                    width = 630, height = 206,
+    }) {
         super();
 
         this.options = {task, margin, onClickClaim, onClickInvite, width, height};
@@ -13,6 +20,7 @@ export class TasksCard extends SuperContainer {
         this.onClickClaim = onClickClaim;
         this.onClickInvite = onClickInvite;
         this.onClickShare = onClickShare;
+        this.onClickCheck = onClickCheck;
 
         this.margin = margin;
         const borderColorByStatus = {

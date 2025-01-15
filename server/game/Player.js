@@ -7,7 +7,7 @@ export class Player {
     #luck;
     level = 0;
 
-    constructor({balance, luck, level, id, session, tasks = [], profile, gameCounter = {total: 0, wins: 0, loses: 0}}) {
+    constructor({balance, luck, level, id, session, tasks = [], profile, gameCounter = {total: 0, wins: 0, loses: 0}}, tasksData) {
         this.balance = balance;
         this.luck = luck;
         this.level = level;
@@ -15,7 +15,11 @@ export class Player {
         this.session = session;
         this.profile = profile;
         this.gameCounter = gameCounter || {total: 0, wins: 0, loses: 0};
-        this.tasks = tasks.map(data => new Task(data));
+        this.tasks = tasks.map((data) => {
+            const metaData = tasksData.find(task => task.id === data.id) || {};
+
+            return new Task(data, metaData);
+        });
     }
 
     addBalance(amount) {
@@ -60,34 +64,38 @@ export class Player {
      * @returns {Array} Список заданий игрока.
      */
     getTasks() {
-        return this.tasks.map(task => ({
-            ...task.toObject()
-        }));
+        return this.tasks.map(task => ({ ...task.data}));
     }
 
     getTask(id) {
         return this.tasks.find(task => task.id === id);
     }
 
-    updateTaskOnAction(action, value) {
-        const updatedTasks = this.tasks.map(task => task.updateOnAction(action)).filter(Boolean);
-
-        if (updatedTasks.length && value) {
-            if (action === TaskAction.SHARE_EMAIL) {
-                this.profile.email = value;
-            }
-            if (action === TaskAction.SHARE_X_ACCOUNT) {
-                this.profile.xAccaunt = value;
-            }
-            if (action === TaskAction.SHARE_PHONE) {
-                this.profile.phone = value;
-            }
-        }
-
-        return updatedTasks;
+    updateTaskOnAction(action) {
+        return this.tasks.map(task => task.updateOnAction(action)).filter(Boolean);
     }
 
-    toObject() {
+    updateTaskStatus(id, status) {
+        const task = this.getTask(id);
+
+        task.updateStatus(status);
+
+        return task;
+    }
+
+    toSaveObject() {
+        return {
+            balance: this.balance,
+            luck: this.luck,
+            level: this.level,
+            session: this.session,
+            profile: this.profile,
+            tasks: this.tasks.map(task => task.data),
+            gameCounter: this.gameCounter,
+        }
+    }
+
+    toClient() {
         return {
             id: this.id,
             balance: this.balance,
@@ -95,8 +103,8 @@ export class Player {
             level: this.level,
             session: this.session,
             profile: this.profile,
-            tasks: this.tasks.map(task => task.toObject()),
-            gameCounter: this.gameCounter,
+            tasks: this.tasks.map(task => task.toClient()),
+            gameCounter: this.gameCounter
         }
     }
 }

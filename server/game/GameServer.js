@@ -12,6 +12,7 @@ import {ServiceLocator} from "./ServiceLocator.js";
 import {initDataToObj, validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../shared/utils.js";
 import {Buffer} from 'node:buffer';
 import {GameShop} from "./GameShop.js";
+import {TaskStatus} from "../../shared/TaskStatus.js";
 
 const Logger = console;
 
@@ -32,7 +33,7 @@ export class GameServer {
      */
     #analytics;
 
-    constructor(botToken, dbAdapter, isDev, clientURL) {
+    constructor(botToken, dbAdapter, isDev, clientURL, chanel) {
         this.#botToken = botToken;
         this.#sessions = new GameSessionsManager(dbAdapter);
         this.#isDev = isDev;
@@ -42,7 +43,7 @@ export class GameServer {
         this.clientURL = clientURL;
         this.#analytics = ServiceLocator.get('analytics');
         this.#taskScheduler.startDailyTaskUpdaterAt();
-        // this.#taskScheduler.startDailyTaskUpdaterByInterval(2);
+        this.chanel = chanel;
     }
 
     async initSession(telegramInitData, invite, metadata) {
@@ -102,7 +103,7 @@ export class GameServer {
             const gameRound = session.getGameRoundInfo();
 
             if (player.session) {
-                await this.#players.updatePlayer(playerID, {...player.toObject(), session: null});
+                await this.#players.updatePlayer(playerID, {...player.toSaveObject(), session: null});
             }
 
             return {
@@ -110,7 +111,7 @@ export class GameServer {
                 steps: this.#gameSteps,
                 gameRound,
                 shopItems: ShopItems,
-                player: player.toObject()
+                player: player.toClient()
             };
         } catch (e) {
             Logger.error(`Failed to init session: ${e}`);
@@ -246,7 +247,7 @@ export class GameServer {
         }
 
         return {
-            player: player.toObject(),
+            player: player.toClient(),
             gameRound: result
         };
     }
@@ -299,6 +300,7 @@ export class GameServer {
         }
 
         const reward = task.claimReward();
+
         player.addBalance(reward);
 
         await this.#players.savePlayer(player);
@@ -308,8 +310,8 @@ export class GameServer {
         return {
             success: true,
             reward:reward,
-            task: task.toObject(),
-            player: player.toObject()
+            task: task.toClient(),
+            player: player.toClient()
         };
     }
 
@@ -374,50 +376,70 @@ export class GameServer {
         return true;
     }
 
-    async getLeaderBoard(pagination = 20) {
-        // TODO: implement pagination and sorting (request to db)
-        let players =(await this.#players.getAllPlayers()).sort((a, b) => b.luck - a.luck).slice(0, pagination);
-
-        return players.map(player => player.toObject()).map(player => {
-            const fullName = `${player.profile.firstName} ${player.profile.lastName}`;
-            const username = fullName || player.profile.username || 'Anonymous';
-            const photo = player.profile.photo || '';
-            const luck = player.luck;
-
-            return {username, luck, photo};
-        });
+    async getLeaderBoard() {
+       return await this.#players.getTopPlayer();
     }
 
-    async applyTaskAction(playerID, taskAction, value) {
+    async applyTaskAction(playerID, taskID) {
         const player = await this.#players.getPlayer(playerID);
 
         if (!player) {
             throw new ServerError('Player not found');
         }
 
-        switch (taskAction) {
-            case TaskAction.SHARE_EMAIL:
-                if (!value || !validateEmail(value)) {
-                    throw new Error('Invalid email format. Please use the format: user@domain.com.');
-                }
-                break;
-            case TaskAction.SHARE_PHONE:
-                if (!value || !validatePhoneNumber(value)) {
-                    throw new Error('Invalid phone number format. Please use the international format: +1234567890 (up to 15 digits).');
-                }
-                break;
-            case TaskAction.SHARE_X_ACCOUNT:
-                if (!value || !validateTwitterAccount(value)) {
-                    throw new Error('Invalid account format. Please use the format: @username.');
-                }
-                break;
+        const task = player.getTask(taskID);
+
+        if (!task) {
+            throw new ServerError('Task not found');
         }
 
-        const tasks = player.updateTaskOnAction(taskAction, value).map(task => task.toObject());
+        if (task.actionRequired === TaskAction.SUBSCRIBE_TELEGRAM_CHANNEL || task.actionRequired === TaskAction.SUBSCRIBE_TWITTER && task.isInProgress()) {
+            const task = player.updateTaskStatus(taskID, TaskStatus.NEED_CHECK).toClient();
 
-        await this.#players.savePlayer(player);
+            await this.#players.savePlayer(player);
 
-        return tasks;
+            return [task];
+        }
+
+        return [];
+    }
+
+    async checkTask(playerID, taskID) {
+        const player = await this.#players.getPlayer(playerID);
+
+        if (!player) {
+            throw new ServerError('Player not found');
+        }
+
+        const task = player.getTask(taskID);
+
+        if (!task) {
+            throw new ServerError('Task not found');
+        }
+
+        if (task.actionRequired === TaskAction.SUBSCRIBE_TELEGRAM_CHANNEL || task.actionRequired === TaskAction.SUBSCRIBE_TWITTER && task.isInNeedToCheck()) {
+            let isSubscribed = false;
+            if (task.actionRequired === TaskAction.SUBSCRIBE_TWITTER) {
+                isSubscribed = true;
+            }
+
+            if (task.actionRequired === TaskAction.SUBSCRIBE_TELEGRAM_CHANNEL) {
+                const {subscribed} = await this.checkTelegramSubscription(playerID);
+                isSubscribed = subscribed;
+            }
+
+            if (isSubscribed) {
+                const tasks = player.updateTaskOnAction(task.actionRequired);
+
+                if (tasks.length) {
+                    await this.#players.savePlayer(player);
+                }
+
+                return tasks.map(t => t.toClient());
+            }
+        }
+
+        return [];
     }
 
     async getUserPhoto(url) {
@@ -450,6 +472,29 @@ export class GameServer {
             }
         } catch (e) {
             Logger.error(`Failed to track update: ${e}`);
+        }
+    }
+
+    async checkTelegramSubscription(playerID) {
+        const url = `https://api.telegram.org/bot${this.#botToken}/getChatMember?chat_id=${this.chanel}&user_id=${playerID}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.ok) {
+                const status = data.result.status;
+                if (status === "member" || status === "administrator" || status === "creator") {
+                    return { subscribed: true, status };
+                } else {
+                    return { subscribed: false, status };
+                }
+            } else {
+                throw new Error(data.description);
+            }
+        } catch (error) {
+            console.error("Error checking subscription:", error);
+            return { subscribed: false, error: error.message };
         }
     }
 }

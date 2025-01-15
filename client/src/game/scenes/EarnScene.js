@@ -14,6 +14,7 @@ export class EarnScene extends ScreenScene {
         this.tasksTabs.on('onClickClaim', this.onClaimTaskReward.bind(this));
         this.tasksTabs.on('onClickShare', this.onShare.bind(this));
         this.tasksTabs.on('onClickInvite', this.onClaimInvite.bind(this));
+        this.tasksTabs.on('onClickCheck', this.onClickCheck.bind(this));
     }
 
     onClaimTaskReward(taskId) {
@@ -26,6 +27,10 @@ export class EarnScene extends ScreenScene {
 
     onClaimInvite(taskId) {
         this.emit('onClickInvite', taskId);
+    }
+
+    onClickCheck(taskId) {
+        this.emit('onClickCheck', taskId);
     }
 
     showTasks(tasks) {

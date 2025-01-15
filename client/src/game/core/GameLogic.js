@@ -2,6 +2,7 @@ import {createAPI} from "../../Api.js";
 import {TaskAction} from "../../../../shared/TaskAction.js";
 import {initDataToObj, initDataToString, validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../../../shared/utils.js";
 import Tasks from "../../../../shared/task_templates.json"
+import {TaskStatus} from "../../../../shared/TaskStatus.js";
 
 const INVITE_URL = 'https://t.me/share/url';
 
@@ -11,7 +12,7 @@ export class GameLogic {
         this.analytics = dependencies.resolve('AnalystService');
     }
     create(options) {
-        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto'], API_URL);
+        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto', 'checkTask'], API_URL);
 
         this.parameters = new URLSearchParams(window.location.search);
         this.platform = window.Telegram.WebApp.platform;
@@ -249,34 +250,42 @@ export class GameLogic {
         return result;
     }
 
-    async applyTaskAction(task, value) {
+    async applyTaskAction(task) {
         let error = null;
 
-        if (task.actionRequired === TaskAction.SHARE_EMAIL && (!value || !validateEmail(value))) {
-            error = 'Invalid email format. Please use the format: name@domain.com.';
+        if (task.actionRequired === TaskAction.SUBSCRIBE_TELEGRAM_CHANNEL) {
+            window.Telegram.WebApp.openTelegramLink(task.metadata.url);
         }
 
-        if (task.actionRequired === TaskAction.SHARE_PHONE && (!value || !validatePhoneNumber(value))) {
-            error = 'Invalid phone number format. Please use the international format: +1234567890 (up to 15 digits).';
+        if (task.actionRequired === TaskAction.SUBSCRIBE_TWITTER) {
+            window.Telegram.WebApp.openLink(task.metadata.url, {try_browser: true});
         }
 
-        if (task.actionRequired === TaskAction.SHARE_X_ACCOUNT && (!value || !validateTwitterAccount(value))) {
-            error = 'Invalid account format. Please use the format: @username.';
-        }
+        if (task.status === TaskStatus.IN_PROGRESS) {
+            let tasksResult = await this.api.applyTaskAction(this.player.id, task.id);
 
-        if (error) {
-            try {
-                window.Telegram.WebApp.showAlert(error);
-            } catch {
-                alert(error);
+            if (tasksResult && tasksResult.length) {
+                tasksResult = this.transformTasks(tasksResult);
+
+                this.player.tasks = this.player.tasks.map(t => {
+                    if (t.id === task.id) {
+                        return tasksResult.find(rt => rt.id === task.id);
+                    }
+
+                    return t;
+                });
             }
-            return false;
+            return tasksResult || [];
         }
 
-        let tasksResult = await this.api.applyTaskAction(this.player.id, task.actionRequired, value);
+        return [];
+    }
 
-        if (tasksResult) {
-            tasksResult = this.transformTasks(tasksResult);
+    async checkTask(task) {
+        const tasks = await this.api.checkTask(this.player.id, task.id);
+
+        if (tasks && tasks.length) {
+            const tasksResult = this.transformTasks(tasks);
 
             this.player.tasks = this.player.tasks.map(t => {
                 if (t.id === task.id) {
@@ -285,9 +294,11 @@ export class GameLogic {
 
                 return t;
             });
+
+            return tasksResult;
         }
 
-        return tasksResult;
+        return [];
     }
 
     async update() {

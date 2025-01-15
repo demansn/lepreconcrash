@@ -9,12 +9,14 @@ import {TextWithIcon} from "./TextWithIcon.js";
 import {InlineBlock} from "./InlineBlock.js";
 import {Graphics} from "pixi.js";
 import {VerticalBlock} from "./VerticalBlock.js";
+import {CheckButtonButton} from "./CheckButton.js";
 
 Mather.registerObjectFactory('ProgressBar', (parameters) => new ProgressBar(parameters));
 Mather.registerObjectFactory('FancyButton', (parameters) => new FancyButton(parameters));
 Mather.registerObjectFactory('RadioGroup', (parameters) => new RadioGroup(parameters));
 Mather.registerObjectFactory('ClaimButton', (parameters) => new ClaimButton(parameters));
 Mather.registerObjectFactory('SubscribeButton', (parameters) => new SubscribeButton(parameters));
+Mather.registerObjectFactory('CheckButtonButton', (parameters) => new CheckButtonButton(parameters));
 Mather.registerObjectFactory('ClaimRewardButton', (parameters) => new ClaimRewardButton(parameters));
 Mather.registerObjectFactory('InviteButton', (parameters) => new InviteButton(parameters));
 Mather.registerObjectFactory('TextWithIcon', (parameters) => new TextWithIcon(parameters));

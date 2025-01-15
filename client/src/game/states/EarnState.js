@@ -26,6 +26,7 @@ export class EarnState extends ScreenState {
         this.earn.on('onClickClaim', this.claimTaskReward.bind(this));
         this.earn.on('onClickInvite', this.inviteFriend.bind(this));
         this.earn.on('onClickShare', this.onClickShare.bind(this));
+        this.earn.on('onClickCheck', this.onClickCheck.bind(this));
     }
 
     async claimTaskReward(taskId) {
@@ -53,17 +54,18 @@ export class EarnState extends ScreenState {
     }
 
     async onClickShare({task}) {
-        const placeholders = {
-            [TaskAction.SHARE_EMAIL]: 'Enter your email:',
-            [TaskAction.SHARE_PHONE]: 'Enter your phone number:',
-            [TaskAction.SHARE_X_ACCOUNT]: 'Enter your x account:',
-        };
-        const placeholder = placeholders[task.actionRequired];
-        const title = task.description;
-        const value = await this.showPopup(title, placeholder);
+        if (task) {
+            const updatedTasks = await this.logic.applyTaskAction(task);
 
-        if (value) {
-            const updatedTasks = await this.logic.applyTaskAction(task, value);
+            if (updatedTasks) {
+                this.earn.updateTasks(updatedTasks);
+            }
+        }
+    }
+
+    async onClickCheck({task}) {
+        if (task) {
+            const updatedTasks = await this.logic.checkTask(task);
 
             if (updatedTasks) {
                 this.earn.updateTasks(updatedTasks);

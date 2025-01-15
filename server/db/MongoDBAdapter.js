@@ -5,13 +5,14 @@ export class MongoDBAdapter {
      * Конструктор класса MongoDBAdapter.
      * @param {string} connectionString - Строка подключения к MongoDB.
      * @param {string} dbName - Имя базы данных.
+     * @param {[]} tasks - Имя базы данных.
      */
-    constructor(connectionString, dbName, taskTemplate) {
+    constructor(connectionString, dbName, tasks) {
         this.client = new MongoClient(connectionString, { useUnifiedTopology: true });
         this.dbName = dbName;
         this.playersCollection = null;
         this.purchasesCollection = null;
-        this.tasksTemplate = taskTemplate;
+        this.tasks = tasks;
     }
 
     /**
@@ -22,8 +23,57 @@ export class MongoDBAdapter {
         const db = this.client.db(this.dbName);
         this.playersCollection = db.collection("players");
         this.purchasesCollection = db.collection("purchases");
-        this.tasksTemplateCollection =
-        console.log("Connected to MongoDB");
+        try {
+            await this.updateAllTasks();
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async updateAllTasks() {
+        const taskIdsToRemove = ['share_phone_number', 'share_email_address', 'share_x_account'];
+        const tasksToAdd = this.tasks.filter(({id}) => id === 'subscribe_twitter' || id === 'subscribe_telegram_channel').map(task => ({
+            id: task.id,
+            progress: 0,
+            counted: 0,
+            status: "in_progress",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+        }));
+
+        await this.playersCollection.updateMany(
+            {'tasks.id': { $in: taskIdsToRemove }},
+            {
+                $pull: { tasks: { id: { $in: taskIdsToRemove } } },
+            }
+        );
+
+        await this.playersCollection.updateMany(
+            {},
+            {
+                $unset: {
+                    'tasks.$[].type': '',
+                    'tasks.$[].reward': '',
+                    'tasks.$[].goal': '',
+                    'tasks.$[].actionRequired': '',
+                    'tasks.$[].repeatable': '',
+                    'tasks.$[].icon': '',
+                    'tasks.$[].description': '',
+                    'tasks.$[].title': '',
+                }
+            }
+        );
+
+        for (const task of tasksToAdd) {
+            await this.playersCollection.updateMany(
+                {
+                    "tasks.id": { $ne: task.id }
+                },
+                {
+                    $addToSet: { tasks: task }
+                }
+            );
+        }
     }
 
     /**
@@ -47,8 +97,21 @@ export class MongoDBAdapter {
      * Получить всех игроков.
      * @returns {Array<Object>} Список игроков.
      */
-    async getAllPlayers() {
+    async getAllPlayers({pagination} = {}) {
         return await this.playersCollection.find({}).toArray();
+    }
+
+    async getTopPlayers(pagination = 20) {
+        try {
+            return await this.playersCollection
+                .find({}, { projection: { 'profile.firstName': 1, 'profile.lastName': 1, 'profile.username': 1, 'profile.photo': 1, luck: 1 } })
+                .sort({ luck: -1 })
+                .limit(pagination)
+                .toArray();
+        } catch (error) {
+            console.error('Error fetching top players:', error);
+            throw error;
+        }
     }
 
     /**
@@ -62,13 +125,8 @@ export class MongoDBAdapter {
             throw new Error(`Player with ID ${playerData.id} already exists`);
         }
 
-        playerData.tasks = this.tasksTemplate.map(task => ({
+        playerData.tasks = this.tasks.map(task => ({
             id: task.id,
-            type: task.type,
-            reward: task.reward,
-            goal: task.goal,
-            actionRequired: task.actionRequired,
-            repeatable: task.repeatable,
             progress: 0,
             counted: 0,
             status: "in_progress",
@@ -127,5 +185,9 @@ export class MongoDBAdapter {
             { _id: new ObjectId(purchaseID) },
             { $set: {...data} }
         );
+    }
+
+    getTasks() {
+        return this.tasks;
     }
 }

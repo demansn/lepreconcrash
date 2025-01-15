@@ -2,13 +2,22 @@ import {TaskStatus} from "../../../shared/TaskStatus.js";
 import {TaskType} from "../../../shared/TaskType.js";
 
 export class Task {
-    constructor(data) {
+    constructor(data, metaData) {
         this.data = data;
+        this.metaData = metaData;
         this.id = data.id;
     }
 
     isDaily() {
-        return this.data.type === TaskType.daily;
+        return this.metaData.type === TaskType.daily;
+    }
+
+    isInProgress() {
+        return this.data.status === TaskStatus.IN_PROGRESS;
+    }
+
+    isInNeedToCheck() {
+        return this.data.status === TaskStatus.NEED_CHECK;
     }
 
     resetProgress() {
@@ -23,10 +32,12 @@ export class Task {
      * @returns {Task}
      */
     updateOnAction(action) {
-        if (this.data.actionRequired === action && (this.data.status === TaskStatus.IN_PROGRESS || this.isRepeatable())) {
+        const isStatusAllowed = this.isInNeedToCheck() || this.isInProgress();
+
+        if (this.metaData.actionRequired === action && (isStatusAllowed || this.isRepeatable())) {
             this.data.progress += 1;
 
-            if (this.data.progress >= this.data.goal) {
+            if (this.data.progress >= this.metaData.goal) {
                 this.data.status = TaskStatus.READY_TO_CLAIM;
             }
 
@@ -36,12 +47,24 @@ export class Task {
         }
     }
 
+    /**
+     * Update task status.
+     * @param {TaskStatus} status - task status
+     * @returns {Task}
+     */
+    updateStatus(status) {
+        this.data.status = status;
+        this.data.updatedAt = new Date().toISOString();
+
+        return this;
+    }
+
     isReadyToClaim() {
         return this.data.status === TaskStatus.READY_TO_CLAIM;
     }
 
     isRepeatable() {
-        return this.data.repeatable;
+        return this.metaData.repeatable;
     }
 
     claimReward() {
@@ -49,8 +72,8 @@ export class Task {
             return 0;
         }
 
-        const amount = this.data.progress / this.data.goal;
-        const reward = amount * this.data.reward;
+        const amount = this.data.progress / this.metaData.goal;
+        const reward = amount * this.metaData.reward;
 
         this.data.counted += this.data.progress;
 
@@ -62,6 +85,14 @@ export class Task {
         }
 
         return reward;
+    }
+
+    get actionRequired() {
+        return this.metaData.actionRequired;
+    }
+
+    toClient() {
+        return {...this.metaData, ...this.data};
     }
 
     toObject() {

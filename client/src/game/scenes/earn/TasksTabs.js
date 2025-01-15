@@ -37,7 +37,13 @@ export class TasksTabs extends SuperContainer {
     }
 
     addTasksTab(tasks = [], height = 900) {
-        const panel = this.tabs.create.displayObject(TasksCardsTab, {tasks, height, onClickClaim: this.onClickClaim.bind(this), onClickShare: this.onClickShare.bind(this), onClickInvite: this.onClickInvite.bind(this)});
+        const panel = this.tabs.create.displayObject(TasksCardsTab, {
+            tasks, height,
+            onClickClaim: this.onClickClaim.bind(this),
+            onClickShare: this.onClickShare.bind(this),
+            onClickInvite: this.onClickInvite.bind(this),
+            onClickCheck: this.onClickCheck.bind(this)
+        });
 
         panel.x = 24;
         panel.y = this.buttons.x + this.buttons.height;
@@ -56,6 +62,10 @@ export class TasksTabs extends SuperContainer {
 
     onClickInvite(taskId) {
         this.emit('onClickInvite', taskId);
+    }
+
+    onClickCheck(taskId) {
+        this.emit('onClickCheck', taskId);
     }
 
     selectTab(index) {
