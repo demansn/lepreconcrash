@@ -134,6 +134,8 @@ export class GameLogic {
 
         this.gameRound = gameRound;
 
+        const isWinBonusGame = gameRound.bonus && gameRound.bonus.prize && gameRound.step === gameRound.bonus.step;
+
         if (gameRound.isLose) {
             this.analytics.track('crash', {
                 username: this.player.profile.username,
@@ -148,6 +150,12 @@ export class GameLogic {
                 win: gameRound.win,
                 luck: gameRound.luck
             });
+
+            if (gameRound.bonus && gameRound.bonus.prize) {
+                this.analytics.track('win+bonusGame');
+            }
+        } else if(isWinBonusGame) {
+            this.analytics.track('bonusGame');
         }
 
         return gameRound;
@@ -171,6 +179,10 @@ export class GameLogic {
             luck: gameRound.luck,
             ...bonus
         });
+
+        if (gameRound.bonus && gameRound.bonus.prize) {
+            this.analytics.track('cashOut+bonusGame');
+        }
 
         this.player.balance = player.balance;
         this.player.luck = player.luck;

@@ -154,6 +154,7 @@ export const GameConfig = {
                 context: {
                     logic: 'GameLogic',
                     ads: 'TabsWidget',
+                    analytics: 'TelemetreeProvider',
                 },
                 scenes: {
                     earn: 'EarnScene',

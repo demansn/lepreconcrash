@@ -45,7 +45,6 @@ export class GameServer {
         this.#taskScheduler = new TaskScheduler(this.#players);
         this.clientURL = clientURL;
         this.#analytics = ServiceLocator.get('analytics');
-        this.#taskScheduler.startDailyTaskUpdaterAt();
         this.chanel = chanel;
     }
 

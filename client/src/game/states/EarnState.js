@@ -50,8 +50,6 @@ export class EarnState extends ScreenState {
     async loadTasks() {
         this.earn.showTasks(this.logic.player.tasks);
         let tasks = await this.logic.getTasks();
-        //sort firs ads task
-
         this.earn.updateTasks(tasks);
     }
 
@@ -80,6 +78,7 @@ export class EarnState extends ScreenState {
     }
 
     async onClickWatch({task}) {
+        this.analytics.track('AdsView', {});
        const result = await this.ads.show();
 
        if (result) {
@@ -89,9 +88,5 @@ export class EarnState extends ScreenState {
                this.earn.updateTasks(updatedTasks);
            }
        }
-    }
-
-    showPopup(title, placeholder) {
-        return ShareInfoPopup.show({title, placeholder});
     }
 }

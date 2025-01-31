@@ -132,9 +132,12 @@ export class GameRound {
     }
 
     getBonusPrize() {
-           const [prize, amount] = this.result.bonus.prize.split('-');
+        if (!this.result.bonus.prize) {
+            return {prize: null, amount: 0};
+        }
+        const [prize, amount] = this.result.bonus.prize.split('-');
 
-           return {prize, amount: Number(amount)};
+        return {prize, amount: Number(amount)};
     }
 
     getBonusLuck() {
@@ -142,8 +145,10 @@ export class GameRound {
             const {prize, amount} = this.getBonusPrize();
 
             if (prize === PrizeType.LUCK) {
-                return amount;
+                return amount + this.result.bonus.luck;
             }
+
+            return this.result.bonus.luck;
         }
 
         return 0;

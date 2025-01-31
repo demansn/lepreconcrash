@@ -25,7 +25,7 @@ export class PlayState extends GameBaseState {
             const info = roundResult.isWin ? this.logic.getInfo() : null;
             const tween = this.playGoAnimation(roundResult, info);
             const {isLose, bonus} = roundResult;
-            const isBonus = bonus && bonus.step === roundResult.step;
+            const isBonus = bonus && bonus.step === roundResult.step && bonus.prize;
 
             if (isLose || isBonus) {
                 this.scene.offAll('GamePlayScene', ['go', 'cashOut']);

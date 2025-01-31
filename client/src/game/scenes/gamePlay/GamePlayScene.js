@@ -141,7 +141,7 @@ export class GamePlayScene extends BaseScene {
 
     go(result, info) {
         const timeline = gsap.timeline();
-        const bonusStep = result.bonus && result.bonus.step === result.step;
+        const bonusStep = result.bonus && result.bonus.step === result.step && result.bonus.prize;
         const needToGo = !result.isWin &&  !bonusStep
 
         timeline

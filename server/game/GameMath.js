@@ -39,6 +39,8 @@ export class GameMath {
     getRandomGameRound(bet, {bonusStep: bs, loseStep: ls, winStep: ts} = {}) {
         const bonusStep = bs  !== undefined ? bs : this.getRandomBonusStep();
         const loseStep = ls !== undefined ? ls : this.getRandomLoseStep();
+        const luck = this.steps[bonusStep].bonusLuck;
+        const isWinBonusPrize = this.chance(0.3);
 
         if (ts !== undefined) {
             this.totalStepsNumber = ts;
@@ -50,7 +52,8 @@ export class GameMath {
             loseStep,
             bonus: {
                 step: bonusStep,
-                prize: this.getRandomPrize(),
+                luck,
+                prize: isWinBonusPrize ? this.getRandomPrize() : undefined,
             },
             betAmount: bet,
             steps: this.steps.map(step => step.multiplier),
@@ -59,23 +62,16 @@ export class GameMath {
         return this.createGameRound({result});
     }
 
+    chance(percent = 0.3) {
+        return Math.random() < percent;
+    }
+
     getRandomLoseStep() {
         return Math.floor(Math.random() * this.totalStepsNumber);
     }
 
      getRandomBonusStep() {
-        const totalProbability = this.steps.reduce((acc, step) => acc + step.qualityBonus, 0);
-        const randomNumber = Math.random() * totalProbability;
-
-        let cumulativeProbability = 0;
-        for (const step of this.steps) {
-            cumulativeProbability += step.qualityBonus;
-            if (randomNumber < cumulativeProbability) {
-                return step.number;
-            }
-        }
-
-        return this.steps[this.steps.length - 1].number;
+        return  Math.floor(Math.random() * this.totalStepsNumber);
     }
 
     getLuckLevel(luck) {
