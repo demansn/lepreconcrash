@@ -23,10 +23,13 @@ export class PlayState extends GameBaseState {
             this.scene.call('GamePlayScene', 'gotoWaitState');
             const roundResult = await this.logic.nextStep();
             const info = roundResult.isWin ? this.logic.getInfo() : null;
-
             const tween = this.playGoAnimation(roundResult, info);
+            const {isLose, bonus} = roundResult;
+            const isBonus = bonus && bonus.step === roundResult.step;
 
-            const {isLose, isBonus} = roundResult;
+            if (isLose || isBonus) {
+                this.scene.offAll('GamePlayScene', ['go', 'cashOut']);
+            }
 
             if (!isLose && isBonus) {
                 tween.then(() => this.owner.goTo('BonusGameState'));

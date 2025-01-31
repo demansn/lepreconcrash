@@ -142,15 +142,16 @@ export class GamePlayScene extends BaseScene {
     go(result, info) {
         const timeline = gsap.timeline();
         const bonusStep = result.bonus && result.bonus.step === result.step;
-        const needToGo = !result.isWin && !bonusStep
+        const needToGo = !result.isWin &&  !bonusStep
 
         timeline
             .add(() => this.hud.gotoWaitState())
             .add(() => {sound.play('jump')} )
             .add(this.level.heroJumpTo(result))
             .add(() => {
+                needToGo && this.hud.gotoGoState();
+
                 if (!result.isLose) {
-                    needToGo && this.hud.gotoGoState();
                     this.hud.updateRoundInfo(result);
                 } else {
                     this.hud.roundInfo.animateToZero()
