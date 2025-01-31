@@ -26,6 +26,10 @@ import {WinState} from "../game/states/gamePlay/substates/WinState.js";
 import {MyProfileScene} from "../game/scenes/myProfile/MyProfileScene.js";
 import {MyProfileState} from "../game/states/MyProfileState.js";
 import {TelemetreeProvider} from "../analitics/TelemetreeProvider.js";
+import {SlotMachine} from "../game/gameObjects/slot/SlotMachine.js";
+import {SlotState} from "../SlotState.js";
+import {SlotGameScene} from "../game/scenes/slotgame/SlotGameScene.js";
+import {BonusGameState} from "../game/states/gamePlay/substates/BonusGameState.js";
 
 export const GameConfig = {
     AnalystService: {
@@ -101,7 +105,8 @@ export const GameConfig = {
                     PlayState,
                     LoseState,
                     CashOutState,
-                    WinState
+                    WinState,
+                    BonusGameState
                 }
             },
             FriendsState: {
@@ -190,6 +195,15 @@ export const GameConfig = {
                     footer: 'Footer',
                 }
             },
+            SlotState: {
+                Class: SlotState,
+                context: {
+                    logic: 'GameLogic',
+                },
+                scenes: {
+                    slotGameScene: 'SlotGameScene',
+                }
+            },
         },
         enterState: 'AssetsLoading'
     },
@@ -210,6 +224,7 @@ export const GameConfig = {
             LeaderboardScene: LeaderboardScene,
             RewardDailyScene: RewardDailyScene,
             MyProfileScene: MyProfileScene,
+            SlotGameScene: SlotGameScene,
         }
     }
 };

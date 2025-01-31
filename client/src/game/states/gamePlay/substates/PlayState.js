@@ -24,14 +24,20 @@ export class PlayState extends GameBaseState {
             const roundResult = await this.logic.nextStep();
             const info = roundResult.isWin ? this.logic.getInfo() : null;
 
-            this.playGoAnimation(roundResult, info);
+            const tween = this.playGoAnimation(roundResult, info);
+
+            const {isLose, isBonus} = roundResult;
+
+            if (!isLose && isBonus) {
+                tween.then(() => this.owner.goTo('BonusGameState'));
+            }
         } catch (e) {
             this.error(e);
         }
     }
 
     playGoAnimation(roundResult, info) {
-        this.owner.gamePlayScene.go(roundResult, info);
+        return this.owner.gamePlayScene.go(roundResult, info);
     }
 
     async onCashOut() {

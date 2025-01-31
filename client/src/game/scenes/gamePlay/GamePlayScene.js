@@ -4,6 +4,7 @@ import gsap from "gsap";
 import {sound} from "@pixi/sound";
 import {ResultPopup} from "../popupManager/popup/ResultPopup.js";
 import {BaseScene} from "../BaseScene.js";
+import {SlotBonusGame} from "./SlotBonusGame.js";
 
 /**
  * Represents the gameplay scene.
@@ -21,6 +22,13 @@ export class GamePlayScene extends BaseScene {
         this.hud = new Hud();
         this.addChild(this.hud);
 
+        /**
+         * Slot game
+         * @type {SlotBonusGame}
+         */
+        this.slotGame = new SlotBonusGame();
+        this.addChild(this.slotGame);
+
         this.popup = this.create.displayObject(ResultPopup, {visible: false, layer: 'popup'});
 
         this.hud.on('go:clicked', () => {
@@ -33,6 +41,10 @@ export class GamePlayScene extends BaseScene {
 
         this.hud.on('cashOut:clicked', () => {
             this.emit('cashOut');
+        });
+
+        this.slotGame.on('spin:clicked', () => {
+            this.emit('spin');
         });
     }
 
@@ -47,13 +59,14 @@ export class GamePlayScene extends BaseScene {
             win: gameRound ? gameRound.win : 0,
             multiplier: gameRound ? gameRound.multiplier : 0,
             luck: gameRound ? gameRound.luck : 0,
+            stars: gameRound ? gameRound.stars : 0
         };
 
         this.level.set(levelParameters);
         this.hud.set(hudParameters);
     }
 
-    showWinPopup({bet, win, luck}) {
+    showWinPopup({bet, win, luck, stars}) {
         this.popup.visible = true;
         this.hud.interactiveChildren = false;
         this.level.interactiveChildren = false;
@@ -63,6 +76,27 @@ export class GamePlayScene extends BaseScene {
             this.hud.interactiveChildren = true;
             this.level.interactiveChildren = true;
         });
+    }
+
+    showSlotGame(fast = false) {
+        const tl = gsap.timeline();
+
+        return tl.add(this.slotGame.show(fast))
+            .add(() => this.slotGame.setEnabledSpin(true))
+    }
+
+    showResultBonusGame(gameRound) {
+        const {prize} = gameRound.bonus;
+
+        const tl = gsap.timeline();
+
+        this.slotGame.setEnabledSpin(false);
+
+        tl.add(this.slotGame.spin(prize));
+        tl.add(this.slotGame.hide(), '+=7');
+        tl.add(() => this.hud.updateRoundInfo(gameRound));
+
+        return tl;
     }
 
     wait() {
@@ -107,6 +141,8 @@ export class GamePlayScene extends BaseScene {
 
     go(result, info) {
         const timeline = gsap.timeline();
+        const bonusStep = result.bonus && result.bonus.step === result.step;
+        const needToGo = !result.isWin && !bonusStep
 
         timeline
             .add(() => this.hud.gotoWaitState())
@@ -114,7 +150,7 @@ export class GamePlayScene extends BaseScene {
             .add(this.level.heroJumpTo(result))
             .add(() => {
                 if (!result.isLose) {
-                    !result.isWin && this.hud.gotoGoState();
+                    needToGo && this.hud.gotoGoState();
                     this.hud.updateRoundInfo(result);
                 } else {
                     this.hud.roundInfo.animateToZero()

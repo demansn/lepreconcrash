@@ -1,4 +1,5 @@
 import Big from "big.js";
+import {PrizeType} from "../../shared/PrizeType.js";
 
 export class GameRound {
     constructor({result, currentStep = 0}) {
@@ -6,7 +7,7 @@ export class GameRound {
         this.currentStep = currentStep;
         this.isEnded = false;
         this.endResutlt = null;
-        this.bonusLuck = 0;
+        this.bonusPrize = null;
     }
 
     nextStep() {
@@ -21,7 +22,7 @@ export class GameRound {
         }
 
         if (this.isBonusStep()) {
-            this.bonusLuck = this.getBonusLuck();
+            this.bonusPrize = this.getBonusPrize();
         }
 
         if (this.isEndStep()) {
@@ -32,7 +33,7 @@ export class GameRound {
     }
 
     #getCurrentWin() {
-        return Big(this.result.betAmount).mul(this.#getCurrentMultiplier()).toNumber();
+        return Big(this.result.betAmount).mul(this.#getCurrentMultiplier()).plus(this.getBonusGold()).toNumber();
     }
 
     #getNextStepWin() {
@@ -125,16 +126,59 @@ export class GameRound {
             isBonus: this.isBonusStep(),
             isBonusCollected: this.result.bonus.step <= this.currentStep,
             luck: this.getRoundLuck(),
+            stars: this.getBonusStars(),
             bet: this.result.betAmount
         };
     }
 
+    getBonusPrize() {
+           const [prize, amount] = this.result.bonus.prize.split('-');
+
+           return {prize, amount: Number(amount)};
+    }
+
     getBonusLuck() {
-           return this.result.bonus.luck;
+        if (this.isBonusCollected()) {
+            const {prize, amount} = this.getBonusPrize();
+
+            if (prize === PrizeType.LUCK) {
+                return amount;
+            }
+        }
+
+        return 0;
+    }
+
+    getBonusStars() {
+        if (this.isBonusCollected()) {
+            const {prize, amount} = this.getBonusPrize();
+
+            if (prize === PrizeType.STAR) {
+                return amount;
+            }
+        }
+
+        return 0;
+    }
+
+    getBonusGold() {
+        if (this.isBonusCollected()) {
+            const {prize, amount} = this.getBonusPrize();
+
+            if (prize === PrizeType.GOLD) {
+                return amount;
+            }
+        }
+
+        return 0;
+    }
+
+    isBonusCollected() {
+        return this.result.bonus.step <= this.currentStep;
     }
 
     getRoundLuck() {
-        return this.currentStep + this.bonusLuck;
+        return this.currentStep + this.getBonusLuck();
     }
 
     toObject() {

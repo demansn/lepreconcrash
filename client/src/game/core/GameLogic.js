@@ -12,10 +12,12 @@ export class GameLogic {
         this.analytics = dependencies.resolve('AnalystService');
     }
     create(options) {
-        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto', 'checkTask'], API_URL);
+        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto', 'checkTask', 'spin'], API_URL);
 
         this.parameters = new URLSearchParams(window.location.search);
         this.platform = window.Telegram.WebApp.platform;
+
+        this.isInTelegram = Boolean(window.Telegram.WebApp.initData);
 
         this.cheat = {
             bonusStep: this.parameters .has('bonusStep')  ? Number(this.parameters .get('bonusStep')) :  undefined,
@@ -94,8 +96,8 @@ export class GameLogic {
         };
     }
 
-    async placeBet(bet) {
-        const {player, gameRound} = await this.api.placeBet(bet, this.player.id, this.cheat);
+    async placeBet() {
+        const {player, gameRound} = await this.api.placeBet(this.player.id, this.cheat);
 
         this.analytics.track('placeBet', {
             username: this.player.profile.username,
@@ -113,6 +115,18 @@ export class GameLogic {
             player,
             round:gameRound
         };
+    }
+
+    isBonusStep() {
+        return this.gameRound && this.gameRound.bonus && this.gameRound.step === this.gameRound.bonus.step;
+    }
+
+    /**
+     * Get bonus prize
+     * @returns {[Prize, amount]}
+     */
+    getBonusPrize() {
+        return this.gameRound.bonus.prize.split('-');
     }
 
     async nextStep() {
@@ -337,6 +351,22 @@ export class GameLogic {
         }
     }
 
+    async spin() {
+        try {
+            const {player, prize, amount, error, name} = await this.api.spin(this.player.id);
+            if (error) {
+                this.showAlert('Error', error);
+                return null;
+            }
+
+            return {prize, amount, player};
+        } catch (e) {
+
+            this.showAlert('Error', e);
+            return null;
+        }
+    }
+
     async #openInvoice(link) {
         return new Promise(resolve => {
             window.Telegram.WebApp.openInvoice(link, (e) => {
@@ -354,6 +384,14 @@ export class GameLogic {
         const fullName = this.player.profile.firstName + ' ' + this.player.profile.lastName;
 
         return fullName ||  this.player.profile.username || 'User';
+    }
+
+    showAlert(title, message) {
+        if (this.isInTelegram) {
+            window.Telegram.WebApp.showAlert(title, message);
+        } else {
+            alert(message);
+        }
     }
 
     async getGeoLocation() {

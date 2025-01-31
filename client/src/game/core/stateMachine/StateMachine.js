@@ -73,13 +73,13 @@ export class StateMachine {
         };
     }
 
-    async goTo(name) {
+    async goTo(name, params) {
         if (this.currentState === name) {
             return;
         }
 
         if (this.currentState) {
-            await this.#states[this.currentState].exit();
+            await this.#states[this.currentState].exit(params);
         }
 
         if (!this.#states[name] && this.#statesConfigByName[name]) {
@@ -91,6 +91,6 @@ export class StateMachine {
         }
 
         this.currentState = name;
-        await this.#states[name].enter();
+        await this.#states[name].enter(params);
     }
 }

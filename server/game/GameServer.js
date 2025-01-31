@@ -9,11 +9,14 @@ import {TaskAction} from "../../shared/TaskAction.js";
 import {TaskScheduler} from "./TaskScheduler.js";
 import {ShopItems} from "./shop/ShopItems.js";
 import {ServiceLocator} from "./ServiceLocator.js";
-import {initDataToObj, validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../shared/utils.js";
+import {initDataToObj} from "../../shared/utils.js";
 import {Buffer} from 'node:buffer';
 import {GameShop} from "./GameShop.js";
 import {TaskStatus} from "../../shared/TaskStatus.js";
+import {PrizeType} from "../../shared/PrizeType.js";
+import {SlotMachinePrizes} from "../configs/SlotMachinePrizes.js";
 
+const DEFAULT_BET = 10;
 const Logger = console;
 
 export class GameServer {
@@ -21,7 +24,7 @@ export class GameServer {
     #players;
     #sessions;
     #gameSteps = GameSteps.map(({number, multiplier}) => multiplier);
-    #math = new GameMath(GameSteps);
+    #math = new GameMath(GameSteps, SlotMachinePrizes);
     #taskScheduler;
     /**
      * @type {GameShop}
@@ -145,7 +148,8 @@ export class GameServer {
         }
     }
 
-    async placeBet(bet, playerID, cheat) {
+    async placeBet(playerID, cheat) {
+        const bet = DEFAULT_BET;
         const gameSession = await this.getSession(playerID);
         const player = await this.#players.getPlayer(gameSession.playerID);
 
@@ -234,7 +238,7 @@ export class GameServer {
         if (result.isWin) {
             player.addBalance(result.win);
             player.addLuck(result.luck);
-            player.level =this.#math.getLuckLevel(player.luck);
+            player.level = this.#math.getLuckLevel(player.luck);
 
             player.addGame(true);
             player.updateTaskOnAction(TaskAction.PLAY_GAME);
@@ -323,6 +327,7 @@ export class GameServer {
 
     async fromTelegram(data) {
         if (data.message) {
+            console.log(data);
             const {message} = data;
             const {successful_payment} = message;
 
@@ -442,6 +447,48 @@ export class GameServer {
         return [];
     }
 
+    async spin(playerID) {
+        const bet = DEFAULT_BET;
+        const player = await this.#players.getPlayer(playerID);
+
+        if (!player) {
+            throw new ServerError('Player not found');
+        }
+
+        if (player.balance < bet) {
+            throw new ServerError('Not enough balance');
+        }
+
+        player.subBalance(bet);
+
+        await this.#players.savePlayer(player);
+
+        const {prize, amount} = this.#math.getPrize();
+
+        switch(prize) {
+            case PrizeType.GOLD:
+                player.addBalance(amount);
+                break;
+            case PrizeType.LUCK:
+                player.addLuck(amount);
+                player.level = this.#math.getLuckLevel(player.luck);
+                break;
+            case PrizeType.STAR:
+                // TODO: add stars for telegram user
+                break;
+        }
+
+        return {
+            player: {
+                balance: player.balance,
+                luck: player.luck,
+                level: player.level
+            },
+            prize,
+            amount
+        };
+    }
+
     async getUserPhoto(url) {
         try {
             const response = await fetch(url);
@@ -474,6 +521,41 @@ export class GameServer {
             Logger.error(`Failed to track update: ${e}`);
         }
     }
+
+    // async takeStars(playerID, amount) {
+    //     const url = `https://api.telegram.org/bot${this.#botToken}/sendInvoice`;
+    //     const params = {
+    //         chat_id: playerID,
+    //         title: "Подарок звезд",
+    //         description: `Ты получил ${amount} звезд!`,
+    //         payload: JSON.stringify({ type: "gift", amount }),
+    //         currency: "XTR",
+    //         prices: [{ label: "Звезды", amount}],
+    //     };
+    //
+    //     try {
+    //         const response = await fetch(url, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(params),
+    //         });
+    //
+    //         const data = await response.json();
+    //
+    //         console.log(data);
+    //
+    //         if (data.ok) {
+    //             return true;
+    //         } else {
+    //             throw new Error(data.description);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error taking stars:", error);
+    //         return false;
+    //     }
+    // }
 
     async checkTelegramSubscription(playerID) {
         const url = `https://api.telegram.org/bot${this.#botToken}/getChatMember?chat_id=${this.chanel}&user_id=${playerID}`;

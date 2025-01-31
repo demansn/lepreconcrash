@@ -13,13 +13,13 @@ export class PlaceBetState extends GameBaseState {
     }
 
     onPlaceBet() {
-        this.placeBet(10);
+        this.placeBet();
     }
 
-    async placeBet(bet) {
+    async placeBet() {
         try {
             this.scene.call('GamePlayScene', 'wait');
-            const {round} = await this.logic.placeBet(bet);
+            const {round} = await this.logic.placeBet();
 
             this.scene.call('HeaderScene', 'set', this.logic.getPlayerBalance());
 

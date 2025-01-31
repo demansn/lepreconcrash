@@ -35,12 +35,12 @@ export class BaseState {
 
     }
 
-    goTo(name) {
+    goTo(name, params) {
         if (!this.#state) {
             throw new Error('State machine is not defined');
         }
 
-        this.#state.goTo(name);
+        this.#state.goTo(name, params);
     }
 
     get currentState() {

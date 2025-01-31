@@ -9,7 +9,11 @@ export class InitGamePlayState extends GameBaseState {
         });
 
         if (this.logic.gameRound) {
-            this.owner.goTo("PlayState");
+            if (this.logic.isBonusStep()) {
+                this.owner.goTo('BonusGameState', true);
+            } else {
+                this.owner.goTo("PlayState");
+            }
         } else {
             this.owner.goTo('PlaceBetState');
         }

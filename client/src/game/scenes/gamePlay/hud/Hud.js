@@ -31,12 +31,8 @@ export class Hud extends SuperContainer {
         });
     }
 
-    set({win, multiplier, luck}) {
-        this.roundInfo.setValue({
-            win,
-            multiplier,
-            luck
-        });
+    set(parameters) {
+        this.roundInfo.setValue(parameters);
     }
 
     animateClouds() {
@@ -79,7 +75,8 @@ export class Hud extends SuperContainer {
         this.roundInfo.setValue({
             win: result.win,
             multiplier: result.multiplier,
-            luck: result.luck
+            luck: result.luck,
+            stars: result.stars
         });
     }
 }

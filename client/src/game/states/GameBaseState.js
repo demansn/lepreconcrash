@@ -7,5 +7,10 @@ export class GameBaseState  extends BaseState {
         const {dependencies} = parameters;
 
         this.scene = dependencies.resolve('SceneManager');
+        this.gameLogic = dependencies.resolve('GameLogic');
+    }
+
+    error(e) {
+        this.gameLogic.showAlert('Error', e);
     }
 }

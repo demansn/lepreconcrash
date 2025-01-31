@@ -13,12 +13,15 @@ dotenv.config(path.join(process.env.PWD, '.env'));
 
 const bot = new Bot(process.env.BOT_TOKEN);
 const isDev = process.env.NODE_ENV === 'development';
-await bot.api.setWebhook(process.env.WEBHOOK_URL);
 const analytics = new AnalystService();
 
-const webHook = await bot.api.getWebhookInfo();
-
-console.log(`Webhook info: ${JSON.stringify(webHook)}`);
+try {
+    await bot.api.setWebhook(process.env.WEBHOOK_URL);
+    const webHook = await bot.api.getWebhookInfo();
+    console.log(`Webhook info: ${JSON.stringify(webHook)}`);
+} catch (e) {
+    console.error(`Failed to set webhook: ${e}`);
+}
 
 const providers = [
     {
@@ -54,7 +57,7 @@ const game = new GameServer(process.env.BOT_TOKEN, db, isDev, process.env.CLIENT
 
 const httpServer = new HTTPServer(options);
 
-httpServer.addAPI(game, ['initSession', 'placeBet', 'cashOut', 'getTasks', 'claimTaskReward', 'fromTelegram', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'checkTask']);
+httpServer.addAPI(game, ['initSession', 'placeBet', 'cashOut', 'getTasks', 'claimTaskReward', 'fromTelegram', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'checkTask', 'spin']);
 httpServer.start({port: process.env.PORT});
 
 async function onTerminate() {

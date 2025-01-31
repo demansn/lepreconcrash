@@ -1,5 +1,6 @@
 import gsap from "gsap";
 import {SuperContainer} from "../../gameObjects/SuperContainer.js";
+import {VerticalBlock} from "../../gameObjects/VerticalBlock.js";
 
 export class RoundWinInfo extends SuperContainer {
     constructor() {
@@ -38,9 +39,10 @@ export class RoundWinInfo extends SuperContainer {
             x: -(this.bg.width / 2 + 90)
         });
 
-        this.luckText = this.create.displayObject(CloverValue, {
-            x: this.bg.width / 2 + 40
-        });
+        this.rightColumnt = this.create.displayObject(VerticalBlock,  {x:  this.bg.width / 2 + 40, parameters: {gap: 10, verticalAlign: 'middle', horizontalAlign: 'left', pivotAlign: [undefined, 'middle']}});
+        this.luckText = this.rightColumnt.create.displayObject(CloverValue);
+        this.starsValue = this.rightColumnt.create.displayObject(StarsValue, {visible: false});
+        this.rightColumnt.layout();
 
         this.button.on('pointerdown', () => {
             this.button.scale.set(0.9);
@@ -76,14 +78,23 @@ export class RoundWinInfo extends SuperContainer {
         return timeline;
     }
 
-    setValue({win, multiplier, luck}) {
+    setValue({win, multiplier, luck, stars}) {
         this.win = win;
         this.multiplier = multiplier;
         this.luck = luck;
+        this.stars = stars || 0;
 
         this.winText.text = win;
         this.multiplerText.text = `x${multiplier}`;
         this.luckText.text = luck;
+
+        this.starsValue.visible = stars;
+
+        if (stars) {
+            this.starsValue.text = stars;
+        }
+
+        this.rightColumnt.layout();
     }
 
     animateToZero() {
@@ -92,8 +103,14 @@ export class RoundWinInfo extends SuperContainer {
         timeline.add([
             this.animateValue('win', 0, () => this.winText.text = Math.floor(this.win)),
             this.animateValue('multiplier', 0, () => this.multiplerText.text = `x${this.multiplier.toFixed(2)}`),
-            this.animateValue('luck', 0, () => this.luckText.text = this.luck.toFixed(0))
+            this.animateValue('luck', 0, () => this.luckText.text = this.luck.toFixed(0)),
+            this.animateValue('stars', 0, () => this.starsValue.text = this.stars.toFixed(0))
         ]);
+
+        timeline.add(() => {
+            this.starsValue.visible = false;
+            this.rightColumnt.layout();
+        });
 
         return timeline;
     }
@@ -119,13 +136,13 @@ export class CloverValue extends SuperContainer {
 
         this.icon = this.create.sprite({
             texture: 'goldCloverCenter',
-            anchor: {y: 0.5}
         });
 
         this.textObject = this.create.text({
             style: 'roundWinInfoLuckValue',
             text: "1",
             anchor: {y: 0.5},
+            y: this.icon.height / 2,
             x: this.icon.width + 5
         });
     }
@@ -156,6 +173,33 @@ export class GrabGoldIcon extends SuperContainer {
             anchor: {y: 0.5},
             x: this.icon.width + 2
         });
+    }
+}
+
+export class StarsValue extends SuperContainer {
+    constructor() {
+        super();
+
+        this.icon = this.create.sprite({
+            texture: 'StarSymbol',
+            scale: 0.6
+        });
+
+        this.textObject = this.create.text({
+            style: 'roundWinInfoLuckValue',
+            text: "1",
+            anchor: {y: 0.5},
+            y: this.icon.height / 2,
+            x: this.icon.width + 5
+        });
+    }
+
+    set text(value) {
+        this.textObject.text = value;
+    }
+
+    get text() {
+        return this.textObject.text;
     }
 }
 

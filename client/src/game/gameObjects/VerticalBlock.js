@@ -13,7 +13,7 @@ export class VerticalBlock extends SuperContainer {
      * @param {string} [options.verticalAlign="top"] - Выравнивание по вертикали: "top", "middle", "bottom".
      * @param {number} [options.gap=0] - Расстояние между дочерними элементами.
      */
-    constructor({ blockWidth = null, blockHeight = null, horizontalAlign = "left", verticalAlign = "top", gap = 0 } = {}) {
+    constructor({ blockWidth = null, blockHeight = null, horizontalAlign = "left", verticalAlign = "top", gap = 0, pivotAlign = [] } = {}) {
         super();
         /**
          * Ширина блока. Если не задана, вычисляется автоматически.
@@ -45,6 +45,8 @@ export class VerticalBlock extends SuperContainer {
          */
         this.gap = gap;
 
+        this.pivotAlign = pivotAlign;
+
         /**
          * Вычисленная ширина содержимого контейнера.
          * @type {number}
@@ -67,6 +69,7 @@ export class VerticalBlock extends SuperContainer {
 
         // Определяем высоту столбца и максимальную ширину
         this.children.forEach((child, index) => {
+            if (child.visible === false) return;
             totalHeight += child.height;
             if (index > 0) totalHeight += this.gap;
             if (child.width > maxWidth) maxWidth = child.width;
@@ -88,6 +91,7 @@ export class VerticalBlock extends SuperContainer {
 
         // Расположение дочерних элементов
         this.children.forEach(child => {
+            if (child.visible === false) return;
             let xOffset = 0;
 
             // Определяем горизонтальное выравнивание
@@ -106,6 +110,26 @@ export class VerticalBlock extends SuperContainer {
             // Смещаем Y для следующего элемента
             currentY += child.height + this.gap;
         });
+
+        if (this.pivotAlign.length) {
+            const [horizontal, vertical] = this.pivotAlign;
+
+            if (horizontal === 'center') {
+                this.pivot.x = this.width / 2;
+            } else if (horizontal === 'right') {
+                this.pivot.x =  this.width;
+            } else {
+                this.pivot.x = 0;
+            }
+
+            if (vertical === 'middle') {
+                this.pivot.y =  this.height / 2;
+            } else if (vertical === 'bottom') {
+                this.pivot.y = this.height;
+            } else {
+                this.pivot.y = 0;
+            }
+        }
 
         // Обновляем вычисленные размеры
         this.calculatedWidth = maxWidth;
