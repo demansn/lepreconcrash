@@ -13,7 +13,6 @@ export class TasksTabs extends SuperContainer {
 
         this.tabs = this.create.container();
         this.tabsByTaskType = {};
-        this.tabsByTaskType[TaskType.daily] = this.addTasksTab();// 'daily'
         this.tabsByTaskType[TaskType.basic] = this.addTasksTab();// 'basic'
         this.tabsByTaskType[TaskType.friends] = this.addTasksTab();// 'friends'
         this.selectTab(0);
@@ -42,11 +41,12 @@ export class TasksTabs extends SuperContainer {
             onClickClaim: this.onClickClaim.bind(this),
             onClickShare: this.onClickShare.bind(this),
             onClickInvite: this.onClickInvite.bind(this),
-            onClickCheck: this.onClickCheck.bind(this)
+            onClickCheck: this.onClickCheck.bind(this),
+            onClickWatch: this.onClickWatch.bind(this)
         });
 
         panel.x = 24;
-        panel.y = this.buttons.x + this.buttons.height;
+        panel.y = 104;
         panel.visible = false;
 
         return panel;
@@ -66,6 +66,10 @@ export class TasksTabs extends SuperContainer {
 
     onClickCheck(taskId) {
         this.emit('onClickCheck', taskId);
+    }
+
+    onClickWatch(taskId) {
+        this.emit('onClickWatch', taskId);
     }
 
     selectTab(index) {

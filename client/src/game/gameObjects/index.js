@@ -2,7 +2,7 @@ import {ProgressBar, FancyButton, RadioGroup} from "@pixi/ui";
 import {Mather} from "./Mather.js";
 import {ClaimButton} from "./ClaimButton.js";
 import {ColoredCheckBox, ElasticBackground} from "./ElasticBackground.js";
-import {SubscribeButton} from "./SubscribeButton.js";
+import {SubscribeButton, WatchButton} from "./SubscribeButton.js";
 import {ClaimRewardButton} from "./ClaimRewardButton.js";
 import {InviteButton} from "./InviteButton.js";
 import {TextWithIcon} from "./TextWithIcon.js";
@@ -16,6 +16,7 @@ Mather.registerObjectFactory('FancyButton', (parameters) => new FancyButton(para
 Mather.registerObjectFactory('RadioGroup', (parameters) => new RadioGroup(parameters));
 Mather.registerObjectFactory('ClaimButton', (parameters) => new ClaimButton(parameters));
 Mather.registerObjectFactory('SubscribeButton', (parameters) => new SubscribeButton(parameters));
+Mather.registerObjectFactory('WatchButton', (parameters) => new WatchButton(parameters));
 Mather.registerObjectFactory('CheckButtonButton', (parameters) => new CheckButtonButton(parameters));
 Mather.registerObjectFactory('ClaimRewardButton', (parameters) => new ClaimRewardButton(parameters));
 Mather.registerObjectFactory('InviteButton', (parameters) => new InviteButton(parameters));
@@ -73,7 +74,7 @@ Mather.registerObjectFactory('TaskPanelButtons', () => {
         borderColor: 0xffffff,
         borderRadius: 20
     };
-    const items = ['DAILY', 'BASIC', 'FRIENDS'];
+    const items = ['QUESTS', 'FRIENDS'];
 
     return new RadioGroup({
             elementsMargin: 16,

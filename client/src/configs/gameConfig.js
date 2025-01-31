@@ -153,6 +153,7 @@ export const GameConfig = {
                 },
                 context: {
                     logic: 'GameLogic',
+                    ads: 'TabsWidget',
                 },
                 scenes: {
                     earn: 'EarnScene',

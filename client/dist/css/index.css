@@ -18,6 +18,27 @@ body, html, #root {
     height: 100%;
 }
 
+#popupTadsContainer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: flex-start;
+    backdrop-filter: blur(8.100000381469727px);
+    padding-top: 60px;
+}
+
+.tads-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
 div#stats {
     position: fixed;
     top: 0;

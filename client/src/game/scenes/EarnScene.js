@@ -1,5 +1,6 @@
 import {ScreenScene} from "./ScreenScene.js";
 import {TasksTabs} from "./earn/TasksTabs.js";
+import {TaskAction} from "../../../../shared/TaskAction.js";
 
 
 export class EarnScene extends ScreenScene {
@@ -15,6 +16,7 @@ export class EarnScene extends ScreenScene {
         this.tasksTabs.on('onClickShare', this.onShare.bind(this));
         this.tasksTabs.on('onClickInvite', this.onClaimInvite.bind(this));
         this.tasksTabs.on('onClickCheck', this.onClickCheck.bind(this));
+        this.tasksTabs.on('onClickWatch', this.onClickWatch.bind(this));
     }
 
     onClaimTaskReward(taskId) {
@@ -33,7 +35,19 @@ export class EarnScene extends ScreenScene {
         this.emit('onClickCheck', taskId);
     }
 
+    onClickWatch(taskId) {
+        this.emit('onClickWatch', taskId);
+    }
+
     showTasks(tasks) {
+        tasks.sort((a, b) => {
+            if (a.actionRequired === TaskAction.WATCH_AD) {
+                return -1;
+            }
+
+            return 0;
+        });
+
         if (this.tasksTabs.isCreatedTasks) {
             this.tasksTabs.updateTasksCards(tasks);
         } else {

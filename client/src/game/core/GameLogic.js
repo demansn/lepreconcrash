@@ -12,7 +12,7 @@ export class GameLogic {
         this.analytics = dependencies.resolve('AnalystService');
     }
     create(options) {
-        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto', 'checkTask', 'spin'], API_URL);
+        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto', 'checkTask', 'spin', 'watchAdsTask'], API_URL);
 
         this.parameters = new URLSearchParams(window.location.search);
         this.platform = window.Telegram.WebApp.platform;
@@ -290,6 +290,26 @@ export class GameLogic {
                 });
             }
             return tasksResult || [];
+        }
+
+        return [];
+    }
+
+    async watchAdsTask(task) {
+        const tasks = await this.api.watchAdsTask(this.player.id, task.id);
+
+        if (tasks && tasks.length) {
+            const tasksResult = this.transformTasks(tasks);
+
+            this.player.tasks = this.player.tasks.map(t => {
+                if (t.id === task.id) {
+                    return tasksResult.find(rt => rt.id === task.id);
+                }
+
+                return t;
+            });
+
+            return tasksResult;
         }
 
         return [];

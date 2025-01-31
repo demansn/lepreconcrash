@@ -1,44 +1,18 @@
 [
     {
-        "id": "daily_login",
-        "type": "daily",
-        "title": "Claim daily rewards",
-        "description": "Log in daily to claim your reward!",
+        "id": "watch_ad",
+        "type": "basic",
+        "title": "Watch ad rewards",
+        "description": "Watch ad rewards",
         "icon": "GoldIcon",
-        "reward": 10,
+        "reward": 20,
         "goal": 1,
         "progress": 0,
         "counted": 0,
         "status": "in_progress",
-        "actionRequired": "claim_daily"
-    },
-    {
-        "id": "daily_play_5_games",
-        "type": "daily",
-        "title": "Play 5 games today",
-        "description": "Play 5 games to claim your daily reward!",
-        "icon": "BagGoldIcon",
-        "reward": 20,
-        "goal": 5,
-        "progress": 0,
-        "counted": 0,
-        "status": "in_progress",
-        "actionRequired": "play_game"
-    },
-    {
-        "id": "grab_10_bonus",
-        "type": "daily",
-        "title": "Grab 10 Lucky Pots",
-        "description": "Collect 10 Lucky Pots today to earn a bonus!",
-        "icon": "PotGoldIcon",
-        "reward": 30,
-        "goal": 10,
-        "progress": 0,
-        "counted": 0,
-        "status": "in_progress",
-        "actionRequired": "collect_bonus"
-    },
-    {
+        "actionRequired": "watch_ad",
+        "repeatable": true
+    },    {
         "id": "subscribe_twitter",
         "type": "basic",
         "title": "Subscribe Twitter",

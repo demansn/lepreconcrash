@@ -9,6 +9,7 @@ export class TasksCard extends SuperContainer {
                     onClickInvite = () => {},
                     onClickShare = () => {},
                     onClickCheck = () => {},
+                    onClickWatch = () => {},
                     width = 630, height = 206,
     }) {
         super();
@@ -21,6 +22,7 @@ export class TasksCard extends SuperContainer {
         this.onClickInvite = onClickInvite;
         this.onClickShare = onClickShare;
         this.onClickCheck = onClickCheck;
+        this.onClickWatch = onClickWatch;
 
         this.margin = margin;
         const borderColorByStatus = {

@@ -6,12 +6,17 @@
 
     <meta name="description" content="Leprecon Crash">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://w.tads.me/widget.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/TONSolutions/telemetree-pixel@main/telemetree-pixel.js"></script>
     <link href="./css/index.css"  rel="stylesheet" />
     <title>Leprecon Crash</title>
 </head>
 <body >
 <div id="root" style="width: 720px; height: 1280px;"></div>
+<div id="popupTadsContainer">
+    <button id="popupTadsButton" class="close-btn" >&times;</button>
+    <div id="tads-container-320" class="tads-container"></div>
+</div>
 <div id="popupContainer">
     <div id="popup">
         <h2 id="popupTitle">Share your details</h2>
@@ -20,7 +25,6 @@
         <button id="popupCloseButton" class="close-btn" >×</button>
     </div>
 </div>
-<!-- Попап для Game Rules -->
 <div id="gameRulesPopupContainer">
     <div id="gameRulesPopup">
         <button id="gameRulesCloseButton" class="close-btn">&times;</button>

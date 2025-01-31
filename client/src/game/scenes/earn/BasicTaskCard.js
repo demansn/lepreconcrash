@@ -1,12 +1,19 @@
 import {TasksCard} from "./TaskCard.js";
 import {TaskStatus} from "../../../../../shared/TaskStatus.js";
+import {WatchButton} from "../../gameObjects/SubscribeButton.js";
+import {TaskAction} from "../../../../../shared/TaskAction.js";
 
 export class BasicTaskCard extends TasksCard {
     createContent(task) {
         switch (task.status) {
             case TaskStatus.IN_PROGRESS:
-                this.subscribeButton = this.content.create.object('SubscribeButton', {x: 26, y: 206 - 46});
-                this.subscribeButton.button.onPress.connect(this.onClickSubscribe.bind(this));
+                if (task.actionRequired === TaskAction.WATCH_AD) {
+                    this.watchButton = this.content.create.object('WatchButton', {x: 26, y: 206 - 46});
+                    this.watchButton.button.onPress.connect(this.onClickWatchBtn.bind(this));
+                } else {
+                    this.subscribeButton = this.content.create.object('SubscribeButton', {x: 26, y: 206 - 46});
+                    this.subscribeButton.button.onPress.connect(this.onClickSubscribe.bind(this));
+                }
                 break;
             case TaskStatus.NEED_CHECK:
                 this.subscribeButton = this.content.create.object('SubscribeButton', {x: 26, y: 206 - 46});
@@ -38,5 +45,9 @@ export class BasicTaskCard extends TasksCard {
         this.onClickShare({
             task: this.task
         });
+    }
+
+    onClickWatchBtn() {
+        this.onClickWatch({task: this.task});
     }
 }

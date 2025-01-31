@@ -31,8 +31,8 @@ export class MongoDBAdapter {
     }
 
     async updateAllTasks() {
-        const taskIdsToRemove = ['share_phone_number', 'share_email_address', 'share_x_account'];
-        const tasksToAdd = this.tasks.filter(({id}) => id === 'subscribe_twitter' || id === 'subscribe_telegram_channel').map(task => ({
+        const taskIdsToRemove = ['daily_login', 'daily_play_5_games', 'grab_10_bonus'];
+        const tasksToAdd = this.tasks.filter(({id}) => id === 'watch_ad').map(task => ({
             id: task.id,
             progress: 0,
             counted: 0,

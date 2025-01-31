@@ -16,6 +16,9 @@ export class EarnState extends ScreenState {
 
         this.earn.off('onClickClaim');
         this.earn.off('onClickInvite');
+        this.earn.off('onClickShare');
+        this.earn.off('onClickCheck');
+        this.earn.off('onClickWatch');
 
         clearTimeout(this.timer);
     }
@@ -27,6 +30,7 @@ export class EarnState extends ScreenState {
         this.earn.on('onClickInvite', this.inviteFriend.bind(this));
         this.earn.on('onClickShare', this.onClickShare.bind(this));
         this.earn.on('onClickCheck', this.onClickCheck.bind(this));
+        this.earn.on('onClickWatch', this.onClickWatch.bind(this));
     }
 
     async claimTaskReward(taskId) {
@@ -45,7 +49,9 @@ export class EarnState extends ScreenState {
 
     async loadTasks() {
         this.earn.showTasks(this.logic.player.tasks);
-        const tasks = await this.logic.getTasks();
+        let tasks = await this.logic.getTasks();
+        //sort firs ads task
+
         this.earn.updateTasks(tasks);
     }
 
@@ -71,6 +77,18 @@ export class EarnState extends ScreenState {
                 this.earn.updateTasks(updatedTasks);
             }
         }
+    }
+
+    async onClickWatch({task}) {
+       const result = await this.ads.show();
+
+       if (result) {
+           const updatedTasks = await this.logic.watchAdsTask(task);
+
+           if (updatedTasks) {
+               this.earn.updateTasks(updatedTasks);
+           }
+       }
     }
 
     showPopup(title, placeholder) {

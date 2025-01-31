@@ -409,6 +409,30 @@ export class GameServer {
         return [];
     }
 
+    async watchAdsTask(playerID, taskID) {
+        const player = await this.#players.getPlayer(playerID);
+
+        if (!player) {
+            throw new ServerError('Player not found');
+        }
+
+        const task = player.getTask(taskID);
+
+        if (!task) {
+            throw new ServerError('Task not found');
+        }
+
+        if (task.actionRequired === TaskAction.WATCH_AD && task.isInProgress()) {
+            const tasks = player.updateTaskOnAction(TaskAction.WATCH_AD);
+
+            await this.#players.savePlayer(player);
+
+            return tasks.map(t => t.toClient());
+        }
+
+        return [];
+    }
+
     async checkTask(playerID, taskID) {
         const player = await this.#players.getPlayer(playerID);
 
