@@ -1,12 +1,10 @@
 import Big from "big.js";
 import {Task} from "./tasks/Task.js";
-import {TaskAction} from "../../shared/TaskAction.js";
 
 export class Player {
     #balance;
     #luck;
     level = 0;
-
     constructor({balance, luck, level, id, session, tasks = [], profile, gameCounter = {total: 0, wins: 0, loses: 0}}, tasksData) {
         this.balance = balance;
         this.luck = luck;

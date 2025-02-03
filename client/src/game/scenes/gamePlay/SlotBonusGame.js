@@ -8,6 +8,7 @@ export class SlotBonusGame extends SuperContainer {
         super();
 
         this.create.sprite({texture: 'slot_bg'});
+
         this.slotMachine = this.addObject(SlotMachine, {}, {x: 64, y: 212});
         this.spinBn = this.addObject(FancyButton, {
             defaultView: 'spin_default',
@@ -20,6 +21,9 @@ export class SlotBonusGame extends SuperContainer {
         this.spinBn.onPress.connect(this.onSpin.bind(this));
         this.alpha = 0;
         this.visible = false;
+
+        this.coins = this.create.sprite({texture: 'coins'});
+        this.coins.y -= this.coins.height;
     }
 
     /**
@@ -65,5 +69,11 @@ export class SlotBonusGame extends SuperContainer {
      */
     spin(resultSymbol) {
         return this.slotMachine.spin(resultSymbol);
+    }
+
+    showCoinsAnimation() {
+        this.coins.y = -this.coins.height;
+
+        return gsap.to(this.coins, {y: this.gameSize.height, duration: 1.5});
     }
 }

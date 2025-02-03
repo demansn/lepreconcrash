@@ -37,10 +37,10 @@ export class GameMath {
     }
 
     getRandomGameRound(bet, {bonusStep: bs, loseStep: ls, winStep: ts} = {}) {
-        const bonusStep = bs  !== undefined ? bs : this.getRandomBonusStep();
+        const bonusStep =1// bs  !== undefined ? bs : this.getRandomBonusStep();
         const loseStep = ls !== undefined ? ls : this.getRandomLoseStep();
         const luck = this.steps[bonusStep].bonusLuck;
-        const isWinBonusPrize = this.chance(0.3);
+        const isWinBonusPrize = this.chance(0.3) || true;
 
         if (ts !== undefined) {
             this.totalStepsNumber = ts;
@@ -71,7 +71,7 @@ export class GameMath {
     }
 
      getRandomBonusStep() {
-        return  Math.floor(Math.random() * this.totalStepsNumber);
+        return  Math.floor(Math.random() * this.totalStepsNumber - 2) + 1;
     }
 
     getLuckLevel(luck) {

@@ -8,7 +8,7 @@ export class PlayersManager {
     async createPlayer(newPlayer) {
         const playerData = await this.dbAdapter.createPlayer(newPlayer);
 
-        return new Player(playerData);
+        return new Player(playerData,  this.dbAdapter.getTasks());
     }
 
     /**

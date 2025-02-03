@@ -67,6 +67,7 @@ export const manifest = {
                 {alias: 'slot_bg', src: './assets/slot/slot_bg.png'},
                 {alias: 'spin_default', src: './assets/slot/spin_default.png'},
                 {alias: 'spin_pressed', src: './assets/slot/spin_pressed.png'},
+                {alias: 'coins', src: './assets/slot/coins.png'},
 
                 // ICONS
                 {alias: 'PlayerIcon', src: './assets/icons/PlayerIcon.webp'},
