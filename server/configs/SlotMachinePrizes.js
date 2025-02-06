@@ -24,52 +24,67 @@
 // };
 
 export const SlotMachinePrizes = {
+    "Gold-1": {
+        "probability": 6.26
+    },
+    "Gold-2": {
+        "probability": 5
+    },
+    "Gold-3": {
+        "probability": 5
+    },
+    "Gold-4": {
+        "probability": 5
+    },
+    "Gold-5": {
+        "probability": 5
+    },
     "Gold-10": {
-        "probability": 15.625
+        "probability": 3
     },
     "Gold-20": {
-        "probability": 10.625
+        "probability": 2
     },
     "Gold-30": {
-        "probability": 4.625
+        "probability": 1.5
     },
     "Gold-50": {
-        "probability": 1.525
+        "probability": 0.5
     },
     "Gold-100": {
-        "probability": 0.725
+        "probability":0.05
     },
     "Gold-200": {
-        "probability": 0.635
+        "probability": 0.005
     },
     "Luck-5": {
-        "probability": 24.125
+        "probability": 26.185000
     },
     "Luck-10": {
-        "probability": 20.125
+        "probability": 21.534000
     },
     "Luck-20": {
-        "probability": 8.125
+        "probability": 8.325000
     },
     "Luck-30": {
-        "probability": 5.17
+        "probability": 5.044950
     },
     "Luck-50": {
-        "probability": 2.71
+        "probability": 2.314350
     },
     "Luck-100": {
-        "probability": 2.245
+        "probability": 1.798200
     },
     "Luck-200": {
-        "probability": 1.123
+        "probability": 0.552780
     },
     "Luck-300": {
-        "probability": 1.025
+        "probability": 0.444000
     },
     "Luck-500": {
-        "probability": 0.967
+        "probability": 0.379620
     },
     "Luck-1000": {
-        "probability": 0.725
+        "probability": 0.111000
     }
 };

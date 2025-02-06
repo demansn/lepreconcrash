@@ -5,6 +5,7 @@ export class GameMath {
         this.steps = steps;
         this.totalStepsNumber = this.steps.length;
         this.prizeProbabilities = this.#normalizeProbabilities(prizes);
+        this.totalLossProb =  this.steps.reduce((sum, step) => sum + step.probabilityToLose, 0);
     }
 
     #normalizeProbabilities(prizeProbabilities) {
@@ -67,11 +68,21 @@ export class GameMath {
     }
 
     getRandomLoseStep() {
-        return Math.floor(Math.random() * this.totalStepsNumber);
+        const rand = Math.random() ;
+        let cumulative = 0;
+
+        for (let i = 0; i < this.steps.length; i++) {
+            cumulative +=  this.steps[i].probabilityToLose;
+            if (rand < cumulative / this.totalLossProb) {
+                return i;
+            }
+        }
+
+         return Math.floor(Math.random() * this.totalStepsNumber);
     }
 
      getRandomBonusStep() {
-        return  Math.floor(Math.random() * this.totalStepsNumber - 2) + 1;
+        return  Math.floor(Math.random() * (this.totalStepsNumber - 2)) + 1;
     }
 
     getLuckLevel(luck) {
