@@ -153,7 +153,9 @@ export class GamePlayScene extends BaseScene {
                 needToGo && this.hud.gotoGoState();
 
                 if (!result.isLose) {
-                    this.hud.updateRoundInfo(result);
+                    if ( !bonusStep) {
+                        this.hud.updateRoundInfo(result);
+                    }
                 } else {
                     this.hud.roundInfo.animateToZero()
                 }

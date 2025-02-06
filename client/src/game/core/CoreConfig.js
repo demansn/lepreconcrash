@@ -4,6 +4,7 @@ import {StateController} from "./StateController.js";
 import {SceneManager} from "./SceneManager.js";
 import {AnalystService} from "../../../../shared/AnalystService.js";
 import {TabsWidget} from "../../services/TabsWidget.js";
+import {TelegramAnalyticsService} from "../../services/TelegramAnalyticsService.js";
 
 export const CoreConfig = {
     systems: [
@@ -13,5 +14,6 @@ export const CoreConfig = {
         {System: StateController, name: 'StateController'},
         {System: SceneManager, name: 'SceneManager'},
         {System: TabsWidget, name: 'TabsWidget'},
+        {System: TelegramAnalyticsService, name: 'TelegramAnalyticsService'},
     ]
 }
