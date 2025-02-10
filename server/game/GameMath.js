@@ -1,11 +1,11 @@
 import {getPlayerRankLevel} from "../../shared/PlayrLevels.js";
+import {GameSteps} from "./GameSteps.js";
 
 export class GameMath {
     constructor(steps, prizes) {
         this.steps = steps;
         this.totalStepsNumber = this.steps.length;
         this.prizeProbabilities = this.#normalizeProbabilities(prizes);
-        this.totalLossProb =  this.steps.reduce((sum, step) => sum + step.probabilityToLose, 0);
     }
 
     #normalizeProbabilities(prizeProbabilities) {
@@ -68,17 +68,35 @@ export class GameMath {
     }
 
     getRandomLoseStep() {
+        return this.getRandomLoseByMath();
+
         const rand = Math.random() ;
         let cumulative = 0;
+        const totalLossProb = this.steps.reduce((sum, step) => sum + step.probabilityToLose, 0);
 
         for (let i = 0; i < this.steps.length; i++) {
-            cumulative +=  this.steps[i].probabilityToLose;
-            if (rand < cumulative / this.totalLossProb) {
+            cumulative += this.steps[i].probabilityToLose;
+            if (rand < cumulative / totalLossProb) {
                 return i;
             }
         }
 
          return Math.floor(Math.random() * this.totalStepsNumber);
+    }
+
+    getRandomLoseByMath() {
+            const lines = this.steps.length - 1;
+            let l = this.steps.length - 1;
+            let t = 2;
+            let steps = 0;
+            for (let i = 0; i < lines; i++) {
+                if (Math.random() < t / (t + l)) {
+                    return steps;
+                }
+                l = l - 1;
+                steps = steps + 1;
+            }
+            return steps;
     }
 
      getRandomBonusStep() {

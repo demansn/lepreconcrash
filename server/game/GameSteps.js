@@ -1,4 +1,4 @@
-export const GameSteps = [
+export const GameSteps2 = [
     {number: 0, multiplier: 1, qualityBonus: 0,  bonusLuck: 0, probabilityToLose: 0.04},
     {number: 1, multiplier: 1.03, qualityBonus: 6875,  bonusLuck: 5, probabilityToLose: 0.04166666667},
     {number: 2, multiplier: 1.06, qualityBonus: 6875,  bonusLuck: 5, probabilityToLose: 0.04347826087},
@@ -26,12 +26,48 @@ export const GameSteps = [
     {number: 24, multiplier: 20, qualityBonus: 51,  bonusLuck: 500, probabilityToLose: 0.5},
 ];
 
+export const GameSteps = [
+    {number: 0, multiplier: 1, qualityBonus: 0,  bonusLuck: 0, probabilityToLose: 0},
+    {number: 1, multiplier: 1.03, qualityBonus: 6875,  bonusLuck: 5, probabilityToLose: 0.96},
+    {number: 2, multiplier: 1.06, qualityBonus: 6875,  bonusLuck: 5, probabilityToLose: 0.92},
+    {number: 3, multiplier: 1.12, qualityBonus: 6875,  bonusLuck: 5, probabilityToLose: 0.88},
+    {number: 4, multiplier: 1.2, qualityBonus: 6875,  bonusLuck: 5, probabilityToLose: 0.84},
+    {number: 5, multiplier: 1.25, qualityBonus: 5833,  bonusLuck: 7, probabilityToLose: 0.8},
+    {number: 6, multiplier: 1.3, qualityBonus:  5833,  bonusLuck: 7, probabilityToLose: 0.76},
+    {number: 7, multiplier: 1.35, qualityBonus: 5833,  bonusLuck: 7, probabilityToLose: 0.72},
+    {number: 8, multiplier: 1.45, qualityBonus: 5833,  bonusLuck: 7, probabilityToLose: 0.68},
+    {number: 9, multiplier: 1.55, qualityBonus: 5184,  bonusLuck: 10, probabilityToLose: 0.64},
+    {number: 10, multiplier: 1.65, qualityBonus: 5184,  bonusLuck: 10, probabilityToLose: 0.6},
+    {number: 11, multiplier: 1.75, qualityBonus: 5184,  bonusLuck: 10, probabilityToLose: 0.56},
+    {number: 12, multiplier: 1.85, qualityBonus: 5184,  bonusLuck: 10, probabilityToLose: 0.52},
+    {number: 13, multiplier: 2, qualityBonus: 4167,  bonusLuck: 20, probabilityToLose: 0.48},
+    {number: 14, multiplier: 2.25, qualityBonus: 4167,  bonusLuck: 20, probabilityToLose: 0.44},
+    {number: 15, multiplier: 2.5, qualityBonus: 4167,  bonusLuck: 20, probabilityToLose: 0.4},
+    {number: 16, multiplier: 2.75, qualityBonus: 3788,  bonusLuck: 30, probabilityToLose: 0.36},
+    {number: 17, multiplier: 3, qualityBonus: 3788,  bonusLuck: 30, probabilityToLose: 0.32},
+    {number: 18, multiplier: 3.5, qualityBonus: 3472,  bonusLuck: 50, probabilityToLose: 0.28},
+    {number: 19, multiplier: 4, qualityBonus: 1667,  bonusLuck: 75, probabilityToLose: 0.24},
+    {number: 20, multiplier: 5, qualityBonus: 1042,  bonusLuck: 100, probabilityToLose: 0.2},
+    {number: 21, multiplier: 6, qualityBonus: 833,  bonusLuck: 150, probabilityToLose: 0.16},
+    {number: 22, multiplier: 8, qualityBonus: 694,  bonusLuck: 200, probabilityToLose: 0.12},
+    {number: 23, multiplier: 10, qualityBonus: 595,  bonusLuck: 300, probabilityToLose: 0.08},
+    {number: 24, multiplier: 20, qualityBonus: 51,  bonusLuck: 500, probabilityToLose: 0.04},
+];
+
+function randomInclusive() {
+    // Выбираем большое число, например 2^32 - 1
+    const N = Math.pow(2, 32) + 1;
+    // Генерируем целое число от 0 до N включительно:
+    const randomInt = Math.floor(Math.random() * (N + 1));
+    return randomInt / N;
+}
+
 function simulateCumulative(iterations) {
-    const counts = new Array(GameSteps.length).fill(0);
+    const counts = new Array(GameSteps.length + 1).fill(0);
     const t = GameSteps.reduce((sum, step) => sum + step.probabilityToLose, 0);
 
     for (let i = 0; i < iterations; i++) {
-        const rand = Math.random();
+        const rand = randomInclusive();
         let cumulative = 0;
         let chosen = -1;
 
@@ -42,53 +78,73 @@ function simulateCumulative(iterations) {
                 break;
             }
         }
-        if (chosen === -1) chosen = GameSteps.length - 1;
-        counts[chosen]++;
-    }
+
+        if (chosen === -1) chosen = GameSteps.length;
+            counts[chosen]++;
+        }
     return counts;
 }
 
-/*
-Алгоритм 2: Последовательная проверка.
-На каждом шаге генерируется новое случайное число, и если оно меньше probabilityToLose,
-выбирается этот шаг. Безусловная вероятность для шага i равна:
-  P(i) = (∏_{j=0}^{i-1}(1 - probabilityToLose_j)) * probabilityToLose_i
-При выбранной конфигурации каждый P(i) должна быть ≈0.04 (т.е. равномерно 1 к 25).
-*/
-function simulateSequential(iterations) {
-    const counts = new Array(GameSteps.length).fill(0);
+function simulateRandom(iterations) {
+    const counts = new Array(GameSteps.length + 1).fill(0);
 
     for (let i = 0; i < iterations; i++) {
         let chosen = -1;
-        for (let j = 0; j < GameSteps.length; j++) {
-            if (Math.random() < GameSteps[j].probabilityToLose) {
-                chosen = j;
-                break;
-            }
-        }
-        if (chosen === -1) chosen = GameSteps.length - 1;
+        chosen = Math.floor(Math.random() * (GameSteps.length + 1));
         counts[chosen]++;
     }
     return counts;
 }
 
+function simulateSequential(iterations) {
+    const counts = new Array(GameSteps.length + 1).fill(0);
+
+    for (let i = 0; i < iterations; i++) {
+        let chosen = -1;
+        chosen = getLine();
+        counts[chosen]++;
+    }
+
+    return counts;
+}
+
+function getLine() {
+    const lines =  GameSteps.length - 1;
+    let l = GameSteps.length - 1;
+    let t = 2;
+    let steps = 0;
+    for (let i = 0; i < lines; i++) {
+        if (Math.random() < t / (t + l)) {
+            return steps;
+        }
+        l = l - 1;
+        steps = steps + 1;
+    }
+    return steps;
+}
+
 // Запускаем симуляции
-// const iterations = 1_000_000;
-// const countsCumulative = simulateCumulative(iterations);
-// const countsSequential = simulateSequential(iterations);
-//
-// // Вывод результатов
-// console.log("Алгоритм 1 (кумулятивный):");
-// GameSteps.forEach((step, i) => {
-//     const freq = (countsCumulative[i] / iterations * 100).toFixed(2);
-//     // Теоретическая вероятность по алгоритму 1 равна p_i / sum(p_i)
-//     const theoretical = (step.probabilityToLose / GameSteps.reduce((s, st) => s + st.probabilityToLose, 0) * 100).toFixed(2);
-//     console.log(`Шаг ${i}: эмпирическая = ${freq}%  (теор. ${theoretical}%)`);
-// });
-//
-// console.log("\nАлгоритм 2 (последовательный):");
-// GameSteps.forEach((step, i) => {
-//     const freq = (countsSequential[i] / iterations * 100).toFixed(2);
-//     // Теоретическая безусловная вероятность для алгоритма 2 должна быть ≈ 4% для каждого шага (при условии равномерного распределения)
-//     console.log(`Шаг ${i}: эмпирическая = ${freq}%  (теор. ≈ 4.00%)`);
-// });
+const iterations = 1_000_000;
+const countRandom = simulateRandom(iterations);
+const countsCumulative = simulateCumulative(iterations);
+const countsSequential = simulateSequential(iterations);
+
+console.log("Алгоритм 0 (рандом):");
+countRandom.forEach((steps, i) => {
+    const freq = (steps / iterations * 100).toFixed(2);
+    console.log(`Шаг ${i}:  loses ${freq}%  sym=${steps}`);
+})
+
+console.log("Алгоритм 1 (кумулятивный):");
+countsCumulative.forEach((steps, i) => {
+    const freq = (steps / iterations * 100).toFixed(2);
+    console.log(`Шаг ${i}: loses = ${freq}%  sym=${steps}`);
+});
+
+console.log("\nАлгоритм 2 (от математика):");
+countsSequential.forEach((steps, i) => {
+    const freq = (steps / iterations * 100).toFixed(2);
+    console.log(`Шаг ${i}: loses = ${freq}%  сумма проигрышей на этом шаге=${steps}`);
+});
+
+

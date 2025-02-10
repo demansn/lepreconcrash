@@ -1,6 +1,6 @@
 import {createAPI} from "../../Api.js";
 import {TaskAction} from "../../../../shared/TaskAction.js";
-import {initDataToObj, initDataToString, validateEmail, validatePhoneNumber, validateTwitterAccount} from "../../../../shared/utils.js";
+import {initDataToObj, initDataToString} from "../../../../shared/utils.js";
 import Tasks from "../../../../shared/task_templates.json"
 import {TaskStatus} from "../../../../shared/TaskStatus.js";
 
