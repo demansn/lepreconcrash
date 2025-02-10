@@ -1,11 +1,13 @@
 import {getPlayerRankLevel} from "../../shared/PlayrLevels.js";
-import {GameSteps} from "./GameSteps.js";
+import {MersenneTwister19937, real} from "random-js";
 
 export class GameMath {
     constructor(steps, prizes) {
         this.steps = steps;
-        this.totalStepsNumber = this.steps.length;
+        this.totalStepsNumber = this.steps.length - 1;
         this.prizeProbabilities = this.#normalizeProbabilities(prizes);
+        this.probabilitiesToLose = this.getProbablityToLose(this.steps.length, 1);
+        this.engine = MersenneTwister19937.autoSeed();
     }
 
     #normalizeProbabilities(prizeProbabilities) {
@@ -18,7 +20,7 @@ export class GameMath {
     }
 
     /**
-     *
+     1
      * @returns {string}
      */
     getRandomPrize() {
@@ -39,7 +41,7 @@ export class GameMath {
 
     getRandomGameRound(bet, {bonusStep: bs, loseStep: ls, winStep: ts} = {}) {
         const bonusStep = bs  !== undefined ? bs : this.getRandomBonusStep();
-        const loseStep = ls !== undefined ? ls : this.getRandomLoseStep();
+        const loseStep = s !== undefined ? ls : this.getRandomLoseStep();
         const luck = this.steps[bonusStep].bonusLuck;
         const isWinBonusPrize = this.chance(0.3);
 
@@ -49,7 +51,7 @@ export class GameMath {
 
         const result = {
             maxSteps: this.totalStepsNumber,
-            lastStep: this.totalStepsNumber - 1,
+            lastStep: this.totalStepsNumber,
             loseStep,
             bonus: {
                 step: bonusStep,
@@ -68,39 +70,37 @@ export class GameMath {
     }
 
     getRandomLoseStep() {
-        return this.getRandomLoseByMath();
-
         const rand = Math.random() ;
         let cumulative = 0;
-        const totalLossProb = this.steps.reduce((sum, step) => sum + step.probabilityToLose, 0);
+        const totalLossProb = this.probabilitiesToLose.reduce((sum, p) => sum + p, 0);
 
-        for (let i = 0; i < this.steps.length; i++) {
-            cumulative += this.steps[i].probabilityToLose;
+        for (let i = 0; i < this.probabilitiesToLose.length; i++) {
+            cumulative += this.probabilitiesToLose[i];
             if (rand < cumulative / totalLossProb) {
-                return i;
+                return i + 1;
             }
         }
 
-         return Math.floor(Math.random() * this.totalStepsNumber);
+         return this.totalStepsNumber;
     }
 
-    getRandomLoseByMath() {
-            const lines = this.steps.length - 1;
-            let l = this.steps.length - 1;
-            let t = 2;
-            let steps = 0;
-            for (let i = 0; i < lines; i++) {
-                if (Math.random() < t / (t + l)) {
-                    return steps;
-                }
-                l = l - 1;
-                steps = steps + 1;
-            }
-            return steps;
+    getProbablityToLose(steps, traps) {
+        const probs = [];
+        let prev = 0;
+
+        for (let i = 0; i < steps; i++) {
+            const p = traps / (steps - (i + 1) + traps + 1);
+            const o = i === 0 ? 1 : probs[i - 1];
+            const l = o * (1 - p);
+            prev = l;
+            probs.push(l);
+        }
+
+        return probs;
     }
 
      getRandomBonusStep() {
-        return  Math.floor(Math.random() * (this.totalStepsNumber - 2)) + 1;
+        return Math.floor(Math.random() * (this.totalStepsNumber - 2)) + 1;
     }
 
     getLuckLevel(luck) {

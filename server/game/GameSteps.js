@@ -1,4 +1,4 @@
-export const GameSteps2 = [
+export const GameSteps1 = [
     {number: 0, multiplier: 1, qualityBonus: 0,  bonusLuck: 0, probabilityToLose: 0.04},
     {number: 1, multiplier: 1.03, qualityBonus: 6875,  bonusLuck: 5, probabilityToLose: 0.04166666667},
     {number: 2, multiplier: 1.06, qualityBonus: 6875,  bonusLuck: 5, probabilityToLose: 0.04347826087},
@@ -25,7 +25,7 @@ export const GameSteps2 = [
     {number: 23, multiplier: 10, qualityBonus: 595,  bonusLuck: 300, probabilityToLose: 0.3333333333},
     {number: 24, multiplier: 20, qualityBonus: 51,  bonusLuck: 500, probabilityToLose: 0.5},
 ];
-
+//
 export const GameSteps = [
     {number: 0, multiplier: 1, qualityBonus: 0,  bonusLuck: 0, probabilityToLose: 0},
     {number: 1, multiplier: 1.03, qualityBonus: 6875,  bonusLuck: 5, probabilityToLose: 0.96},
@@ -53,98 +53,3 @@ export const GameSteps = [
     {number: 23, multiplier: 10, qualityBonus: 595,  bonusLuck: 300, probabilityToLose: 0.08},
     {number: 24, multiplier: 20, qualityBonus: 51,  bonusLuck: 500, probabilityToLose: 0.04},
 ];
-
-function randomInclusive() {
-    // Выбираем большое число, например 2^32 - 1
-    const N = Math.pow(2, 32) + 1;
-    // Генерируем целое число от 0 до N включительно:
-    const randomInt = Math.floor(Math.random() * (N + 1));
-    return randomInt / N;
-}
-
-function simulateCumulative(iterations) {
-    const counts = new Array(GameSteps.length + 1).fill(0);
-    const t = GameSteps.reduce((sum, step) => sum + step.probabilityToLose, 0);
-
-    for (let i = 0; i < iterations; i++) {
-        const rand = randomInclusive();
-        let cumulative = 0;
-        let chosen = -1;
-
-        for (let j = 0; j < GameSteps.length; j++) {
-            cumulative += GameSteps[j].probabilityToLose;
-            if (rand < cumulative / t) {
-                chosen = j;
-                break;
-            }
-        }
-
-        if (chosen === -1) chosen = GameSteps.length;
-            counts[chosen]++;
-        }
-    return counts;
-}
-
-function simulateRandom(iterations) {
-    const counts = new Array(GameSteps.length + 1).fill(0);
-
-    for (let i = 0; i < iterations; i++) {
-        let chosen = -1;
-        chosen = Math.floor(Math.random() * (GameSteps.length + 1));
-        counts[chosen]++;
-    }
-    return counts;
-}
-
-function simulateSequential(iterations) {
-    const counts = new Array(GameSteps.length + 1).fill(0);
-
-    for (let i = 0; i < iterations; i++) {
-        let chosen = -1;
-        chosen = getLine();
-        counts[chosen]++;
-    }
-
-    return counts;
-}
-
-function getLine() {
-    const lines =  GameSteps.length - 1;
-    let l = GameSteps.length - 1;
-    let t = 2;
-    let steps = 0;
-    for (let i = 0; i < lines; i++) {
-        if (Math.random() < t / (t + l)) {
-            return steps;
-        }
-        l = l - 1;
-        steps = steps + 1;
-    }
-    return steps;
-}
-
-// Запускаем симуляции
-const iterations = 1_000_000;
-const countRandom = simulateRandom(iterations);
-const countsCumulative = simulateCumulative(iterations);
-const countsSequential = simulateSequential(iterations);
-
-console.log("Алгоритм 0 (рандом):");
-countRandom.forEach((steps, i) => {
-    const freq = (steps / iterations * 100).toFixed(2);
-    console.log(`Шаг ${i}:  loses ${freq}%  sym=${steps}`);
-})
-
-console.log("Алгоритм 1 (кумулятивный):");
-countsCumulative.forEach((steps, i) => {
-    const freq = (steps / iterations * 100).toFixed(2);
-    console.log(`Шаг ${i}: loses = ${freq}%  sym=${steps}`);
-});
-
-console.log("\nАлгоритм 2 (от математика):");
-countsSequential.forEach((steps, i) => {
-    const freq = (steps / iterations * 100).toFixed(2);
-    console.log(`Шаг ${i}: loses = ${freq}%  сумма проигрышей на этом шаге=${steps}`);
-});
-
-

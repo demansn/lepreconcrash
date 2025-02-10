@@ -25,10 +25,10 @@ export class GameRound {
             this.bonusPrize = this.getBonusPrize();
         }
 
-        if (this.isEndStep()) {
-            this.endWithWin();
-        } else if (this.isLoseStep()) {
+        if (this.isLoseStep()) {
             this.endWitLose();
+        } else if (this.isEndStep()) {
+            this.endWithWin();
         }
     }
 
