@@ -41,7 +41,7 @@ export class GameMath {
 
     getRandomGameRound(bet, {bonusStep: bs, loseStep: ls, winStep: ts} = {}) {
         const bonusStep = bs  !== undefined ? bs : this.getRandomBonusStep();
-        const loseStep = s !== undefined ? ls : this.getRandomLoseStep();
+        const loseStep = ls !== undefined ? ls : this.getRandomLoseStep();
         const luck = this.steps[bonusStep].bonusLuck;
         const isWinBonusPrize = this.chance(0.3);
 
