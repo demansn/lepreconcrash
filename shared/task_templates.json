@@ -2,8 +2,8 @@
     {
         "id": "watch_ad",
         "type": "basic",
-        "title": "Watch ad rewards",
-        "description": "Watch ad rewards",
+        "title": "WATCH AND CLICK AD",
+        "description": "WATCH AND CLICK AD",
         "icon": "GoldIcon",
         "reward": 20,
         "goal": 1,

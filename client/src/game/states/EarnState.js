@@ -79,14 +79,17 @@ export class EarnState extends ScreenState {
 
     async onClickWatch({task}) {
         this.analytics.track('AdsView', {});
-       const result = await this.ads.show();
+        this.ads.off('clickReward')
+        this.ads.once('clickReward', this.onClickAd.bind(this, task), this);
+        await this.ads.show(this.onClickAd.bind(this, task));
+    }
 
-       if (result) {
-           const updatedTasks = await this.logic.watchAdsTask(task);
+    async onClickAd(task) {
+        const updatedTasks = await this.logic.watchAdsTask(task);
 
-           if (updatedTasks) {
-               this.earn.updateTasks(updatedTasks);
-           }
-       }
+        if (updatedTasks) {
+            this.earn.updateTasks(updatedTasks);
+        }
+        this.ads.off('clickReward');
     }
 }

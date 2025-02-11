@@ -51,6 +51,8 @@ export class TabsWidget  extends EventEmitter {
 
     hidePopup() {
         this.container.style.display = 'none';
+        this.off('showReward');
+        this.off('clickReward');
     }
 
     async show() {
