@@ -1,3 +1,4 @@
+import {gsap} from "gsap";
 import {GameBaseState} from "../GameBaseState.js";
 
 export class SlotGameState extends GameBaseState {
@@ -29,15 +30,20 @@ export class SlotGameState extends GameBaseState {
 
         const {symbol, reward, player} = await spinPromise;
 
-        await this.gamesScene.spin(symbol);
-        this.header.animateTo(player);
-        await this.gamesScene.showWinPopup(reward);
+        const tl = gsap.timeline();
 
-        this.gamesScene.enableUI();
+        tl.add(this.gamesScene.spin(symbol))
+        tl.add([
+            () => this.header.animateTo(player),
+            () => this.gamesScene.showWinPopup(reward)
+        ], '-=0.5');
+        tl.add(() => this.gamesScene.enableUI());
     }
 
     exit() {
         super.exit();
         this.gamesScene.hideSlotGame();
+        this.gamesScene.off('closeGame');
+        this.gamesScene.off('spin');
     }
 }

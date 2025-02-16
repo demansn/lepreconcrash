@@ -158,6 +158,15 @@ export const manifest = {
                 {alias: 'BigWinBase', src: './assets/Win Base2.png'},
                 {alias: 'MegaWinBase', src: './assets/Win Base3.png'},
                 {alias: 'animations', src: './assets/animations-0.json'},
+
+                //Coockie Game
+                {alias: 'CoockieButtonDefault', src: './assets/coockieGame/CoockieButtonDefault.png'},
+                {alias: 'CoockieButtonPressed', src: './assets/coockieGame/CoockieButtonPressed.png'},
+                {alias: 'CoockieClosed', src: './assets/coockieGame/CoockieClosed.png'},
+                {alias: 'CoockieOpen', src: './assets/coockieGame/CoockieOpen.png'},
+                {alias: 'CoockieGameBG', src: './assets/coockieGame/CoockieGameBG.png'},
+                {alias: 'CoockieGameWinIcon', src: './assets/coockieGame/CoockieGameWinIcon.png'},
+
                 {alias: 'mainMusic', src: './assets/sound/WOW Sound_CGM_Level_2_noPer.mp3'},
                 {alias: 'cashGrab', src: './assets/sound/cash-grab-button.mp3'},
                 {alias: 'jump', src: './assets/sound/jump.mp3'},

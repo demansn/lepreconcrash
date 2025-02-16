@@ -13,7 +13,7 @@ export class VerticalBlock extends SuperContainer {
      * @param {string} [options.verticalAlign="top"] - Выравнивание по вертикали: "top", "middle", "bottom".
      * @param {number} [options.gap=0] - Расстояние между дочерними элементами.
      */
-    constructor({ blockWidth = null, blockHeight = null, horizontalAlign = "left", verticalAlign = "top", gap = 0, pivotAlign = [] } = {}) {
+    constructor({ blockWidth, blockHeight, horizontalAlign = "left", verticalAlign = "top", gap = 0, pivotAlign = [] } = {}) {
         super();
         /**
          * Ширина блока. Если не задана, вычисляется автоматически.
@@ -81,7 +81,7 @@ export class VerticalBlock extends SuperContainer {
         let currentY = 0;
 
         // Определяем начальную позицию для вертикального выравнивания
-        if (this.blockHeight) {
+        if (calculatedBlockHeight) {
             if (this.verticalAlign === "middle") {
                 currentY = (calculatedBlockHeight - totalHeight) / 2;
             } else if (this.verticalAlign === "bottom") {
@@ -95,7 +95,7 @@ export class VerticalBlock extends SuperContainer {
             let xOffset = 0;
 
             // Определяем горизонтальное выравнивание
-            if (this.blockWidth) {
+            if (calculatedBlockWidth) {
                 if (this.horizontalAlign === "center") {
                     xOffset = (calculatedBlockWidth - child.width) / 2;
                 } else if (this.horizontalAlign === "right") {

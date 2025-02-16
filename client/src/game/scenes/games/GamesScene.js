@@ -30,10 +30,18 @@ export class GamesScene extends ScreenScene {
          */
         this.slotGame = this.addObject(SlotBonusGame, {}, {alpha: 0});
         this.slotGame.on('spin:clicked', this.onClickSpin.bind(this));
+        this.slotGame.visible = false;
+        /**
+         * @type {CookieGame}
+         */
         this.cookieGame = this.addObject(CookieGame, {}, {alpha: 0});
+        this.cookieGame.on('open', () => {
+            this.emit('openCookie');
+        });
+        this.cookieGame.visible = false;
 
         const text = this.create.text({text: '×', style: 'CloseButtonX'});
-        text.x = 600;
+        text.x = 620;
         text.y = 110;
         text.alpha = 0;
 
@@ -53,12 +61,26 @@ export class GamesScene extends ScreenScene {
 
     disableUI() {
         this.slotGame.setEnabledSpin(false);
+        this.cookieGame.disableUI();
         this.closeButton.enabled = false;
     }
 
     enableUI() {
         this.slotGame.setEnabledSpin(true);
+        this.cookieGame.enableUI();
         this.closeButton.enabled = true;
+    }
+
+    openCookie(message) {
+        const tl = gsap.timeline();
+
+        tl.add([
+            this.cookieGame.showCoinsAnimation(),
+            () => this.cookieGame.openCookie(message)
+        ]);
+        tl.add(() => this.cookieGame.closeCookie(), '+=2');
+
+        return tl.then();
     }
 
     spin(symbol) {
@@ -67,7 +89,7 @@ export class GamesScene extends ScreenScene {
         tl.add(this.slotGame.spin(symbol));
         tl.add(this.slotGame.showCoinsAnimation());
 
-        return tl.then();
+        return tl;
     }
 
     showWinPopup(reward) {
@@ -99,22 +121,28 @@ export class GamesScene extends ScreenScene {
     }
 
     showSlotGame() {
+        this.slotGame.visible = true;
         this.slotGame.show();
         this.showCloseButton();
     }
 
     showCookieGame() {
+        this.cookieGame.visible = true;
         this.cookieGame.show();
         this.showCloseButton();
     }
 
     hideSlotGame() {
-        this.slotGame.hide();
+        this.slotGame.hide().then(() => {
+            this.slotGame.visible = false;
+        });
         this.hideCloseButton();
     }
 
     hideCookieGame() {
-        this.cookieGame.hide();
+        this.cookieGame.hide().then(() => {
+            this.cookieGame.visible = false;
+        });
         this.hideCloseButton();
     }
 }

@@ -1,6 +1,4 @@
-export const SPIN_COST = 20;
-
-export const FortuneMessages = [
+[
     "Your wonderful will lead you to great success.",
     "Your wise will lead you to great success.",
     "Your unexpected will lead you to great success.",

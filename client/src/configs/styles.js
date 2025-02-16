@@ -108,6 +108,17 @@ export const Styles = {
         align: 'center',
     },
 
+    CookieMessage: {
+        fontFamily: 'AldotheApache',
+        fontSize: 45,
+        fill: 0x884e13,
+        align: 'center',
+        // stroke: '#000000',
+        // strokeThickness: 4,
+        wordWrapWidth: 450,
+        wordWrap: true,
+    },
+
     CloseButtonX: {
         fontFamily: 'AldotheApache',
         fontSize: 100,

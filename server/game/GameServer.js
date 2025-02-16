@@ -16,6 +16,7 @@ import {TaskStatus} from "../../shared/TaskStatus.js";
 import {PrizeType} from "../../shared/PrizeType.js";
 import {SlotMachinePrizes} from "../configs/SlotMachinePrizes.js";
 import {SPIN_COST} from "../../shared/constants.js";
+import {FortuneMessages} from "../../shared/constants.js";
 
 const DEFAULT_BET = 10;
 const Logger = console;
@@ -469,6 +470,33 @@ export class GameServer {
         }
 
         return [];
+    }
+
+    async openCookie(playerID) {
+        const bet = SPIN_COST;
+        const player = await this.#players.getPlayer(playerID);
+
+        if (!player) {
+            throw new ServerError('Player not found');
+        }
+
+        if (player.balance < bet) {
+            throw new ServerError('Not enough balance');
+        }
+
+        player.subBalance(bet);
+        player.addLuck(100);
+        player.level = this.#math.getLuckLevel(player.luck);
+        await this.#players.savePlayer(player);
+
+        return {
+            player: {
+                balance: player.balance,
+                luck: player.luck,
+                level: player.level
+            },
+            message: FortuneMessages[Math.floor(Math.random() * FortuneMessages.length)]
+        };
     }
 
     async spin(playerID) {

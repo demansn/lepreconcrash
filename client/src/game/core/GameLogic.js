@@ -13,7 +13,7 @@ export class GameLogic {
         this.analytics = dependencies.resolve('AnalystService');
     }
     create(options) {
-        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto', 'checkTask', 'spin', 'watchAdsTask'], API_URL);
+        this.api = createAPI(['initSession', 'placeBet', 'cashOut', 'nextStep', 'getTasks', 'claimTaskReward', 'getInvoiceLink', 'getLeaderBoard', 'applyTaskAction', 'getUserPhoto', 'checkTask', 'spin', 'watchAdsTask', 'openCookie'], API_URL);
 
         this.parameters = new URLSearchParams(window.location.search);
         this.platform = window.Telegram.WebApp.platform;
@@ -401,6 +401,27 @@ export class GameLogic {
             return {prize, amount, symbol, reward, player};
         } catch (e) {
 
+            this.showAlert('Error', e);
+            return null;
+        }
+    }
+
+    async openCookie() {
+        try {
+            this.player.balance = this.player.balance - SPIN_COST;
+            const {message, error, player} = await this.api.openCookie(this.player.id);
+
+            this.player.balance = player.balance;
+            this.player.luck = player.luck;
+            this.player.level = player.level;
+
+            if (error) {
+                this.showAlert('Error', error);
+                return error;
+            }
+
+            return message;
+        } catch (e) {
             this.showAlert('Error', e);
             return null;
         }
