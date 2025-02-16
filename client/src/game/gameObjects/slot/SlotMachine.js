@@ -9,6 +9,9 @@ export class SlotMachine extends SuperContainer {
 
         this.bg = this.addObject('slot');
         this.arm = this.addObject(SlotMachineArm, {}, {x:496, y: 170});
+        /**
+         * @type {SlotMachineReel}
+         */
         this.reel = this.addObject(SlotMachineReel, {reel: ['Gold-1', 'Luck-100', 'Star-1000']}, {x: 171, y: 400});
         this.reel.mask = this.reel.addObject('slot_mask_2', {}, {x:-40, y: -182});
         this.symbolSequenceGenerator = new SymbolSequenceGenerator(SlotMachineSymbols);
@@ -18,7 +21,7 @@ export class SlotMachine extends SuperContainer {
         }));
     }
 
-    async spin(endSymbol) {
+    spin(endSymbol) {
         this.reel.setSymbols(this.symbolSequenceGenerator.generate({
             endSymbol,
             length: 30

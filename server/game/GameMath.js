@@ -108,8 +108,9 @@ export class GameMath {
     }
 
     getPrize() {
-        const [prize, amount] = this.getRandomPrize().split('-');
+        const symbol = this.getRandomPrize();
+        const [prize, amount] = symbol.split('-');
 
-        return {prize, amount: Number(amount)};
+        return {prize, amount: Number(amount), symbol};
     }
 }

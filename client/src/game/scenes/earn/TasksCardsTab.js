@@ -1,73 +1,14 @@
-import {SuperContainer} from "../../gameObjects/SuperContainer.js";
-import {List, ScrollBox} from "@pixi/ui";
-import {DailyTaskCard} from "./DailyTaskCard.js";
-import {BasicTaskCard} from "./BasicTaskCard.js";
-import {FriendsTaskCard} from "./FriendsTaskCard.js";
-import {TaskType} from "../../../../../shared/TaskType.js";
+import {CardsTab} from "../../gameObjects/tabs/CardsTab.js";
 
-export class TasksCardsTab extends SuperContainer {
-    constructor({tasks, height = 900, onClickClaim, onClickShare, onClickInvite, onClickCheck, onClickWatch}) {
-        super();
+export class TasksCardsTab extends CardsTab {
+    constructor(parameters) {
+        super(parameters);
+        const {onClickClaim, onClickShare, onClickInvite, onClickCheck, onClickWatch} = parameters;
 
         this.onClickClaim = onClickClaim;
         this.onClickShare = onClickShare;
         this.onClickInvite = onClickInvite;
         this.onClickCheck = onClickCheck;
         this.onClickWatch = onClickWatch;
-
-        this.list = this.addChild(new List({
-            elementsMargin: 16,
-            topPadding: 2,
-            leftPadding: 4,
-            rightPadding: 4,
-        }));
-
-        tasks.forEach(task => this.list.addChild(this.createTaskCard(task, {onClickClaim, onClickShare, onClickInvite, onClickCheck, onClickWatch})));
-    }
-
-    createTaskCard(task, params) {
-        const constucrorsByType = {
-            [TaskType.basic]: BasicTaskCard,
-            [TaskType.friends]: FriendsTaskCard,
-        }
-
-        return this.create.displayObject(constucrorsByType[task.type], {task, ...params});
-    }
-
-    getHeight() {
-        this.list.arrangeChildren();
-
-        return this.list.height;
-    }
-
-    updateTaskCard(task) {
-        const card = this.list.children.find(card => card.task.id === task.id);
-
-        if (!card) {
-            return;
-        }
-
-        card.update(task);
-    }
-
-    updateTasksCards(tasks) {
-        tasks.forEach(task => this.updateTaskCard(task));
-        window.setTimeout(() =>this.resize(), 1);
-    }
-
-    addTasksCards(tasks){
-        tasks.forEach(task => {
-            const card = this.createTaskCard(task, {onClickClaim: this.onClickClaim, onClickShare: this.onClickShare, onClickInvite: this.onClickInvite, onClickCheck: this.onClickCheck, onClickWatch: this.onClickWatch});
-
-            card.on('changedSize', this.resize.bind(this));
-
-            this.list.addChild(card);
-        });
-
-        this.resize();
-    }
-
-    resize() {
-        this.emit('changedSize');
     }
 }

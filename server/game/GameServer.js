@@ -15,6 +15,7 @@ import {GameShop} from "./GameShop.js";
 import {TaskStatus} from "../../shared/TaskStatus.js";
 import {PrizeType} from "../../shared/PrizeType.js";
 import {SlotMachinePrizes} from "../configs/SlotMachinePrizes.js";
+import {SPIN_COST} from "../../shared/constants.js";
 
 const DEFAULT_BET = 10;
 const Logger = console;
@@ -471,8 +472,14 @@ export class GameServer {
     }
 
     async spin(playerID) {
-        const bet = DEFAULT_BET;
+        const bet = SPIN_COST;
         const player = await this.#players.getPlayer(playerID);
+        const reward = {
+            win: 0,
+            luck: 0,
+            stars: 0,
+            bet,
+        }
 
         if (!player) {
             throw new ServerError('Player not found');
@@ -484,22 +491,24 @@ export class GameServer {
 
         player.subBalance(bet);
 
-        await this.#players.savePlayer(player);
-
-        const {prize, amount} = this.#math.getPrize();
+        const {prize, amount, symbol} = this.#math.getPrize();
 
         switch(prize) {
             case PrizeType.GOLD:
                 player.addBalance(amount);
+                reward.win = amount;
                 break;
             case PrizeType.LUCK:
                 player.addLuck(amount);
                 player.level = this.#math.getLuckLevel(player.luck);
+                reward.luck = amount;
                 break;
             case PrizeType.STAR:
                 // TODO: add stars for telegram user
                 break;
         }
+
+        await this.#players.savePlayer(player);
 
         return {
             player: {
@@ -508,7 +517,9 @@ export class GameServer {
                 level: player.level
             },
             prize,
-            amount
+            amount,
+            symbol,
+            reward
         };
     }
 

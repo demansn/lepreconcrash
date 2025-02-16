@@ -60,36 +60,6 @@ Mather.registerObjectFactory('Button', (parameters) => new FancyButton({
         }
     }
 }));
-
-Mather.registerObjectFactory('TaskPanelButtons', () => {
-    const checkedStyleButton = {
-        fill: '0x3DB232',
-        border: 2,
-        borderColor: 0xffffff,
-        borderRadius: 20
-    };
-    const uncheckedStyleButton = {
-        fill: 'rgba(255, 255, 255, 0.01)',
-        border: 2,
-        borderColor: 0xffffff,
-        borderRadius: 20
-    };
-    const items = ['QUESTS', 'FRIENDS'];
-
-    return new RadioGroup({
-            elementsMargin: 16,
-            items: items.map(label => {
-                return new ColoredCheckBox( {
-                    label: {text:label, style: 'TasksPanelBtnText'},
-                    checked: checkedStyleButton,
-                    unchecked: uncheckedStyleButton,
-                    width: 182,
-                    height: 64
-                })
-            })
-    });
-});
-
 Mather.registerObjectConstructor('ElasticBackground', ElasticBackground);
 Mather.registerObjectConstructor('InlineBlock', InlineBlock);
 Mather.registerObjectConstructor('VerticalBlock', VerticalBlock);
@@ -106,5 +76,6 @@ Mather.registerObjectFactory('TaskPanelBackground', ({width = 678, height =1} = 
             }
     });
 });
+
 
 

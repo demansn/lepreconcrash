@@ -4,7 +4,7 @@ import gsap from "gsap";
 import {sound} from "@pixi/sound";
 import {ResultPopup} from "../popupManager/popup/ResultPopup.js";
 import {BaseScene} from "../BaseScene.js";
-import {SlotBonusGame} from "./SlotBonusGame.js";
+import {SlotBonusGame} from "../../gameObjects/SlotBonusGame.js";
 
 /**
  * Represents the gameplay scene.

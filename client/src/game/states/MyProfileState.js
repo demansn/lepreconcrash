@@ -13,7 +13,7 @@ export class MyProfileState extends ScreenState {
     }
 
     onClickInvite() {
-        this.owner.goTo('FriendsState')
+        this.owner.goTo('EarnState')
     }
 
     onClickCheckProgress() {

@@ -30,6 +30,11 @@ import {SlotMachine} from "../game/gameObjects/slot/SlotMachine.js";
 import {SlotState} from "../SlotState.js";
 import {SlotGameScene} from "../game/scenes/slotgame/SlotGameScene.js";
 import {BonusGameState} from "../game/states/gamePlay/substates/BonusGameState.js";
+import {GamesState} from "../game/states/games/GamesState.js";
+import {GamesScene} from "../game/scenes/games/GamesScene.js";
+import {SelectGameState} from "../game/states/games/SelectGameState.js";
+import {SlotGameState} from "../game/states/games/SlotGameState.js";
+import {CookieGameState} from "../game/states/games/CookieGameState.js";
 
 export const GameConfig = {
     AnalystService: {
@@ -62,9 +67,9 @@ export const GameConfig = {
             icon: 'Earn',
             state: 'EarnState',
         },
-        friends: {
-            icon: 'Friends',
-            state: 'FriendsState',
+        games: {
+            icon: 'Games',
+            state: 'GamesState',
         },
         play: {
             icon: 'Play',
@@ -109,21 +114,26 @@ export const GameConfig = {
                     BonusGameState
                 }
             },
-            FriendsState: {
-                Class: FriendsState,
+            GamesState: {
+                Class: GamesState,
                 options: {
                     screen: {
-                        scene: 'FriendsScene',
-                        name: 'friends',
+                        scene: 'GamesScene',
+                        name: 'games',
                     }
                 },
                 context: {
                     logic: 'GameLogic',
                 },
                 scenes: {
-                    screen: 'FriendsScene',
+                    screen: 'GamesScene',
                     header: 'HeaderScene',
                     footer: 'Footer',
+                },
+                states: {
+                    SlotGameState,
+                    CookieGameState,
+                    SelectGameState
                 }
             },
             ShopState: {
@@ -221,7 +231,7 @@ export const GameConfig = {
             HeaderScene: HeaderScene,
             GamePlayScene: GamePlayScene,
             ShopScene: ShopScene,
-            FriendsScene: FriendsScene,
+            GamesScene,
             EarnScene: EarnScene,
             LeaderboardScene: LeaderboardScene,
             RewardDailyScene: RewardDailyScene,

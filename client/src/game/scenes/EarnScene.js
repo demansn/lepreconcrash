@@ -2,7 +2,6 @@ import {ScreenScene} from "./ScreenScene.js";
 import {TasksTabs} from "./earn/TasksTabs.js";
 import {TaskAction} from "../../../../shared/TaskAction.js";
 
-
 export class EarnScene extends ScreenScene {
     constructor() {
         super({name: 'earn'});
@@ -48,14 +47,10 @@ export class EarnScene extends ScreenScene {
             return 0;
         });
 
-        if (this.tasksTabs.isCreatedTasks) {
-            this.tasksTabs.updateTasksCards(tasks);
-        } else {
-            this.tasksTabs.addTasksCards(tasks);
-        }
+        this.tasksTabs.setTabsData(tasks);
     }
 
     updateTasks(tasks) {
-        this.tasksTabs.updateTasksCards(tasks);
+        this.tasksTabs.setTabsData(tasks);
     }
 }

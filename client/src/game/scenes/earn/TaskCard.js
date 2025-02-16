@@ -1,66 +1,43 @@
 import {SuperContainer} from "../../gameObjects/SuperContainer.js";
-import {ElasticBackground} from "../../gameObjects/ElasticBackground.js";
 import {TextWithIcon} from "../../gameObjects/TextWithIcon.js";
+import {Card} from "../../gameObjects/tabs/Card.js";
 
-export class TasksCard extends SuperContainer {
-    constructor({
-                    task, margin = 26,
-                    onClickClaim = () => {},
-                    onClickInvite = () => {},
-                    onClickShare = () => {},
-                    onClickCheck = () => {},
-                    onClickWatch = () => {},
-                    width = 630, height = 206,
-    }) {
-        super();
+export class TasksCard extends Card {
+    constructor(parameters) {
+        super(parameters);
 
-        this.options = {task, margin, onClickClaim, onClickInvite, width, height};
+        const {
+            onClickClaim = () => {},
+            onClickInvite = () => {},
+            onClickShare = () => {},
+            onClickCheck = () => {},
+            onClickWatch = () => {},
+            data,
+        } = parameters;
 
-        this.name = 'TasksCard_' + task.id;
-        this.task = task;
+        this.task = data;
+
         this.onClickClaim = onClickClaim;
         this.onClickInvite = onClickInvite;
         this.onClickShare = onClickShare;
         this.onClickCheck = onClickCheck;
         this.onClickWatch = onClickWatch;
-
-        this.margin = margin;
-        const borderColorByStatus = {
-            ready_to_claim: 0xFFE20B,
-            in_progress: 0xffffff,
-            claimed: 0x004600
-        }
-        const borderColor = borderColorByStatus[task.status] || 0xffffff;
-
-        this.background = this.create.displayObject(ElasticBackground, {
-            width,
-            height,
-            style: {
-                fill: 'rgba(0, 0, 0, 0.6)',
-                border: 2,
-                borderColor: this.getBorerColorByStatus(task.status),
-                borderRadius: 24
-            }
-        });
-
-        this.content = this.create.container();
-
-        this.createInfo(task);
-        this.createContent(task);
-        this.resize();
     }
 
     createInfo(task) {
-        this.info = this.content.create.displayObject(TaskInfo, {x: 16, y: 86, parameters: task});
+        if (!this.info) {
+            this.info = this.content.addObject(TaskInfo, task, {x: 16, y: 86});
+        }
     }
 
-    createContent(task) {}
-
-    resize() {
-        this.background.setSize({width: this.options.width, height: this.content.height + this.margin * 2});
+    createContent(task) {
+        super.createContent(task);
+        this.createInfo(task);
     }
 
-    getBorerColorByStatus(status) {
+    getBorderColor() {
+        const {status} = this.parameters;
+
         const borderColorByStatus = {
             ready_to_claim: 0xFFE20B,
             in_progress: 0xffffff,
@@ -68,15 +45,6 @@ export class TasksCard extends SuperContainer {
         }
 
         return borderColorByStatus[status] || 0xffffff;
-    }
-
-    update(task) {
-        this.background.setStyle({borderColor: this.getBorerColorByStatus(task.status)});
-        this.content.removeChildren();
-
-        this.createInfo(task);
-        this.createContent(task);
-        this.resize();
     }
 }
 

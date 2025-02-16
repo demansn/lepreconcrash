@@ -3,6 +3,7 @@ import {TaskAction} from "../../../../shared/TaskAction.js";
 import {initDataToObj, initDataToString} from "../../../../shared/utils.js";
 import Tasks from "../../../../shared/task_templates.json"
 import {TaskStatus} from "../../../../shared/TaskStatus.js";
+import {SPIN_COST} from "../../../../shared/constants.js";
 
 const INVITE_URL = 'https://t.me/share/url';
 
@@ -385,13 +386,19 @@ export class GameLogic {
 
     async spin() {
         try {
-            const {player, prize, amount, error, name} = await this.api.spin(this.player.id);
+            this.player.balance = this.player.balance - SPIN_COST;
+
+            const {player, prize, amount, error, name, symbol, reward} = await this.api.spin(this.player.id);
             if (error) {
                 this.showAlert('Error', error);
                 return null;
             }
 
-            return {prize, amount, player};
+            this.player.balance = player.balance;
+            this.player.luck = player.luck;
+            this.player.level = player.level;
+
+            return {prize, amount, symbol, reward, player};
         } catch (e) {
 
             this.showAlert('Error', e);
@@ -410,6 +417,10 @@ export class GameLogic {
                 }
             }) ;
         });
+    }
+
+    getBalance() {
+        return this.player.balance;
     }
 
     getUserName() {

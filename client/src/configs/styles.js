@@ -107,6 +107,16 @@ export const Styles = {
         fill: 0xffffff,
         align: 'center',
     },
+
+    CloseButtonX: {
+        fontFamily: 'AldotheApache',
+        fontSize: 100,
+        fill: 0xffffff,
+        align: 'center',
+        stroke: 0x000000,
+        strokeThickness: 3,
+        fontWeight: 'bold',
+    },
     TaskInfoText: {
         fontFamily: 'AldotheApache',
         fontSize: 36,

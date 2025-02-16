@@ -18,7 +18,7 @@ export const manifest = {
                 {alias: 'Green+', src: './assets/Green+.png'},
                 {alias: 'earn_bg', src: './assets/bg/earn_bg.jpg'},
                 {alias: 'shop_bg', src: './assets/bg/shop_bg.jpg'},
-                {alias: 'friends_bg', src: './assets/bg/friends_bg.jpg'},
+                {alias: 'games_bg', src: './assets/bg/friends_bg.jpg'},
                 {alias: 'leaderboard_bg', src: './assets/bg/leaderboard_bg.jpg'},
                 {alias: 'MyProfileBackground_bg', src: './assets/bg/MyProfileBackground.png'},
 
@@ -115,17 +115,19 @@ export const manifest = {
                 {alias: 'BottomPanelBtnDefault', src: './assets/bottomPanel/BottomPanelBtnDefault.png'},
 
                 {alias: 'EarnIconActive', src: './assets/bottomPanel/EarnIconActive.png'},
-                {alias: 'FriendsIconActive', src: './assets/bottomPanel/FriendsIconActive.png'},
+                {alias: 'GamesIconActive', src: './assets/bottomPanel/GamesIconActive.png'},
                 {alias: 'LeaderboardIconActive', src: './assets/bottomPanel/LeaderboardIconActive.png'},
                 {alias: 'PlayIconActive', src: './assets/bottomPanel/PlayIconActive.png'},
                 {alias: 'ShopIconActive', src: './assets/bottomPanel/ShopIconActive.png'},
 
                 {alias: 'EarnIconDefault', src: './assets/bottomPanel/EarnIconDefault.png'},
-                {alias: 'FriendsIconDefault', src: './assets/bottomPanel/FriendsIconDefault.png'},
+                {alias: 'GamesIconDefault', src: './assets/bottomPanel/GamesIconDefault.png'},
                 {alias: 'LeaderboardIconDefault', src: './assets/bottomPanel/LeaderboardIconDefault.png'},
                 {alias: 'PlayIconDefault', src: './assets/bottomPanel/PlayIconDefault.png'},
                 {alias: 'ShopIconDefault', src: './assets/bottomPanel/ShopIconDefault.png'},
 
+                {alias: 'CookieIcon', src: './assets/CookieIcon.png'},
+                {alias: 'SlotIcon', src: './assets/SlotIcon.png'},
                 {alias: 'CloudsFront', src: './assets/CloudsFront.png'},
                 {alias: 'CloudsUp', src: './assets/CloudsUp.png'},
                 {alias: 'CloudsBack', src: './assets/CloudsBack.png'},

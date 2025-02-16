@@ -1,55 +1,56 @@
-import {SuperContainer} from "../../gameObjects/SuperContainer.js";
 import {TaskType} from "../../../../../shared/TaskType.js";
+import {FriendsTaskCard} from "./FriendsTaskCard.js";
+import {BasicTaskCard} from "./BasicTaskCard.js";
+import {CardsTabs} from "../../gameObjects/tabs/CardsTabs.js";
 import {TasksCardsTab} from "./TasksCardsTab.js";
 
-export class TasksTabs extends SuperContainer {
+export class TasksTabs extends CardsTabs {
     constructor() {
-        super();
-
-        this.background = this.create.object('TaskPanelBackground');
-        this.buttons =  this.create.object('TaskPanelButtons', {x: 's50%', y: 24});
-        this.buttons.x -= (this.buttons.width / 2) +16;
-        this.buttons.onChange.connect(this.onSelect.bind(this))
-
-        this.tabs = this.create.container();
-        this.tabsByTaskType = {};
-        this.tabsByTaskType[TaskType.basic] = this.addTasksTab();// 'basic'
-        this.tabsByTaskType[TaskType.friends] = this.addTasksTab();// 'friends'
-        this.selectTab(0);
-        this.isCreatedTasks = false;
-        this.selectedTabIndex = 0;
+        super({
+            buttons: ['QUESTS', 'FRIENDS'],
+            tabsByType: {[TaskType.basic]: [], [TaskType.friends]: []},
+            CardsTabConstructor: TasksCardsTab
+        });
     }
 
     addTasksCards(tasks) {
-        for (const type in this.tabsByTaskType) {
-            this.tabsByTaskType[type].addTasksCards(tasks.filter(task => task.type === type));
+       super.addCards(this.toTasksByType(tasks));
+    }
+
+    toTasksByType(tasks) {
+        const tasksByType = {};
+        const constucrorsByType = {
+            [TaskType.basic]: BasicTaskCard,
+            [TaskType.friends]: FriendsTaskCard,
         }
-        this.isCreatedTasks = true;
-        this.resize();
+
+        tasks.forEach(task => {
+            if (!tasksByType[task.type]) {
+                tasksByType[task.type] = [];
+            }
+            const taskData = {
+                constructor: constucrorsByType[task.type],
+                ...task
+            };
+
+            tasksByType[task.type].push(taskData);
+        });
+
+        return tasksByType;
     }
 
     updateTasksCards(tasks) {
-        for (const type in this.tabsByTaskType) {
-            this.tabsByTaskType[type].updateTasksCards(tasks.filter(task => task.type === type));
-        }
-        this.resize();
+        super.updateCards(this.toTasksByType(tasks));
     }
 
-    addTasksTab(tasks = [], height = 900) {
-        const panel = this.tabs.create.displayObject(TasksCardsTab, {
-            tasks, height,
+    getTabOptions() {
+        return {
             onClickClaim: this.onClickClaim.bind(this),
             onClickShare: this.onClickShare.bind(this),
             onClickInvite: this.onClickInvite.bind(this),
             onClickCheck: this.onClickCheck.bind(this),
             onClickWatch: this.onClickWatch.bind(this)
-        });
-
-        panel.x = 24;
-        panel.y = 104;
-        panel.visible = false;
-
-        return panel;
+        }
     }
 
     onClickClaim(taskId) {
@@ -70,25 +71,5 @@ export class TasksTabs extends SuperContainer {
 
     onClickWatch(taskId) {
         this.emit('onClickWatch', taskId);
-    }
-
-    selectTab(index) {
-        this.tabs.children.forEach((panel, i) => {
-            panel.visible = i === index;
-        });
-
-        this.selectedTabIndex = index;
-
-        this.resize();
-    }
-
-    resize() {
-        const height = Math.min(this.tabs.children[this.selectedTabIndex].getHeight()+ 138);
-
-        this.background.setSize({height, width: 678});
-    }
-
-    onSelect(i) {
-        this.selectTab(i);
     }
 }

@@ -5,6 +5,8 @@ import {TaskAction} from "../../../../../shared/TaskAction.js";
 
 export class BasicTaskCard extends TasksCard {
     createContent(task) {
+        super.createContent(task);
+
         switch (task.status) {
             case TaskStatus.IN_PROGRESS:
                 if (task.actionRequired === TaskAction.WATCH_AD) {
@@ -38,16 +40,14 @@ export class BasicTaskCard extends TasksCard {
     }
 
     onClickCheckBtn() {
-        this.onClickCheck({task: this.task});
+        this.onClickCheck({task: this.parameters});
     }
 
     onClickSubscribe() {
-        this.onClickShare({
-            task: this.task
-        });
+        this.onClickShare({task: this.parameters});
     }
 
     onClickWatchBtn() {
-        this.onClickWatch({task: this.task});
+        this.onClickWatch({task: this.parameters});
     }
 }

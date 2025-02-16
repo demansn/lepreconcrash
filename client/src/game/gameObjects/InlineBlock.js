@@ -13,7 +13,7 @@ export class InlineBlock extends SuperContainer {
      * @param {string} [options.verticalAlign="top"] - Выравнивание по вертикали: "top", "middle", "bottom".
      * @param {number} [options.gap=0] - Расстояние между дочерними элементами.
      */
-    constructor({ lineWidth = null, lineHeight = null, horizontalAlign = "left", verticalAlign = "top", gap = 0 } = {}) {
+    constructor({ lineWidth, lineHeight, horizontalAlign = "left", verticalAlign = "top", gap = 0 } = {}) {
         super();
         /**
          * Ширина линии. Если не задана, вычисляется автоматически.
@@ -66,7 +66,7 @@ export class InlineBlock extends SuperContainer {
         let currentX = 0;
 
         // Определяем начальную позицию для выравнивания
-        if (this.lineWidth) {
+        if (containerWidth) {
             if (this.horizontalAlign === "center") {
                 currentX = (containerWidth - totalWidth) / 2;
             } else if (this.horizontalAlign === "right") {
@@ -79,7 +79,7 @@ export class InlineBlock extends SuperContainer {
             let yOffset = 0;
 
             // Определяем вертикальное выравнивание
-            if (this.lineHeight) {
+            if (containerHeight) {
                 if (this.verticalAlign === "middle") {
                     yOffset = (containerHeight - child.height) / 2;
                 } else if (this.verticalAlign === "bottom") {
@@ -91,7 +91,6 @@ export class InlineBlock extends SuperContainer {
             child.x = currentX;
             child.y = yOffset;
 
-            // Смещаем X для следующего элемента
             currentX += child.width + this.gap;
         });
     }

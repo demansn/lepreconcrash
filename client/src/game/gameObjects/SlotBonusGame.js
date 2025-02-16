@@ -1,5 +1,5 @@
-import {SuperContainer} from "../../gameObjects/SuperContainer.js";
-import {SlotMachine} from "../../gameObjects/slot/SlotMachine.js";
+import {SuperContainer} from "./SuperContainer.js";
+import {SlotMachine} from "./slot/SlotMachine.js";
 import {FancyButton} from "@pixi/ui";
 import {gsap} from "gsap";
 
@@ -9,6 +9,9 @@ export class SlotBonusGame extends SuperContainer {
 
         this.create.sprite({texture: 'slot_bg'});
 
+        /**
+         * @type {SlotMachine}
+         */
         this.slotMachine = this.addObject(SlotMachine, {}, {x: 64, y: 212});
         this.spinBn = this.addObject(FancyButton, {
             defaultView: 'spin_default',
@@ -65,7 +68,7 @@ export class SlotBonusGame extends SuperContainer {
     /**
      *
      * @param resultSymbol
-     * @returns {gsap.core.Tween}
+     * @returns {gsap.core.Timeline}
      */
     spin(resultSymbol) {
         return this.slotMachine.spin(resultSymbol);

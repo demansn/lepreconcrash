@@ -6,7 +6,13 @@ export class GameBaseState  extends BaseState {
 
         const {dependencies} = parameters;
 
+        /**
+         * @type {SceneManager}
+         */
         this.scene = dependencies.resolve('SceneManager');
+        /**
+         * @type {GameLogic}
+         */
         this.gameLogic = dependencies.resolve('GameLogic');
     }
 
