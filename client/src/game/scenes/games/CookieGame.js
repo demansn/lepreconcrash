@@ -10,6 +10,7 @@ export class CookieGame extends SuperContainer {
 
         this.addObject('CoockieGameBG');
         this.cookie = this.addObject(Cookie, {}, {x: 's50%', y: 's50%'});
+        this.cookie.on('onClickCookie', () => this.emit('close'));
 
         /**
          * @type {FancyButton}
@@ -75,8 +76,9 @@ export class CookieGame extends SuperContainer {
 
     closeCookie() {
         this.cookie.close();
+        this.coins.y = -this.coins.height;
+        gsap.killTweensOf(this.coins);
     }
-
 
     showCoinsAnimation() {
         this.coins.y = -this.coins.height;
@@ -96,6 +98,9 @@ export class Cookie extends SuperContainer {
         this.winContent = this.addObject(VerticalBlock, {verticalAlign: 'middle', horizontalAlign: 'center', gap: 20}, {y: -170, visible: false});
         this.winContent.addObject('CoockieGameWinIcon',);
         this.message = this.winContent.create.text({style: 'CookieMessage', text: 'You won 1 cookie!'});
+
+        this.closedState.interactive = true;
+        this.closedState.on('pointerdown', () => this.emit('onClickCookie'));
 
         this.close();
     }

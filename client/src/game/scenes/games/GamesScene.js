@@ -78,9 +78,12 @@ export class GamesScene extends ScreenScene {
             this.cookieGame.showCoinsAnimation(),
             () => this.cookieGame.openCookie(message)
         ]);
-        tl.add(() => this.cookieGame.closeCookie(), '+=2');
 
-        return tl.then();
+        return tl;
+    }
+
+    closeCookie() {
+        this.cookieGame.closeCookie();
     }
 
     spin(symbol) {

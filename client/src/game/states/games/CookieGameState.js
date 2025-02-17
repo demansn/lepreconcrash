@@ -1,3 +1,4 @@
+import {gsap} from "gsap";
 import {GameBaseState} from "../GameBaseState.js";
 
 export class CookieGameState extends GameBaseState {
@@ -16,7 +17,6 @@ export class CookieGameState extends GameBaseState {
         this.gamesScene.showCookieGame();
         this.gamesScene.on('closeGame', this.onCloseGame, this);
         this.gamesScene.on('openCookie', this.openCookie, this);
-
     }
 
     async openCookie() {
@@ -25,9 +25,30 @@ export class CookieGameState extends GameBaseState {
         const resultPromise = this.gameLogic.openCookie();
         this.header.setBalance(this.gameLogic.getBalance());
         const message = await resultPromise;
-        this.header.animateTo(this.gameLogic.player);
-        await this.gamesScene.openCookie(message);
 
+        if (!message) {
+            this.gamesScene.enableUI();
+            return;
+        }
+
+        this.header.animateTo(this.gameLogic.player);
+
+        this.gamesScene.cookieGame.on('close', this.closeCookie, this);
+
+        this.openTween = gsap.timeline();
+        this.openTween
+            .add(this.gamesScene.openCookie(message))
+            .add(() => this.closeCookie(), '+=9');
+    }
+
+    closeCookie() {
+        if (this.openTween) {
+            this.openTween.kill();
+            this.openTween = null;
+        }
+
+        this.gamesScene.cookieGame.off('close');
+        this.gamesScene.cookieGame.closeCookie();
         this.gamesScene.enableUI();
     }
 
