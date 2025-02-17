@@ -93,7 +93,7 @@ export class GamePlayScene extends BaseScene {
         this.slotGame.setEnabledSpin(false);
 
         tl.add(this.slotGame.spin(prize));
-        tl.add(this.slotGame.showCoinsAnimation(), '+=6');
+        tl.add(this.slotGame.showCoinsAnimation());
         tl.add(this.slotGame.hide(),'+=1');
         tl.add(() => this.hud.updateRoundInfo(gameRound));
 
