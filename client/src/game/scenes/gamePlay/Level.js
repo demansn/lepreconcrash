@@ -90,6 +90,8 @@ export class Level extends SuperContainer {
         const nexPlatform = this.getPlatformByNumber(targetPlatformNumber + 1);
         const timeline = gsap.timeline();
 
+        this.hero.setPosition(standPlatform);
+
         if (!isLose) {
             let jumpTimeline = this.hero.jumpTo(platform).add([
                 platform.hideWinValue(),

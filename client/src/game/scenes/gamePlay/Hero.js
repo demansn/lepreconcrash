@@ -16,38 +16,12 @@ export class Hero extends SuperContainer {
         this.addChild(this.jumpState);
     }
 
-    jumpTo(position) {
-        const duration = 0.8;
-
-        gsap.killTweensOf(this);
-        gsap.killTweensOf(this.scale);
-        gsap.killTweensOf(this.position);
-
-        this.setNormalState();
-
-        const timeline = gsap.timeline();
-        const dx = Math.abs(this.x - position.x);
-        const dy = Math.abs(this.y - position.y);
-
-        timeline
-            .add(() => this.setJumpState())
-            .to(this, {
-                duration: duration / 2,
-                x: `+=${dx * 0.7}`,
-                y: '-=100',
-              })
-            .addLabel('jump-half')
-        .to(this, {
-            duration: duration / 2,
-            x: `+=${dx * 0.3}`,
-            y: position.y,
-        })
-            .add(() => this.setNormalState(), '-=0.15');
-
-        return timeline
+    setPosition({x, y}) {
+        this.x = x;
+        this.y = y;
     }
 
-    fallTo(position) {
+    startJump(position) {
         const duration = 0.8;
 
         gsap.killTweensOf(this);
@@ -67,6 +41,34 @@ export class Hero extends SuperContainer {
                 y: '-=100',
             })
             .addLabel('jump-half')
+
+        return timeline;
+    }
+
+    jumpTo(position) {
+        const duration = 0.8;
+        const timeline = this.startJump(position);
+        const dx = Math.abs(this.x - position.x);
+        const dy = Math.abs(this.y - position.y);
+
+        timeline
+        .to(this, {
+            duration: duration / 2,
+            x: `+=${dx * 0.3}`,
+            y: position.y,
+        })
+            .add(() => this.setNormalState(), '-=0.15');
+
+        return timeline
+    }
+
+    fallTo(position) {
+        const duration = 0.8;
+        const timeline = this.startJump(position);
+        const dx = Math.abs(this.x - position.x);
+        const dy = Math.abs(this.y - position.y);
+
+        timeline
             .add(gsap.to({}, {duration: 0.1}))
             .to(this, {
                 delay: 0.2,
