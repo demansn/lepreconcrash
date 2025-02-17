@@ -386,8 +386,13 @@ export class GameLogic {
 
     async spin() {
         try {
+            if (this.player.balance < SPIN_COST) {
+                this.showAlert('Error', 'Not enough balance');
+                return null;
+            }
             this.player.balance = this.player.balance - SPIN_COST;
 
+            this.analytics.track('spin');
             const {player, prize, amount, error, name, symbol, reward} = await this.api.spin(this.player.id);
             if (error) {
                 this.showAlert('Error', error);
@@ -414,6 +419,7 @@ export class GameLogic {
             }
 
             this.player.balance = this.player.balance - SPIN_COST;
+            this.analytics.track('openCookie');
             const {message, error, player} = await this.api.openCookie(this.player.id);
 
             this.player.balance = player.balance;
