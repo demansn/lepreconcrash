@@ -248,7 +248,9 @@ export class GameServer {
                 player.updateTaskOnAction(TaskAction.COLLECT_BONUS);
             }
 
-            await this.#players.savePlayer(player);
+            Promise.resolve().then(async () => {
+                await this.#players.savePlayer(player);
+            });
         }
 
         return {
